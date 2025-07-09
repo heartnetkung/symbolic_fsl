@@ -1,0 +1,6 @@
+end=$(($@+4))
+for i in `seq $@ $end`
+do
+	echo "index: $i"
+	python3 -m arc2.script.visualize "$i" train_v1 train_only
+done

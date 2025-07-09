@@ -1,0 +1,6 @@
+{
+	"exclude":[],
+	"include":["arc"],
+	"reportInvalidTypeVarUse":false,
+	"reportInvalidTypeForm":false
+}

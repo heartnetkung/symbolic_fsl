@@ -1,0 +1,44 @@
+from dataclasses import dataclass
+from functools import cached_property
+from numpy.random import RandomState, SeedSequence, MT19937
+import numpy as np
+import pandas as pd
+import re
+
+ANY_PATTERN = re.compile('.*')
+MISSING_VALUE = -5
+NULL_COLOR = -1
+NULL_DF = pd.DataFrame([])
+BOOLS = [False, True]
+
+
+@dataclass(frozen=True)
+class GlobalParams:
+    '''
+    Store all modifiable parameters of all classes for hyperparameter tuning.
+    '''
+
+    # random seed
+    seed: int = 0
+    # enable epdt to try polynomial of degree 2
+    epdt_enable_deg2: bool = False
+    # the number of possible classifiers per branch
+    epdt_max_classifer_choices: int = 2
+    # the number of possible regressors per branch
+    epdt_max_regressor_choices: int = 1
+    # the number of possible regressors per EPDT
+    epdt_max_nested_regressors: int = 3
+    # linear programming time limit
+    linprog_time_limit: int = 10
+
+    @cached_property
+    def nprandom(self):
+        return RandomState(MT19937(SeedSequence(self.seed)))
+
+    def random(self, size: int)->np.ndarray:
+        '''Random a numpy array with given size with value from 0-1.'''
+        return self.nprandom.rand(size)
+
+    def shuffle(self, arr: np.ndarray)->None:
+        '''Shuffle the given array.'''
+        self.nprandom.shuffle(arr)
