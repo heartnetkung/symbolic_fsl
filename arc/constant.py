@@ -4,6 +4,7 @@ from numpy.random import RandomState, SeedSequence, MT19937
 import numpy as np
 import pandas as pd
 import re
+from enum import Enum
 
 ANY_PATTERN = re.compile('.*')
 MISSING_VALUE = -5
@@ -42,3 +43,9 @@ class GlobalParams:
     def shuffle(self, arr: np.ndarray)->None:
         '''Shuffle the given array.'''
         self.nprandom.shuffle(arr)
+
+
+class FuzzyBool(Enum):
+    no = 0
+    yes = 1
+    maybe = 2

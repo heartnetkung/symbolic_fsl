@@ -1,0 +1,94 @@
+import numpy as np
+import pandas as pd
+from ...graphic import *
+from itertools import product, combinations
+from .util import *
+from .prop import *
+from .rel import *
+
+
+def gen_rel_product(all_x_shapes: list[list[Shape]],
+                    all_y_shapes: list[list[Shape]])->pd.DataFrame:
+    result = {'sample_id': [], 'x_index': [], 'y_index': [], 'rel': []}
+    for sample_id, (x_shapes, y_shapes) in enumerate(zip(all_x_shapes, all_y_shapes)):
+        x_shapes_set = set(x_shapes)
+        for x_index, y_index in product(range(len(x_shapes)), range(len(y_shapes))):
+            x_shape, y_shape = x_shapes[x_index], y_shapes[y_index]
+            if y_shape in x_shapes_set:
+                continue
+
+            for rel in list_relationship(x_shape, y_shape):
+                result['sample_id'].append(sample_id)
+                result['x_index'].append(x_index)
+                result['y_index'].append(y_index)
+                result['rel'].append(rel)
+    return filter_consistency(pd.DataFrame(result), 'rel')
+
+
+def gen_rel_combination(all_shapes: list[list[Shape]])->pd.DataFrame:
+    result = {'sample_id': [], 'index1': [], 'index2': [], 'rel': []}
+    for sample_id, shapes in enumerate(all_shapes):
+        for index1, index2 in combinations(range(len(shapes)), 2):
+            shape1, shape2 = shapes[index1], shapes[index2]
+            for rel in list_relationship(shape1, shape2):
+                result['sample_id'].append(sample_id)
+                result['index1'].append(index1)
+                result['index2'].append(index2)
+                result['rel'].append(rel)
+    return filter_consistency(pd.DataFrame(result), 'rel')
+
+
+def gen_prop(all_shapes: list[list[Shape]],
+             consider_all_props: bool = True)->pd.DataFrame:
+    prop_func = list_properties if consider_all_props else list_shape_representations
+    result = {'sample_id': [], 'index': [], 'prop': []}
+    for sample_id, shapes in enumerate(all_shapes):
+        for shape_index, shape in enumerate(shapes):
+            for prop_key, prop_value in prop_func(shape).items():
+                result['sample_id'].append(sample_id)
+                result['index'].append(shape_index)
+                result['prop'].append(f'{prop_key}: {prop_value}')
+    return filter_consistency(pd.DataFrame(result), 'prop')
+
+
+def cal_consistency_requirement(df: pd.DataFrame)->int:
+    n_samples = len(pd.unique(df['sample_id']))
+    # TODO should we do this? return min(n_samples, 3)
+    return n_samples
+
+
+def filter_consistency(df: pd.DataFrame, col_name: str)->pd.DataFrame:
+    '''
+    Filter the dataframe for rows that row[col_name] has consistent values.
+    Consistency value occurs when such values appear across enough samples.
+    '''
+    if df.empty:
+        return df
+
+    min_appearance = cal_consistency_requirement(df)
+    grouped_series = df.groupby(col_name)[['sample_id']].apply(
+        lambda x: len(set(x['sample_id'])))
+    consistent_filter = grouped_series[
+        grouped_series >= min_appearance].reset_index().drop(columns=0)  # type:ignore
+    return df.merge(consistent_filter, on=col_name, how='inner')
+
+
+def filter_constant_arity(df: pd.DataFrame, unit_cols: list[str],
+                          value_col: str)->pd.DataFrame:
+    '''
+    Filter the dataframe for rows that row[value_cols]
+    has consistent arity per given row[unit_cols].
+    Constant arity is that certain data appears exactly n times per unit.
+    '''
+    if df.empty:
+        return df
+
+    pivot = pd.pivot_table(df, index=unit_cols, columns=value_col, aggfunc='size')
+    keep_values = []
+    for col in pivot.columns:
+        if len(pd.unique(pivot[col])) == 1:
+            keep_values.append(col)
+
+    result = df[df[value_col].isin(keep_values)].reset_index(drop=True)
+    assert isinstance(result, pd.DataFrame)
+    return result
