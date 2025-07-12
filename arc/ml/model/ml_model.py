@@ -99,8 +99,6 @@ class MemorizedModel(MLModel):
         return f'return {self.result}'
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
-        if len(X) != len(self.result):
-            raise Exception('length mismatched')
         return self.result
 
 
