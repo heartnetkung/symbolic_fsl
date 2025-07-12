@@ -7,7 +7,7 @@ python3 -m arc.script.solve_one 30 >temp
 # solve problem 30 with full logging
 python3 -m arc.script.solve_one 30 train_v1 debug >temp
 # run test case with specific pattern filter
-pytest -k pattern
+pytest -k pattern -log-level=INFO
 # visualize problem 30
 python3 -m arc.script.visualize 30
 ```
