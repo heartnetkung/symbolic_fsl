@@ -89,6 +89,21 @@ class ColumnModel(MLModel):
         return col.to_numpy()
 
 
+class MemorizedModel(MLModel):
+    '''Model that memorized answer.'''
+
+    def __init__(self, result: np.ndarray)->None:
+        self.result = result
+
+    def _to_code(self) -> str:
+        return f'return {self.result}'
+
+    def predict(self, X: pd.DataFrame)->np.ndarray:
+        if len(X) != len(self.result):
+            raise Exception('length mismatched')
+        return self.result
+
+
 class FunctionModel(MLModel):
     '''
     Model represented by a deterministic function used for testing.
