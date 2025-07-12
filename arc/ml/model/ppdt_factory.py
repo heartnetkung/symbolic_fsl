@@ -22,7 +22,7 @@ class LabelType(Enum):
     regression = 1
 
 
-def make_epdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
+def make_ppdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
                type: LabelType)->list[MLModel]:
     '''List all possible EDPT models that perfectly fit the data.'''
     result = []
@@ -42,7 +42,7 @@ def make_epdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 def _make_all_regressors(
         X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         type: LabelType, prefix: list[MLModel], result: list[list[MLModel]])->None:
-    if len(prefix) == params.epdt_max_nested_regressors:
+    if len(prefix) == params.ppdt_max_nested_regressors:
         return
 
     for regressor in make_regressors(X, y, params, type):
@@ -66,7 +66,7 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if len(y) == 0:
         return []
 
-    max_result = params.epdt_max_regressor_choices
+    max_result = params.ppdt_max_regressor_choices
     result: list[MLModel] = []
 
     if type == LabelType.regression and len(y) > 1:
@@ -103,7 +103,7 @@ def make_classifiers(X: pd.DataFrame, y: np.ndarray,
     assert not y.all(), 'classifier with all true will cause training errors'
     assert y.any(), 'classifier with all false will cause training errors'
 
-    max_result = params.epdt_max_classifer_choices
+    max_result = params.ppdt_max_classifer_choices
     raw_results = solve_cls(X, y, params, max_result=max_result)
     if len(raw_results) == 0:
         return []

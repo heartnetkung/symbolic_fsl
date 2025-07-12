@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from ...arc.ml.model.epdt_factory import make_regressors, LabelType
+from ...arc.ml.model.ppdt_factory import make_regressors, LabelType
 from ..util import *
 import pytest
 from ...arc.base import GlobalParams

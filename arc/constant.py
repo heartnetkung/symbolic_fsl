@@ -21,13 +21,13 @@ class GlobalParams:
     # random seed
     seed: int = 0
     # enable epdt to try polynomial of degree 2
-    epdt_enable_deg2: bool = False
+    ppdt_enable_deg2: bool = False
     # the number of possible classifiers per branch
-    epdt_max_classifer_choices: int = 2
+    ppdt_max_classifer_choices: int = 2
     # the number of possible regressors per branch
-    epdt_max_regressor_choices: int = 1
+    ppdt_max_regressor_choices: int = 1
     # the number of possible regressors per EPDT
-    epdt_max_nested_regressors: int = 3
+    ppdt_max_nested_regressors: int = 3
     # linear programming time limit
     linprog_time_limit: int = 10
 

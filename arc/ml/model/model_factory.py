@@ -1,5 +1,5 @@
 from .ml_model import *
-from .epdt_factory import *
+from .ppdt_factory import *
 from itertools import combinations
 from .ml_model import MLModel, ConstantModel
 from typing import Optional, Callable
@@ -71,9 +71,9 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 @lru_cache
 def make_models(data: TrainingData, type: LabelType)->list[MLModel]:
     result, X, y = [], data.X, data.y
-    for epdt in make_epdts(X, y, data.params, type):
-        if np.allclose(epdt.predict(X), y):
-            result.append(MatchColumn(epdt, X))
+    for ppdt in make_ppdts(X, y, data.params, type):
+        if np.allclose(ppdt.predict(X), y):
+            result.append(MatchColumn(ppdt, X))
     return result
 
 

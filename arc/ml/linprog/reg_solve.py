@@ -101,7 +101,7 @@ def _is_overfit(counts: VariableCount, result: LinprogResult)->bool:
 
 def _make_deg2_cols(col_names: list[str], params: GlobalParams,
                     deg2_pattern: Pattern)->list[tuple[str, str]]:
-    if not params.epdt_enable_deg2:
+    if not params.ppdt_enable_deg2:
         return []
     result = []
     for col1, col2 in combinations_with_replacement(col_names, 2):

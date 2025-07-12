@@ -8,7 +8,7 @@ X = pd.DataFrame({'a': [0, 1, 2], 'b': [3, 4, 5]})
 
 
 def test_solve_all():
-    params = GlobalParams(epdt_enable_deg2=True)
+    params = GlobalParams(ppdt_enable_deg2=True)
     y = np.array([0, 1, 2])
     result = solve_reg(X, y, params)
     assert len(result) == 2
@@ -42,7 +42,7 @@ def test_solve_all():
 
 
 def test_solve_partial():
-    params = GlobalParams(epdt_enable_deg2=True)
+    params = GlobalParams(ppdt_enable_deg2=True)
     X = pd.DataFrame({'a': [-3, -2, -1, 0, 1, 2, 3]})
     y = np.array([0, 0, 0, 0, 1, 2, 3])
     result = solve_reg(X, y, params)
@@ -59,7 +59,7 @@ def test_solve_partial():
 
 
 def test_inference():
-    params = GlobalParams(epdt_enable_deg2=True)
+    params = GlobalParams(ppdt_enable_deg2=True)
     coef = np.array([1, 2, 3, 4, 5, 6])
     poly_X = make_reg_features(X, params)
     result = np.matmul(poly_X, coef)
@@ -69,7 +69,7 @@ def test_inference():
 
 
 def test_regex():
-    params = GlobalParams(epdt_enable_deg2=True)
+    params = GlobalParams(ppdt_enable_deg2=True)
     X2 = pd.DataFrame({'a': [0, 1, 2, 3], 'b': [3, 4, 5, 6]})
     y = np.array([18, 32, 50, 72])
     result = solve_reg(X2, y, params, deg2_pattern=re.compile('a|b'))

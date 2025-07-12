@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from ..util import *
-from ...arc.ml.model.epdt_factory import make_classifiers
+from ...arc.ml.model.ppdt_factory import make_classifiers
 from ...arc.base import GlobalParams
 import pytest
 
