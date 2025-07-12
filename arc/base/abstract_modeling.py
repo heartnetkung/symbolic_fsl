@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TypeVar, Generic, Optional, Any
+from typing import TypeVar, Generic, Optional, Any, Union
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from enum import Enum
@@ -17,14 +17,11 @@ def default_repr(obj: Any)->str:
     return '{}({})'.format(obj.__class__.__name__, ','.join(vars_))
 
 
-class State(Generic[IN, OUT], ABC):
-    '''Immutably encapsulate all state information about the solving problem.'''
-    X_train: list[IN]
-    X_test: list[IN]
-    y_train: list[OUT]
-    y_test: Optional[list[OUT]]
-    out_train: Optional[list[OUT]] = None
-    out_test: Optional[list[OUT]] = None
+class TrainingState(Generic[IN, OUT], ABC):
+    '''Immutably encapsulate all training step information about the task.'''
+    x: list[IN]
+    out: Optional[list[OUT]]
+    y: list[OUT]
 
     @abstractmethod
     def __hash__(self)->int:
@@ -32,7 +29,24 @@ class State(Generic[IN, OUT], ABC):
         pass
 
 
-class RuntimeTask(ABC):
+class InferenceState(Generic[IN, OUT], ABC):
+    '''Immutably encapsulate all inference step information about the task.'''
+    x: list[IN]
+    out: Optional[list[OUT]]
+
+    @abstractmethod
+    def __hash__(self)->int:
+        '''Hashability is a requirement.'''
+        pass
+
+
+State = Union[TrainingState, InferenceState]
+TS = TypeVar('TS', bound=TrainingState)
+IS = TypeVar('IS', bound=InferenceState)
+S = TypeVar('S', bound=State)
+
+
+class InferenceTask(ABC):
     '''
     Immutably encapsulate both train and test information required to solve the problem,
     including the subset of inputs/outputs in the state to work on.
@@ -50,21 +64,21 @@ class RuntimeTask(ABC):
         return default_repr(self)
 
 
-class ModeledTask(ABC):
+class ModeledTask(Generic[IS], ABC):
     ''''''
     @abstractmethod
-    def to_runtimes(self, test_before: S)->Optional[RuntimeTask]:
+    def to_runtimes(self, before: IS)->Optional[InferenceTask]:
         '''Predict new inputs.'''
         pass
 
 
-class Task(ABC):
+class Task(Generic[TS], ABC):
     '''
     Immutably encapsulate training information required to solve the problem,
     including the subset of inputs/outputs in the state to work on.
     '''
     @abstractmethod
-    def to_models(self, train_before: S, train_after: S)->list[ModeledTask]:
+    def to_models(self, before: TS, after: TS)->list[ModeledTask]:
         '''For any parameterized task, train the models to predict new inputs.'''
         pass
 
@@ -72,19 +86,18 @@ class Task(ABC):
         return default_repr(self)
 
 
-S = TypeVar('S', bound=State)
 T = TypeVar('T', bound=Task)
-RT = TypeVar('RT', bound=RuntimeTask)
+IT = TypeVar('IT', bound=InferenceTask)
 
 
-class Action(Generic[S, T], ABC):
+class Action(Generic[TS, T], ABC):
     '''Replayable actions for transforming the training part of the state.'''
     @abstractmethod
-    def perform(self, state: S, task: T)->Optional[S]:
+    def perform(self, state: TS, task: T)->Optional[S]:
         pass
 
     @abstractmethod
-    def to_runtimes(self, before: S, after: S, task: T)->list[RuntimeAction]:
+    def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
         '''For any parameterized action, train the models to predict new inputs.'''
         pass
 
@@ -92,10 +105,10 @@ class Action(Generic[S, T], ABC):
         return default_repr(self)
 
 
-class RuntimeAction(Generic[S, RT], ABC):
+class InferenceAction(Generic[IS, IT], ABC):
     '''Replayable actions for transforming both train and test parts of the state.'''
     @abstractmethod
-    def perform(self, state: S, task: RT)->Optional[S]:
+    def apply(self, state: IS, task: IT)->Optional[IS]:
         pass
 
     def get_cost(self)->int:
@@ -110,10 +123,10 @@ class RuntimeAction(Generic[S, RT], ABC):
         return default_repr(self)
 
 
-class Manager(Generic[S], ABC):
+class Manager(Generic[TS], ABC):
     '''Control the flow of the execution and decide what to do in each iteration.'''
     @abstractmethod
-    def decide(self, state: S)->list[tuple[Task, S]]:
+    def decide(self, state: TS)->list[tuple[Task[TS], TS]]:
         pass
 
 
@@ -124,31 +137,31 @@ class Recruiter(ABC):
         pass
 
 
-class Expert(Generic[S, T], ABC):
+class Expert(Generic[TS, T], ABC):
     '''Experts apply domain knowledge to the given state.'''
     @abstractmethod
-    def solve_problem(self, state: S, task: T)->list[Action]:
+    def solve_problem(self, state: TS, task: T)->list[Action]:
         pass
 
 
-class Program(Generic[S], ABC):
+class Program(Generic[IS], ABC):
     '''A test-friendly construct used to run a series of actions.'''
     @abstractmethod
-    def run(self, state: S)->Optional[S]:
+    def run(self, state: IS)->Optional[IS]:
         pass
 
 
-class SuccessCriteria(Generic[S], ABC):
+class SuccessCriteria(Generic[TS], ABC):
     '''Condition for success'''
     @abstractmethod
-    def is_success(self, state: S)->bool:
+    def is_success(self, state: TS)->bool:
         pass
 
 
 @dataclass(frozen=True)
 class Trace:
-    task_actions: list[tuple[RuntimeTask, RuntimeAction]]
-    prediction: State
+    task_actions: list[tuple[InferenceTask, InferenceAction]]
+    prediction: InferenceState
 
     @cached_property
     def cost(self)->int:
@@ -158,9 +171,9 @@ class Trace:
         result = [f'Trace(cost={self.cost}):']
         for task, action in self.task_actions:
             result.append(f'  {task} {action}')
-        result.append(f'  {self.prediction.out_test}')
+        result.append(f'  {self.prediction.out}')
         return '\n'.join(result)
 
     @staticmethod
-    def cal_cost(task_actions: list[tuple[RuntimeTask, RuntimeAction]])->int:
+    def cal_cost(task_actions: list[tuple[InferenceTask, InferenceAction]])->int:
         return sum([t.get_cost() + a.get_cost()for t, a in task_actions])

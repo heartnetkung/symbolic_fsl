@@ -10,14 +10,14 @@ class PlanningGraph:
     Each edge contains a list of Tasks and Actions required for state transition.
     '''
 
-    def __init__(self, start_state: State)->None:
+    def __init__(self, start_state: TrainingState)->None:
         self.graph = nx.DiGraph()
         self.graph.add_node(start_state)
         self.start_state = start_state
         self.end_states = []
 
-    def add_state(self, before: State, after: State, task: Task, action: Action,
-                  is_end: bool)->bool:
+    def add_state(self, before: TrainingState, after: TrainingState, task: Task,
+                  action: Action, is_end: bool)->bool:
         '''Add new state to the graph and return True if new edge is created.'''
         assert before in self.graph
         if before == after:
@@ -33,13 +33,14 @@ class PlanningGraph:
             edge_data['data'].append((task, action))
             return False
 
-    def shortest_simple_paths(self)->Generator[list[State], None, None]:
+    def shortest_simple_paths(self)->Generator[list[TrainingState], None, None]:
         for end_state in self.end_states:
             for path in nx.shortest_simple_paths(
                     self.graph, self.start_state, end_state):
                 yield path
 
-    def get_edge_data(self, before: State, after: State)->list[tuple[Task, Action]]:
+    def get_edge_data(self, before: TrainingState,
+                      after: TrainingState)->list[tuple[Task, Action]]:
         result = self.graph.get_edge_data(before, after, default={'data': []})
         return result['data']
 

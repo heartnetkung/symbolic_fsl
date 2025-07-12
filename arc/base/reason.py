@@ -25,7 +25,7 @@ class ResultCollection:
         self.acceptable_cost = LARGE_VALUE
 
     def append(self, trace: Trace)->None:
-        key = repr(trace.prediction.out_test)
+        key = repr(trace.prediction.out)
         value = self.min_cost_traces.get(key, None)
         if value is None:
             self.min_cost_traces[key] = (trace, 1)
@@ -51,15 +51,15 @@ class ResultCollection:
 
 class ModelCache:
     def __init__(self)->None:
-        self.cache: dict[tuple[State, State], list[
-            tuple[ModeledTask, RuntimeAction]]] = {}
+        self.cache: dict[tuple[TrainingState, TrainingState], list[
+            tuple[ModeledTask, InferenceAction]]] = {}
 
-    def get_models(self, before: State, after: State, plan: PlanningGraph)->list[
-            tuple[ModeledTask, RuntimeAction]]:
+    def get_models(self, before: TrainingState, after: TrainingState,
+                   plan: PlanningGraph)->list[tuple[ModeledTask, InferenceAction]]:
         key = (before, after)
         values = self.cache.get(key, None)
         if values is None:
-            new_values: list[tuple[ModeledTask, RuntimeAction]] = []
+            new_values: list[tuple[ModeledTask, InferenceAction]] = []
             for task, action in plan.get_edge_data(before, after):
                 try:
                     modeled_tasks = task.to_models(before, after)
@@ -73,8 +73,8 @@ class ModelCache:
         return values
 
 
-def reason(plan: PlanningGraph, max_result: int, max_path: int,
-           max_time_s: int)->ReasoningResult:
+def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
+           max_path: int, max_time_s: int)->ReasoningResult:
     result = ResultCollection(max_result)
     model_cache = ModelCache()
     end_time = time.time()+max_time_s
@@ -88,12 +88,13 @@ def reason(plan: PlanningGraph, max_result: int, max_path: int,
             logger.info('time limit')
             return ReasoningResult(result.to_list(), path_no, 'time limit')
 
-        _fill_traces(plan.start_state, path, 0, plan, [], result, model_cache)
+        _fill_traces(init_state, path, 0, plan, [], result, model_cache)
     return ReasoningResult(result.to_list(), max_path, 'options exhausted')
 
 
-def _fill_traces(state: State, path: list[State], index: int, plan: PlanningGraph,
-                 prefix: list[tuple[RuntimeTask, RuntimeAction]],
+def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
+                 plan: PlanningGraph,
+                 prefix: list[tuple[InferenceTask, InferenceAction]],
                  result: ResultCollection, cache: ModelCache)->None:
     if index == len(path)-1:
         result.append(Trace(prefix, state))
@@ -109,7 +110,7 @@ def _fill_traces(state: State, path: list[State], index: int, plan: PlanningGrap
         if runtime_task is None:
             continue
 
-        new_state = runtime_action.perform(state, runtime_task)
+        new_state = runtime_action.apply(state, runtime_task)
         if new_state is None:
             continue
 

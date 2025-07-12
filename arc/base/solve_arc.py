@@ -39,7 +39,7 @@ class ArcResult:
     def predictions(self)->list[list[Grid]]:
         result = []
         for trace in self.reasoning_result.traces:
-            pred = trace.prediction.out_test
+            pred = trace.prediction.out
             assert pred is not None
             result.append(pred)
         return result
@@ -52,15 +52,13 @@ def solve_arc(
         max_time_s: int = MAX_TIME_S)->ArcResult:
 
     start_time, _id, X_test_count = time.time(), dataset._id, len(dataset.X_test)
-    init_state = ArcState(dataset.X_train, dataset.X_test,
-                          dataset.y_train, dataset.y_test)
     criteria = ArcSuccessCriteria()
 
-    planning_result = plan(init_state, manager, hr, criteria,
+    planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
                            max_plan_depth, max_plan_itr, max_time_s)
     time_left = int(max_time_s - (time.time()-start_time))
-    reasoning_result = reason(planning_result.plan, n_result,
-                              max_reason_path, time_left)
+    reasoning_result = reason(planning_result.plan, dataset.to_inference_state(),
+                              n_result, max_reason_path, time_left)
     elapsed_time = time.time()-start_time
 
     if dataset.y_test is None:

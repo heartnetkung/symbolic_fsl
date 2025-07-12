@@ -4,9 +4,9 @@ import json
 from dataclasses import dataclass
 from typing import Optional
 from os import path
-from functools import cached_property,cache
+from functools import cached_property, cache
 from enum import Enum
-from .arc_state import ArcState
+from .arc_state import ArcTrainingState, ArcInferenceState
 
 INPUT_FOLDER = path.abspath(path.join(__file__, '../../../data/'))
 
@@ -53,8 +53,11 @@ class Dataset:
         assert self.y_test is not None
         return self.y_train+self.y_test
 
-    def to_initial_state(self)->ArcState:
-        return ArcState(self.X_train, self.X_test, self.y_train, self.y_test)
+    def to_training_state(self)->ArcTrainingState:
+        return ArcTrainingState(self.X_train, self.y_train)
+
+    def to_inference_state(self)->ArcInferenceState:
+        return ArcInferenceState(self.X_test)
 
 
 def _get_json(filename: str, version: str) -> dict:

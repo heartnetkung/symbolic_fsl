@@ -4,7 +4,7 @@ from .mock_impl import *
 
 def test_basic():
     X_train, X_test, y_train, y_test = [1], [2], [9], [17]
-    init_state = MockState(X_train, X_test, y_train, y_test, X_train, X_test)
+    init_state = MockTrainingState(X_train, y_train, X_train)
     manager = MockManager()
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})
@@ -18,7 +18,7 @@ def test_basic():
 
 def test_itr_limit():
     X_train, X_test, y_train, y_test = [1], [2], [9], [17]
-    init_state = MockState(X_train, X_test, y_train, y_test, X_train, X_test)
+    init_state = MockTrainingState(X_train, y_train, X_train)
     manager = MockManager()
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})
@@ -32,7 +32,7 @@ def test_itr_limit():
 
 def test_depth_limit():
     X_train, X_test, y_train, y_test = [1], [2], [9], [17]
-    init_state = MockState(X_train, X_test, y_train, y_test, X_train, X_test)
+    init_state = MockTrainingState(X_train, y_train, X_train)
     manager = MockManager()
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})

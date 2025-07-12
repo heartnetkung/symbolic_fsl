@@ -23,13 +23,13 @@ class StateQueue:
         self.data = deque()
         self.dedup = dedup
 
-    def queue(self, state: State)->bool:
+    def queue(self, state: TrainingState)->bool:
         if self.dedup.has_seen_before(state):
             return False
         self.data.append(state)
         return True
 
-    def dequeue(self)->Optional[State]:
+    def dequeue(self)->Optional[TrainingState]:
         try:
             return self.data.popleft()
         except IndexError:
@@ -39,7 +39,7 @@ class StateQueue:
         return len(self.data)
 
 
-def plan(initial_state: State, manager: Manager, hr: Recruiter,
+def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
          criteria: SuccessCriteria, max_depth: int, max_iteration: int,
          max_time_s: int)->PlanningResult:
 
@@ -94,8 +94,8 @@ def plan(initial_state: State, manager: Manager, hr: Recruiter,
     return PlanningResult(plan, iteration_no, 'depth limit reached')
 
 
-def _dispatch_expert(task: Task, state: State,
-                     expert: Expert)->list[tuple[Action, State]]:
+def _dispatch_expert(task: Task, state: TrainingState,
+                     expert: Expert)->list[tuple[Action, TrainingState]]:
     try:
         new_actions = expert.solve_problem(state, task)
     except Exception:
