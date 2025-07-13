@@ -8,6 +8,8 @@ from .make_attention.find_shapes import *
 
 def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
               x_train: list[Grid], params: GlobalParams)->list[AttentionModel]:
+    '''Generate models for predicting InferenceAttention.'''
+
     index_blob = gen_all_possible_index(output_train_shapes, atn.x_cluster_info)
     if index_blob is None:
         return []
@@ -25,6 +27,8 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
 def to_runtimes(
         model: AttentionModel, output_test_shapes: list[list[Shape]],
         x_test: list[Grid])->Optional[InferenceAttention]:
+    '''Predict InferenceAttention from the model.'''
+
     index_blob = gen_all_possible_index(output_test_shapes, model.x_cluster_info)
     if index_blob is None:
         return None
