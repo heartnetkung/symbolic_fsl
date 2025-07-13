@@ -22,7 +22,8 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     out: Optional[list[Grid]] = None
 
     # info
-    background: Optional[Background] = None
+    x_bg: Optional[list[int]] = None
+    y_bg: Optional[list[int]] = None
     has_layer: bool = False
     reparse_count: int = field(repr=False, compare=False, default=0)
 
@@ -32,7 +33,6 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     out_shapes: Optional[list[list[Shape]]] = None
 
     # reparsing checklist, exclusively used by ArcManager
-    tile_reparse: bool = False
     stack_reparse: bool = False
     split_reparse: bool = False
     edge_reparse: bool = False
@@ -56,7 +56,8 @@ class ArcInferenceState(InferenceState[Grid, Grid]):
     out: Optional[list[Grid]] = None
 
     # info
-    background: Optional[Background] = None
+    x_bg: Optional[list[int]] = None
+    y_bg: Optional[list[int]] = None
     has_layer: bool = False
 
     # shapes
@@ -71,30 +72,3 @@ class ArcInferenceState(InferenceState[Grid, Grid]):
 
 
 ArcState = Union[ArcTrainingState, ArcInferenceState]
-
-
-@dataclass(frozen=True)
-class Background:
-    X_train: list[int]
-    y_train: list[int]
-    X_test: list[int]
-    y_test: list[int]
-
-    @staticmethod
-    def constant(X_train: list[Grid], X_test: list[Grid], value: int)->Background:
-        len_train, len_test = len(X_train), len(X_test)
-        return Background([value]*len_train, [value]*len_train,
-                          [value]*len_test, [value]*len_test)
-
-    @staticmethod
-    def x_dynamic(X_train: list[Grid], X_test: list[Grid])->Background:
-        train = [grid.get_top_color() for grid in X_train]
-        test = [grid.get_top_color() for grid in X_test]
-        return Background(train, train, test, test)
-
-    @staticmethod
-    def double_constant(X_train: list[Grid], X_test: list[Grid], x_value: int,
-                        y_value: int)->Background:
-        len_train, len_test = len(X_train), len(X_test)
-        return Background([x_value]*len_train, [y_value]*len_train,
-                          [x_value]*len_test, [y_value]*len_test)

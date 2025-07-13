@@ -16,7 +16,9 @@ def test_tile_stack():
 
     problem = 16
     y = ds[problem].y_train
-    background = find_backgrounds(ds[problem])[0]
+    state = ds[problem].to_training_state()
+    _, y_model = find_backgrounds(state)[0]
+    y_backgrounds = y_model.predict_int(make_background_df(state))
     outputs = [
         [FilledRectangle(1, 14, 6, 1, 8),
          FilledRectangle(2, 4, 6, 1, 3),
@@ -29,12 +31,14 @@ def test_tile_stack():
          FilledRectangle(6, 2, 1, 12, 2),
          FilledRectangle(14, 12, 1, 6, 8)]
     ]
-    for grid, bg, output in zip(y, background.y_train, outputs):
+    for grid, bg, output in zip(y, y_backgrounds, outputs):
         do_test(grid, bg, output)
 
     problem = 46
     y = ds[problem].y_train
-    background = find_backgrounds(ds[problem])[0]
+    state = ds[problem].to_training_state()
+    _, y_model = find_backgrounds(state)[0]
+    y_backgrounds = y_model.predict_int(make_background_df(state))
     outputs = [
         [FilledRectangle(2, 7, 14, 4, 7),
          FilledRectangle(6, 4, 10, 4, 3),
@@ -49,12 +53,14 @@ def test_tile_stack():
          FilledRectangle(1, 5, 13, 8, 6),
          FilledRectangle(1, 10, 6, 2, 2)]
     ]
-    for grid, bg, output in zip(y, background.y_train, outputs):
+    for grid, bg, output in zip(y, y_backgrounds, outputs):
         do_test(grid, bg, output)
 
     problem = 40
     X = ds[problem].X_train
-    background = find_backgrounds(ds[problem])[0]
+    state = ds[problem].to_training_state()
+    x_model, _ = find_backgrounds(state)[0]
+    x_backgrounds = x_model.predict_int(make_background_df(state))
     outputs = [
         [FilledRectangle(4, 0, 1, 11, 8),
          FilledRectangle(0, 3, 11, 1, 8),
@@ -72,12 +78,14 @@ def test_tile_stack():
          FilledRectangle(0, 16, 27, 1, 1),
          FilledRectangle(0, 21, 27, 1, 1),
          FilledRectangle(0, 23, 27, 1, 1)]]
-    for grid, bg, output in zip(X, background.X_train, outputs):
+    for grid, bg, output in zip(X, x_backgrounds, outputs):
         do_test(grid, bg, output)
 
     problem = 50
     y = ds[problem].y_train
-    background = find_backgrounds(ds[problem])[0]
+    state = ds[problem].to_training_state()
+    _, y_model = find_backgrounds(state)[0]
+    y_backgrounds = y_model.predict_int(make_background_df(state))
     outputs = [
         [FilledRectangle(3, 0, 1, 9, 1),
          FilledRectangle(6, 0, 1, 9, 1),
@@ -116,5 +124,5 @@ def test_tile_stack():
          FilledRectangle(2, 4, 1, 1, 2),
          FilledRectangle(6, 9, 1, 1, 2)]
     ]
-    for grid, bg, output in zip(y, background.y_train, outputs):
+    for grid, bg, output in zip(y, y_backgrounds, outputs):
         do_test(grid, bg, output)

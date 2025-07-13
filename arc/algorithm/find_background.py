@@ -6,33 +6,34 @@ import networkx as nx
 from scipy.stats import mode
 from dataclasses import dataclass
 from typing import Union
+from ..ml import MLModel, ConstantModel, ColumnModel
+import pandas as pd
 
 MISSING_VALUE = 10
 COMMON_BG = 0
 
 
-def find_backgrounds(dataset: Union[Dataset, ArcState])->list[Background]:
+def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel]]:
     '''
     Find the possible choices of background for all grids in the dataset
     (including y_test).
     '''
-    X_train_top_colors = [grid.get_top_color() for grid in dataset.X_train]
-    y_train_top_colors = [grid.get_top_color() for grid in dataset.y_train]
-    X_train_bg = [find_background(grid) for grid in dataset.X_train]
-    y_train_bg = [find_background(grid) for grid in dataset.y_train]
-    x_common_colors = _find_common_colors(dataset.X_train)
-    y_common_colors = _find_common_colors(dataset.y_train)
-    X_global_top_color = _find_global_top_color(dataset.X_train)
-    y_global_top_color = _find_global_top_color(dataset.y_train)
-    len_train, len_test = len(dataset.X_train), len(dataset.X_test)
+    X_train_top_colors = [grid.get_top_color() for grid in state.x]
+    y_train_top_colors = [grid.get_top_color() for grid in state.y]
+    X_train_bg = [find_background(grid) for grid in state.x]
+    y_train_bg = [find_background(grid) for grid in state.y]
+    x_common_colors = _find_common_colors(state.x)
+    y_common_colors = _find_common_colors(state.y)
+    X_global_top_color = _find_global_top_color(state.x)
+    y_global_top_color = _find_global_top_color(state.y)
 
     result = []
     if COMMON_BG in x_common_colors:
-        result.append(Background.constant(dataset.X_train, dataset.X_test, COMMON_BG))
+        result.append((ConstantModel(COMMON_BG), ConstantModel(COMMON_BG)))
 
     if len(set(X_train_top_colors)) > 1:
         x_dynamic = True
-        for x_grid, y_grid in zip(dataset.X_train, dataset.y_train):
+        for x_grid, y_grid in zip(state.x, state.y):
             x_colors = x_grid.get_color_count()
             x_top_color = x_grid.get_top_color()
             if x_top_color not in y_grid.list_colors():
@@ -40,26 +41,32 @@ def find_backgrounds(dataset: Union[Dataset, ArcState])->list[Background]:
             if x_colors[x_top_color]/x_grid.width/x_grid.height < 0.4:
                 x_dynamic = False
         if x_dynamic:
-            result.append(Background.x_dynamic(dataset.X_train, dataset.X_test))
+            result.append((ColumnModel('x_top_color'),
+                           ColumnModel('x_top_color')))
             if len(X_train_top_colors) > len(set(X_train_top_colors)):
                 dynamic_mode = mode(X_train_top_colors).mode
-                result.append(Background.constant(
-                    dataset.X_train, dataset.X_test, dynamic_mode))
+                result.append((ConstantModel(dynamic_mode),
+                               ConstantModel(dynamic_mode)))
 
     if ((X_global_top_color in x_common_colors) and
         (y_global_top_color in y_common_colors) and
             (X_global_top_color != y_global_top_color)):
-        result.append(Background.double_constant(
-            dataset.X_train, dataset.X_test, X_global_top_color, y_global_top_color))
+        result.append((ConstantModel(X_global_top_color),
+                       ConstantModel(y_global_top_color)))
 
     x_mode = mode(X_train_bg+X_train_top_colors).mode
     y_mode = mode(y_train_bg+y_train_top_colors).mode
     if x_mode == y_mode:
         if x_mode in x_common_colors and x_mode != COMMON_BG:
-            result.append(Background.constant(dataset.X_train, dataset.X_test, x_mode))
+            result.append((ConstantModel(x_mode), ConstantModel(x_mode)))
     if len(result) > 0:
         return result
-    return [Background.constant(dataset.X_train, dataset.X_test, COMMON_BG)]
+    return [(ConstantModel(COMMON_BG), ConstantModel(COMMON_BG))]  # type:ignore
+
+
+def make_background_df(state: ArcState)->pd.DataFrame:
+    data = {'x_top_color': [grid.get_top_color() for grid in state.x]}
+    return pd.DataFrame(data)
 
 
 def find_background(grid: Grid)->int:
