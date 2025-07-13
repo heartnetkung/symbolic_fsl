@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from ...graphic import *
 from itertools import product, combinations
-from .util import *
 from .prop import *
 from .rel import *
+from sklearn.metrics.pairwise import pairwise_distances
 
 
 def gen_rel_product(all_x_shapes: list[list[Shape]],
@@ -94,3 +94,15 @@ def filter_constant_arity(df: pd.DataFrame, unit_cols: list[str],
     result = df[df[value_col].isin(keep_values)].reset_index(drop=True)
     assert isinstance(result, pd.DataFrame)
     return result
+
+def to_distance_matrix(df: pd.DataFrame, metric: str)->np.ndarray:
+    # There are many metric types as listed below
+    # https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise_distances.html
+    # [‘cityblock’, ‘cosine’, ‘euclidean’, ‘l1’, ‘l2’, ‘manhattan’].
+
+    # https://docs.scipy.org/doc/scipy/reference/spatial.distance.html
+    # [‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘correlation’,
+    # ‘hamming’, ‘kulsinski’, ‘mahalanobis’, ‘minkowski’,
+    # ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’,
+    # ‘sokalsneath’, ‘sqeuclidean’, ‘yule’]
+    return pairwise_distances(df, metric=metric)

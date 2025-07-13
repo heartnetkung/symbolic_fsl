@@ -9,11 +9,9 @@ def find_common_y_shapes(all_y_shapes: list[list[Shape]])->list[Shape]:
     '''Find consistent shapes across all samples.'''
     props = gen_prop(all_y_shapes, False)
     common_shapes = props.groupby('prop').aggregate('first').drop_duplicates()
-    result = []
-    for index, row in common_shapes.iterrows():
-        sample_id, shape_index = int(row['sample_id']), int(row['index'])
-        result.append(ShapeId(sample_id, shape_index))
-    return [lookup(shape_id, all_y_shapes)for shape_id in sorted(result)]
+    common_shapes.sort_values(['sample_id', 'index'], inplace=True)  # type:ignore
+    return [all_y_shapes[id1][id2]
+            for id1, id2 in zip(common_shapes['sample_id'], common_shapes['index'])]
 
 
 def make_syntactic_models(sample_index: list[int], x_index: list[list[int]],
