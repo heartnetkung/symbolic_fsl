@@ -6,6 +6,7 @@ import pandas as pd
 from typing import Optional
 from .make_attention.cluster_y import *
 from .make_attention.cluster_x import *
+from .make_attention.find_shapes import *
 
 
 def make_attentions(
@@ -65,6 +66,7 @@ def _make_attentions(
         x_train: list[Grid], rel_df: pd.DataFrame,
         y_clusters: list[pd.DataFrame])->list[TrainingAttention]:
     result = []
+    common_y_shapes = find_common_y_shapes(y_train_shapes)
 
     for y_cluster in y_clusters:
         possible_x_clusters = cluster_x(rel_df, y_cluster)
@@ -75,7 +77,8 @@ def _make_attentions(
                 assert isinstance(current_df, pd.DataFrame)
                 if current_df.empty:
                     continue
-                result.append(_make_attention(current_df))
+                result += _make_inner_attentions(
+                    current_df, common_y_shapes, output_train_shapes)
 
     if len(result) == 0:
         empty_attention = create_empty_attention(y_train_shapes)
@@ -84,7 +87,8 @@ def _make_attentions(
     return list(dict.fromkeys(result))
 
 
-def _make_attention(df: pd.DataFrame)->Optional[TrainingAttention]:
+def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
+                           all_shapes: list[list[Shape]])->list[TrainingAttention]:
     grouped_series = df.sort_values(['sample_id', 'y_index', 'x_label']).groupby(
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
     index = grouped_series.index.to_frame()
@@ -95,7 +99,13 @@ def _make_attention(df: pd.DataFrame)->Optional[TrainingAttention]:
     y_index = index['y_index'].to_list()
     x_index = grouped_series.to_list()
     x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
-    return TrainingAttention(sample_index, x_index, y_index, rel_info, x_cluster_info)
+    models = make_syntactic_models(sample_index, x_index, all_shapes)
+    if len(models) == 0:
+        return [TrainingAttention(sample_index, x_index, y_index, rel_info,
+                                  x_cluster_info, common_y_shapes)]
+    return [TrainingAttention(
+        sample_index, x_index, y_index, rel_info, x_cluster_info, common_y_shapes)
+        for model in models]
 
 
 def _copy_cluster_y(atn: TrainingAttention, rel_df: pd.DataFrame)->pd.DataFrame:

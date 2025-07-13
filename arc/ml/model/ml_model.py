@@ -89,6 +89,22 @@ class ColumnModel(MLModel):
         return col.to_numpy()
 
 
+class ConstantColumnModel(MLModel):
+    '''Model that check if a column is equal to a constant value.'''
+
+    def __init__(self, col_name: str, value: int)->None:
+        self.col_name = col_name
+        self.value = value
+
+    def _to_code(self) -> str:
+        return f'return {self.col_name} == {self.value}'
+
+    def predict(self, X: pd.DataFrame)->np.ndarray:
+        col = X[self.col_name]
+        assert col is not None
+        return np.where(col == self.value, 1, 0)
+
+
 class MemorizedModel(MLModel):
     '''Model that memorized answer.'''
 

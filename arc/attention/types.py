@@ -32,7 +32,9 @@ class TrainingAttention:
     # count of columns for each x cluster from left to right
     x_cluster_info: list[int]
     # extra shapes to attend to regardless of row
-    extra_shapes: Optional[list[Shape]] = None
+    extra_shapes: list[Shape]
+    # model for predicting extra shapes
+    syntactic_model: Optional[MLModel] = None
 
     def __post_init__(self):
         # check n
@@ -42,9 +44,14 @@ class TrainingAttention:
 
         # check m
         n_cols = len(self.x_index[0])
-        assert sum(self.x_cluster_info) == n_cols
         for shape_index in self.x_index:
             assert len(shape_index) == n_cols
+
+        # check syntactic_model
+        if self.syntactic_model is None:
+            assert sum(self.x_cluster_info) == n_cols
+        else:
+            assert sum(self.x_cluster_info) + 1 == n_cols
 
     def update(self, **kwargs)->Attention:
         return replace(self, **kwargs)
@@ -60,7 +67,7 @@ class InferenceAttention:
     sample_index: list[int]
     x_index: list[list[int]]
     relationship_info: pd.DataFrame = field(compare=False)
-    extra_shapes: Optional[list[Shape]] = None
+    extra_shapes: list[Shape]
 
     def __post_init__(self):
         # check n
@@ -87,8 +94,6 @@ Attention = Union[TrainingAttention, InferenceAttention]
 class AttentionModel:
     '''Extra information required to infer new attentions.'''
     model: MLModel
-    common_y_shapes: list[Shape]
-    extra_relationship: list[str]
 
 
 def create_empty_attention(
@@ -106,4 +111,4 @@ def create_empty_attention(
     y_index = [0]*train_count
     sample_index = list(range(train_count))
     empty_df = pd.DataFrame({})
-    return TrainingAttention(sample_index, x_index, y_index, empty_df, [])
+    return TrainingAttention(sample_index, x_index, y_index, empty_df, [], [])

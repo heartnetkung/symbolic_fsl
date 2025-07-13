@@ -74,7 +74,7 @@ def filter_consistency(df: pd.DataFrame, col_name: str)->pd.DataFrame:
 
 
 def filter_constant_arity(df: pd.DataFrame, unit_cols: list[str],
-                          value_col: str)->pd.DataFrame:
+                          value_col: str, exactly_one: bool = False)->pd.DataFrame:
     '''
     Filter the dataframe for rows that row[value_cols]
     has consistent arity per given row[unit_cols].
@@ -86,7 +86,9 @@ def filter_constant_arity(df: pd.DataFrame, unit_cols: list[str],
     pivot = pd.pivot_table(df, index=unit_cols, columns=value_col, aggfunc='size')
     keep_values = []
     for col in pivot.columns:
-        if len(pd.unique(pivot[col])) == 1:
+        if exactly_one and (np.allclose(pivot[col], 1)):
+            keep_values.append(col)
+        elif (not exactly_one) and (len(pd.unique(pivot[col])) == 1):
             keep_values.append(col)
 
     result = df[df[value_col].isin(keep_values)].reset_index(drop=True)
