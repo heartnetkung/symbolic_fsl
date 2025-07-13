@@ -2,13 +2,13 @@ from __future__ import annotations
 from ..graphic import *
 from ..ml import *
 from dataclasses import dataclass, replace, field
-from typing import Optional
+from typing import Optional, Union
 import pandas as pd
 from ..constant import default_hash
 
 
 @dataclass(frozen=True)
-class Attention:
+class TrainingAttention:
     '''
     Object encapsulating the result of attention.
     Conceptually, it's a dataframe even though the actual data structure is list.
@@ -54,14 +54,45 @@ class Attention:
 
 
 @dataclass(frozen=True)
+class InferenceAttention:
+    '''Similar to TrainingAttention but less info'''
+
+    sample_index: list[int]
+    x_index: list[list[int]]
+    relationship_info: pd.DataFrame = field(compare=False)
+    extra_shapes: Optional[list[Shape]] = None
+
+    def __post_init__(self):
+        # check n
+        n_rows = len(self.x_index)
+        assert len(self.sample_index) == n_rows
+        assert n_rows > 0
+
+        # check m
+        n_cols = len(self.x_index[0])
+        for shape_index in self.x_index:
+            assert len(shape_index) == n_cols
+
+    def update(self, **kwargs)->Attention:
+        return replace(self, **kwargs)
+
+    def __hash__(self)->int:
+        return default_hash(self)
+
+
+Attention = Union[TrainingAttention, InferenceAttention]
+
+
+@dataclass(frozen=True)
 class AttentionModel:
     '''Extra information required to infer new attentions.'''
     model: MLModel
     common_y_shapes: list[Shape]
-    consistent_extra_relationship: list[str]
+    extra_relationship: list[str]
 
 
-def create_singleton_attention(all_y_shapes: list[list[Shape]])->Optional[Attention]:
+def create_empty_attention(
+        all_y_shapes: list[list[Shape]])->Optional[TrainingAttention]:
     '''
     Singleton attention is where all y_grids contain exactly one shape.
     In such case, it's possible that there is no attention at all.
@@ -75,4 +106,4 @@ def create_singleton_attention(all_y_shapes: list[list[Shape]])->Optional[Attent
     y_index = [0]*train_count
     sample_index = list(range(train_count))
     empty_df = pd.DataFrame({})
-    return Attention(sample_index, x_index, y_index, empty_df, [])
+    return TrainingAttention(sample_index, x_index, y_index, empty_df, [])

@@ -10,7 +10,7 @@ from .make_attention.cluster_x import *
 
 def make_attentions(
         output_train_shapes: list[list[Shape]], y_train_shapes: list[list[Shape]],
-        X_train: list[Grid])->list[Attention]:
+        x_train: list[Grid])->list[TrainingAttention]:
     '''
     Create attention from the current training state.
     The returning outer array contains all possible ways to attend to shapes in this state.
@@ -19,11 +19,11 @@ def make_attentions(
     rel_df = gen_rel_product(output_train_shapes, y_train_shapes)
     possible_y_clusters = cluster_y(rel_df)
     return _make_attentions(output_train_shapes, y_train_shapes,
-                            X_train, rel_df, possible_y_clusters)
+                            x_train, rel_df, possible_y_clusters)
 
 
 def is_attention_solved(
-        atn: Attention, output_train_shapes: list[list[Shape]],
+        atn: TrainingAttention, output_train_shapes: list[list[Shape]],
         y_train_shapes: list[list[Shape]])->FuzzyBool:
     '''
     Check if the previous attention is resolved.
@@ -41,9 +41,10 @@ def is_attention_solved(
     return FuzzyBool.maybe
 
 
-def remake_attentions(
-        attention: Attention, output_train_shapes: list[list[Shape]],
-        y_train_shapes: list[list[Shape]], X_train: list[Grid])->list[Attention]:
+def remake_attentions(attention: TrainingAttention,
+                      output_train_shapes: list[list[Shape]],
+                      y_train_shapes: list[list[Shape]],
+                      x_train: list[Grid])->list[TrainingAttention]:
     '''
     Remake the attention with the same y part but with updated value from x parts.
     '''
@@ -51,7 +52,7 @@ def remake_attentions(
     rel_df = gen_rel_product(output_train_shapes, y_train_shapes)
     possible_y_clusters = [_copy_cluster_y(attention, rel_df)]
     return _make_attentions(output_train_shapes, y_train_shapes,
-                            X_train, rel_df, possible_y_clusters)
+                            x_train, rel_df, possible_y_clusters)
 
 
 # ==============================
@@ -61,8 +62,8 @@ def remake_attentions(
 
 def _make_attentions(
         output_train_shapes: list[list[Shape]], y_train_shapes: list[list[Shape]],
-        X_train: list[Grid], rel_df: pd.DataFrame,
-        y_clusters: list[pd.DataFrame])->list[Attention]:
+        x_train: list[Grid], rel_df: pd.DataFrame,
+        y_clusters: list[pd.DataFrame])->list[TrainingAttention]:
     result = []
 
     for y_cluster in y_clusters:
@@ -77,13 +78,13 @@ def _make_attentions(
                 result.append(_make_attention(current_df))
 
     if len(result) == 0:
-        singleton = create_singleton_attention(y_train_shapes)
-        if singleton is not None:
-            result.append(singleton)
+        empty_attention = create_empty_attention(y_train_shapes)
+        if empty_attention is not None:
+            return [empty_attention]
     return list(dict.fromkeys(result))
 
 
-def _make_attention(df: pd.DataFrame)->Optional[Attention]:
+def _make_attention(df: pd.DataFrame)->Optional[TrainingAttention]:
     grouped_series = df.sort_values(['sample_id', 'y_index', 'x_label']).groupby(
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
     index = grouped_series.index.to_frame()
@@ -94,10 +95,10 @@ def _make_attention(df: pd.DataFrame)->Optional[Attention]:
     y_index = index['y_index'].to_list()
     x_index = grouped_series.to_list()
     x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
-    return Attention(sample_index, x_index, y_index, rel_info, x_cluster_info)
+    return TrainingAttention(sample_index, x_index, y_index, rel_info, x_cluster_info)
 
 
-def _copy_cluster_y(atn: Attention, rel_df: pd.DataFrame)->pd.DataFrame:
+def _copy_cluster_y(atn: TrainingAttention, rel_df: pd.DataFrame)->pd.DataFrame:
     filter_data = {'sample_id': atn.sample_index, 'y_index': atn.y_index}
     filter_df = pd.DataFrame(filter_data)
     result = to_y_df(rel_df.merge(filter_df, on=['sample_id', 'y_index'], how='inner'))
