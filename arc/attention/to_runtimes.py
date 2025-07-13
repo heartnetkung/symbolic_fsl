@@ -6,8 +6,7 @@ from .to_runtime.align_x import *
 
 
 def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
-              y_train_shapes: list[list[Shape]], x_train: list[Grid],
-              params: GlobalParams)->list[AttentionModel]:
+              x_train: list[Grid], params: GlobalParams)->list[AttentionModel]:
     index_blob = gen_all_possible_index(output_train_shapes, atn.x_cluster_info)
     if index_blob is None:
         return []
@@ -40,4 +39,3 @@ def to_runtimes(
             result_x_index.append(index)
             # TODO handle syntactic
     return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes)
-

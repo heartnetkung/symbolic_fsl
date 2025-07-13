@@ -24,10 +24,16 @@ def make_syntactic_models(sample_index: list[int], x_index: list[list[int]],
 
     Return the model that find such shapes.
     '''
-    used_df = _make_syntactic_df(all_x_shapes, sample_index, x_index, True)
     unused_df = _make_syntactic_df(all_x_shapes, sample_index, x_index, False)
+    if unused_df is None:
+        return []
+
     n_samples = len(all_x_shapes)
     models = _generate_models(unused_df, n_samples)
+    used_df = _make_syntactic_df(all_x_shapes, sample_index, x_index, True)
+    if used_df is None:
+        return models
+
     return _filter_intersect(models, used_df)
 
 
@@ -45,14 +51,18 @@ def predict_syntactic_shapes(
     '''
 
     used_df = _make_syntactic_df(all_x_shapes, sample_index, x_index, True)
-    syntactics_in_attention = model.predict_bool(used_df)
-    if np.any(syntactics_in_attention):
-        return None
+    if used_df is not None:
+        syntactics_in_attention = model.predict_bool(used_df)
+        if np.any(syntactics_in_attention):
+            return None
 
     unused_df = _make_syntactic_df(all_x_shapes, sample_index, x_index, False)
+    if unused_df is None:
+        return None
+
     syntactics_outside_attention = model.predict_bool(unused_df)
     unused_df['label'] = syntactics_outside_attention
-    selected_shapes = unused_df[unused_df['label'] == 1]
+    selected_shapes = unused_df[unused_df['label'] == 1].copy()
     assert isinstance(selected_shapes, pd.DataFrame)
     selected_shapes.sort_values('sample_index', inplace=True)
     if not np.array_equal(selected_shapes['sample_index'], range(len(all_x_shapes))):
@@ -62,8 +72,9 @@ def predict_syntactic_shapes(
     return [shape_indexes[sample_id] for sample_id in sample_index]
 
 
-def _make_syntactic_df(all_x_shapes: list[list[Shape]], sample_index: list[int],
-                       x_index: list[list[int]], intersect: bool = False)->pd.DataFrame:
+def _make_syntactic_df(
+        all_x_shapes: list[list[Shape]], sample_index: list[int],
+        x_index: list[list[int]], intersect: bool = False)->Optional[pd.DataFrame]:
     mentioned_index = set()
     for sample_id, indexes in zip(sample_index, x_index):
         for index in indexes:
@@ -77,6 +88,8 @@ def _make_syntactic_df(all_x_shapes: list[list[Shape]], sample_index: list[int],
                 relevant_shapes.append([shape])
                 extra_features['sample_index'].append(i)
                 extra_features['shape_index'].append(j)
+    if len(relevant_shapes) == 0:
+        return None
     return generate_df(all_shapes=relevant_shapes, extra_features=extra_features)
 
 

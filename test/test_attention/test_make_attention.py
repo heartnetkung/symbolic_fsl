@@ -3,6 +3,7 @@ from ...arc.graphic import *
 from ...arc.attention.low_level import *
 from ...arc.attention.make_attention.cluster_y import *
 from ...arc.attention.make_attention.cluster_x import *
+from ...arc.attention import *
 import pandas as pd
 
 
@@ -51,3 +52,29 @@ def test_cluster_x():
     assert len(possible_x_clusters) == 1
     to_check = possible_x_clusters[0][list(expect.keys())]
     assert pd.DataFrame(expect).equals(to_check)
+
+
+def test_predict():
+    all_x_shapes = [[FilledRectangle(0, 0, 1, 1, 1), FilledRectangle(0, 0, 1, 3, 2)],
+                    [FilledRectangle(0, 0, 2, 2, 1)]]
+    all_y_shapes = [[FilledRectangle(0, 0, 1, 1, 2)], [FilledRectangle(0, 0, 2, 2, 2)]]
+    all_x_test_shapes = [
+        [FilledRectangle(1, 2, 3, 4, 1), FilledRectangle(5, 6, 7, 8, 2)]]
+    params = GlobalParams()
+    grid = Grid([[1, 2], [3, 4]])
+    x_train_grids, x_test_grids = [grid, grid], [grid]
+
+    attentions = make_attentions(all_x_shapes, all_y_shapes, x_train_grids)
+    assert len(attentions) == 1
+    assert attentions[0].sample_index == [0, 1]
+    assert attentions[0].x_index == [[0], [0]]
+    assert attentions[0].y_index == [0, 0]
+    assert attentions[0].x_cluster_info == [1]
+
+    models = to_models(attentions[0], all_x_shapes, x_train_grids, params)
+    assert len(models) == 4
+    assert repr(models[0]).find('top_color') > 0
+
+    attention2 = to_runtimes(models[0], all_x_test_shapes, x_test_grids)
+    assert attention2.sample_index == [0]
+    assert attention2.x_index == [[0]]

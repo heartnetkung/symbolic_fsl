@@ -38,5 +38,7 @@ def do_align(arity: list[int], shapes: list[Shape], x_index: list[int])->list[in
         if arity_count > 1:
             subindex = x_index[offset:offset+arity_count]
             result += sorted(subindex, key=key_func)
+        elif arity_count == 1:
+            result.append(x_index[offset])
         offset += arity_count
     return result
