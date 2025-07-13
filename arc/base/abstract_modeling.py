@@ -5,16 +5,11 @@ from collections.abc import Sequence
 from enum import Enum
 from dataclasses import dataclass
 from functools import cached_property
-from ..constant import GlobalParams
+from ..constant import GlobalParams, default_repr
 
 
 IN = TypeVar('IN')
 OUT = TypeVar('OUT')
-
-
-def default_repr(obj: Any)->str:
-    vars_ = [f'{k}={v}' for k, v in obj.__dict__.items() if k[0] != '_']
-    return '{}({})'.format(obj.__class__.__name__, ','.join(vars_))
 
 
 class TrainingState(Generic[IN, OUT], ABC):

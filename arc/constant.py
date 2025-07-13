@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import re
 from enum import Enum
+from typing import Any
+from dataclasses import fields, asdict, replace
 
 ANY_PATTERN = re.compile('.*')
 MISSING_VALUE = -5
@@ -49,3 +51,15 @@ class FuzzyBool(Enum):
     no = 0
     yes = 1
     maybe = 2
+
+
+def default_repr(obj: Any)->str:
+    vars_ = [f'{k}={v}' for k, v in obj.__dict__.items() if k[0] != '_']
+    return '{}({})'.format(obj.__class__.__name__, ','.join(vars_))
+
+
+def default_hash(obj: Any)->int:
+    comparable_fields = [f.name for f in fields(obj) if f.compare]
+    dict_ = asdict(obj)
+    values = tuple(repr(dict_[f]) for f in comparable_fields)
+    return hash(values)

@@ -3,14 +3,8 @@ from .abstract_modeling import TrainingState, InferenceState
 from dataclasses import dataclass, field, replace, fields, asdict
 from typing import Optional, Any, Union
 from ..graphic import Shape, Grid
+from ..constant import default_hash
 # from ..attention_to_consistency import AttentionToConsistency
-
-
-def default_hash(obj: Any)->int:
-    comparable_fields = [f.name for f in fields(obj) if f.compare]
-    dict_ = asdict(obj)
-    values = tuple(repr(dict_[f]) for f in comparable_fields)
-    return hash(values)
 
 
 @dataclass(frozen=True)
