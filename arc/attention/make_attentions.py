@@ -99,13 +99,29 @@ def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
     y_index = index['y_index'].to_list()
     x_index = grouped_series.to_list()
     x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
+    syntactic_info = _apply_syntactic(sample_index, x_index, all_shapes)
+
+    return [TrainingAttention(
+        sample_index, x_index2, y_index, rel_info, x_cluster_info, common_y_shapes,
+        model) for model, x_index2 in syntactic_info]
+
+
+def _apply_syntactic(
+        sample_index: list[int], x_index: list[list[int]],
+        all_shapes: list[list[Shape]])->list[tuple[Optional[MLModel], list[list[int]]]]:
     models = make_syntactic_models(sample_index, x_index, all_shapes)
     if len(models) == 0:
-        return [TrainingAttention(sample_index, x_index, y_index, rel_info,
-                                  x_cluster_info, common_y_shapes)]
-    return [TrainingAttention(
-        sample_index, x_index, y_index, rel_info, x_cluster_info, common_y_shapes)
-        for model in models]
+        return [(None, x_index)]
+
+    result = []
+    for model in models:
+        prediction = predict_syntactic_shapes(model, sample_index, x_index, all_shapes)
+        if prediction is None:
+            continue
+
+        x_index2 = [index+[extra] for index, extra in zip(x_index, prediction)]
+        result.append((model, x_index2))
+    return result
 
 
 def _copy_cluster_y(atn: TrainingAttention, rel_df: pd.DataFrame)->pd.DataFrame:
