@@ -7,6 +7,9 @@ from typing import Optional
 from .make_attention.cluster_y import *
 from .make_attention.cluster_x import *
 from .make_attention.find_shapes import *
+from .to_runtime.align_x import *
+
+MAX_ATTENDING_SHAPE = 3
 
 
 def make_attentions(
@@ -99,11 +102,23 @@ def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
     y_index = index['y_index'].to_list()
     x_index = grouped_series.to_list()
     x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
-    syntactic_info = _apply_syntactic(sample_index, x_index, all_shapes)
+    if sum(x_cluster_info) > MAX_ATTENDING_SHAPE:
+        return []
 
+    x_index2 = _align_x_index(all_shapes, x_index, sample_index, x_cluster_info)
+    syntactic_info = _apply_syntactic(sample_index, x_index2, all_shapes)
     return [TrainingAttention(
-        sample_index, x_index2, y_index, rel_info, x_cluster_info, common_y_shapes,
-        model) for model, x_index2 in syntactic_info]
+        sample_index, x_index3, y_index, rel_info, x_cluster_info, common_y_shapes,
+        model) for model, x_index3 in syntactic_info]
+
+
+def _align_x_index(all_shapes: list[list[Shape]], x_index: list[list[int]],
+                   sample_index: list[int], arity: list[int])->list[list[int]]:
+    result = []
+    for sample_id, index in zip(sample_index, x_index):
+        shapes = all_shapes[sample_id]
+        result.append(do_align(arity, shapes, index))
+    return result
 
 
 def _apply_syntactic(

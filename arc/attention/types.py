@@ -66,7 +66,6 @@ class InferenceAttention:
 
     sample_index: list[int]
     x_index: list[list[int]]
-    relationship_info: pd.DataFrame = field(compare=False)
     extra_shapes: list[Shape]
 
     def __post_init__(self):
@@ -94,6 +93,9 @@ Attention = Union[TrainingAttention, InferenceAttention]
 class AttentionModel:
     '''Extra information required to infer new attentions.'''
     model: MLModel
+    x_cluster_info: list[int]
+    extra_shapes: list[Shape]
+    syntactic_model: Optional[MLModel] = None
 
 
 def create_empty_attention(
