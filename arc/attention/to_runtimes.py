@@ -3,6 +3,7 @@ from ..graphic import *
 from ..base import *
 from .to_runtime.train_model import *
 from .to_runtime.align_x import *
+from .make_attention.find_shapes import *
 
 
 def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
@@ -32,10 +33,23 @@ def to_runtimes(
     df = create_df(x_test, output_test_shapes, sample_index, x_index)
     correct_index = model.model.predict_bool(df)
 
+    x_index2 = _add_syntactic(model.syntactic_model,
+                              sample_index, x_index, output_test_shapes)
     result_sample_index, result_x_index = [], []
-    for correct, sample_index, index in zip(correct_index, sample_index, x_index):
+    for correct, sample_index, index in zip(correct_index, sample_index, x_index2):
         if correct:
             result_sample_index.append(sample_index)
             result_x_index.append(index)
-            # TODO handle syntactic
-    return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes)
+    return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes,
+                              model.model, model.syntactic_model)
+
+
+def _add_syntactic(
+        model: Optional[MLModel], sample_index: list[int],
+        x_index: list[list[int]], all_shapes: list[list[Shape]])->list[list[int]]:
+    if model is None:
+        return x_index
+    prediction = predict_syntactic_shapes(model, sample_index, x_index, all_shapes)
+    if prediction is None:
+        return x_index
+    return [index+[extra] for index, extra in zip(x_index, prediction)]

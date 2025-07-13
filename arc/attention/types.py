@@ -67,6 +67,8 @@ class InferenceAttention:
     sample_index: list[int]
     x_index: list[list[int]]
     extra_shapes: list[Shape]
+    model: MLModel
+    syntactic_model: Optional[MLModel]
 
     def __post_init__(self):
         # check n
