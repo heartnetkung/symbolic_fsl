@@ -6,7 +6,8 @@ from .edit_feat_eng import edit_feat_eng
 
 
 def generate_df(
-        grids: list[Grid], all_shapes: Optional[list[list[Shape]]] = None,
+        grids: Optional[list[Grid]] = None,
+        all_shapes: Optional[list[list[Shape]]] = None,
         extra_features: Optional[dict[str, list]] = None,
         edit_index: int = -1)->pd.DataFrame:
     '''
@@ -14,10 +15,13 @@ def generate_df(
     '''
     _check_input(grids, all_shapes, extra_features)
     extra_features_sub = extra_features if extra_features is not None else {}
-    result = {'grid_width': [], 'grid_height': []} | extra_features_sub
+    result = extra_features_sub
 
-    for grid in grids:
-        _append_grid(grid, result)
+    if grids is not None:
+        result['grid_width'] = []
+        result['grid_height'] = []
+        for grid in grids:
+            _append_grid(grid, result)
     if all_shapes is not None:
         for i, shapes in enumerate(all_shapes):
             _append_shapes(shapes, result, i)
@@ -36,22 +40,25 @@ def ensure_size(df_dict: dict[str, list])->dict[str, list]:
     return df_dict
 
 
-def _check_input(grids: list[Grid],
+def _check_input(grids: Optional[list[Grid]],
                  all_shapes: Optional[list[list[Shape]]],
                  extra_features: Optional[dict[str, list]])->None:
-    len_grids = len(grids)
-    assert len_grids > 0
+    if grids is not None:
+        _len = len(grids)
+    elif all_shapes is not None:
+        _len = len(all_shapes)
+    else:
+        assert False
+    assert _len > 0
 
     if extra_features is not None:
         for k, v in extra_features.items():
-            assert len(v) == len_grids
+            assert len(v) == _len
 
     if all_shapes is not None:
-        assert len(all_shapes) > 0
-        assert len(all_shapes) == len_grids
+        assert len(all_shapes) == _len
         all_shapes_count = {len(shapes) for shapes in all_shapes}
         assert len(all_shapes_count) == 1
-        assert all_shapes_count.pop() > 0
 
 
 def _append_grid(grid: Grid, result: dict[str, list])->None:
