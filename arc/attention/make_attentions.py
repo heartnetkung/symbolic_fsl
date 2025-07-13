@@ -1,12 +1,11 @@
 from ..constant import *
 from ..graphic import *
 from .low_level import *
-from .attention_obj import *
+from .types import *
 import pandas as pd
 from typing import Optional
 from .make_attention.cluster_y import *
 from .make_attention.cluster_x import *
-from .make_attention.find_shapes import *
 
 
 def make_attentions(
@@ -33,7 +32,7 @@ def is_attention_solved(
     '''
 
     relevant_y_shapes = {y_train_shapes[id1][id2] for id1, id2 in zip(
-        atn.sample_train_index, atn.y_train_index)}
+        atn.sample_index, atn.y_index)}
     all_x_shapes = {shape for shapes in output_train_shapes for shape in shapes}
     if relevant_y_shapes.issubset(all_x_shapes):
         return FuzzyBool.yes
@@ -89,15 +88,17 @@ def _make_attention(df: pd.DataFrame)->Optional[Attention]:
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
     index = grouped_series.index.to_frame()
     rel_info = df.iloc[:, 4:].groupby('x_label').mean().reset_index()
+    cluster_counts = df.sort_values('x_label').groupby('x_label').size().to_list()
 
-    sample_train_index = index['sample_id'].to_list()
-    y_train_index = index['y_index'].to_list()
-    X_train_index = grouped_series.to_list()
-    return Attention(sample_train_index, X_train_index, y_train_index, rel_info)
+    sample_index = index['sample_id'].to_list()
+    y_index = index['y_index'].to_list()
+    x_index = grouped_series.to_list()
+    x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
+    return Attention(sample_index, x_index, y_index, rel_info, x_cluster_info)
 
 
 def _copy_cluster_y(atn: Attention, rel_df: pd.DataFrame)->pd.DataFrame:
-    filter_data = {'sample_id': atn.sample_train_index, 'y_index': atn.y_train_index}
+    filter_data = {'sample_id': atn.sample_index, 'y_index': atn.y_index}
     filter_df = pd.DataFrame(filter_data)
     result = to_y_df(rel_df.merge(filter_df, on=['sample_id', 'y_index'], how='inner'))
     result['y_label'] = 0

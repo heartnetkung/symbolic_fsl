@@ -1,4 +1,4 @@
 from .low_level.prop import list_shape_representations
 from .low_level.rel import touch_overlap
 from .make_attentions import make_attentions, is_attention_solved, remake_attentions
-from .attention_obj import Attention
+from .types import Attention, AttentionModel
