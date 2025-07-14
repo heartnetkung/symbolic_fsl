@@ -4,7 +4,7 @@ from dataclasses import dataclass, field, replace, fields, asdict
 from typing import Optional, Any, Union
 from ..graphic import Shape, Grid
 from ..constant import default_hash
-# from ..attention_to_consistency import AttentionToConsistency
+from ..attention import Attention
 
 
 @dataclass(frozen=True)
@@ -33,8 +33,8 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     merge_nearby_reparse: bool = False
 
     # attention cache, exclusively used by ArcManager
-    # attention_cache: Optional[AttentionToConsistency] = field(
-    #     repr=False, default=None, compare=False)
+    attention_cache: Optional[Attention] = field(
+        repr=False, default=None, compare=False)
 
     def update(self, **kwargs)->ArcState:
         return replace(self, **kwargs)

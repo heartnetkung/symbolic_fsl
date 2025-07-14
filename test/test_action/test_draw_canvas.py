@@ -21,6 +21,4 @@ def test_basic():
     state = state.update(has_layer=True)
     program = AttentionExpertProgram(action, params)
     result = program.run(state)
-    print(result.out)
-    print(expect)
     assert result.out == expect

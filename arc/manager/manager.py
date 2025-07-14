@@ -3,6 +3,7 @@ from ..base import *
 from ..graphic import *
 from .task import *
 import logging
+from ..attention import *
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,34 @@ class ArcManager(Manager[ArcTrainingState]):
         if _all_shapes_matched(state.out_shapes, state.y_shapes):
             return [(DrawCanvasTask(), state)]
 
-        return []
+        logger.info('attention_task')
+        return self._make_attention_task(state)
+
+    def _make_attention_task(self, state: ArcTrainingState)->list[
+            tuple[Task[ArcTrainingState], ArcTrainingState]]:
+        assert state.out_shapes is not None
+        assert state.y_shapes is not None
+        attention = state.attention_cache
+
+        results, attentions = [], []
+        if attention is not None:
+            assert isinstance(attention, TrainingAttention)
+            is_solved = is_attention_solved(
+                attention, state.out_shapes, state.y_shapes)
+            if is_solved == FuzzyBool.maybe:
+                return []
+            if is_solved == FuzzyBool.no:
+                attentions = remake_attentions(
+                    attention, state.out_shapes, state.y_shapes, state.x)
+
+        if attentions == []:
+            attentions = make_attentions(state.out_shapes, state.y_shapes, state.x)
+
+        for attention in attentions:
+            new_state = state.update(attention_cache=attention)
+            new_attention = TrainingAttentionTask(attention, self.params)
+            results.append((new_attention, new_state))
+        return results
 
 
 def _all_shapes_matched(a: Optional[list[list[Shape]]],

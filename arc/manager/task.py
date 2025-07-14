@@ -1,6 +1,7 @@
 from ..base import Task, ArcTrainingState, ModelFreeTask
 from dataclasses import dataclass
 from typing import Callable
+from .attention_task import TrainingAttentionTask, AttentionTask
 # no import star
 
 # =========================
