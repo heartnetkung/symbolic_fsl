@@ -49,7 +49,7 @@ class MockExpert(Expert[MockTrainingState, MockTrainingState]):
 
 
 class PlusOneIAction(InferenceAction[MockInferenceState, MockTask]):
-    def apply(self, state: MockInferenceState,
+    def perform_infer(self, state: MockInferenceState,
                 task: MockTask)->Optional[MockInferenceState]:
         return state.update(out=[val+1 for val in state.out])
 
@@ -58,7 +58,7 @@ class PlusOneIAction(InferenceAction[MockInferenceState, MockTask]):
 
 
 class PlusOneAction(Action[MockTrainingState, MockTask]):
-    def perform(self, state: MockTrainingState,
+    def perform_train(self, state: MockTrainingState,
                 task: MockTask)->Optional[MockTrainingState]:
         return state.update(out=[val+1 for val in state.out])
 
@@ -68,7 +68,7 @@ class PlusOneAction(Action[MockTrainingState, MockTask]):
 
 
 class MulTwoIAction(InferenceAction[MockInferenceState, MockTask]):
-    def apply(self, state: MockInferenceState,
+    def perform_infer(self, state: MockInferenceState,
                 task: MockTask)->Optional[MockInferenceState]:
         return state.update(out=[val*2 for val in state.out])
 
@@ -77,7 +77,7 @@ class MulTwoIAction(InferenceAction[MockInferenceState, MockTask]):
 
 
 class MulTwoAction(Action[MockTrainingState, MockTask]):
-    def perform(self, state: MockTrainingState,
+    def perform_train(self, state: MockTrainingState,
                 task: MockTask)->Optional[MockTrainingState]:
         return state.update(out=[val*2 for val in state.out])
 

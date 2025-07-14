@@ -13,7 +13,7 @@ MISSING_VALUE = 10
 COMMON_BG = 0
 
 
-def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel]]:
+def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
     '''
     Find the possible choices of background for all grids in the dataset
     (including y_test).

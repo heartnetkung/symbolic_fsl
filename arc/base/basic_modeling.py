@@ -29,17 +29,17 @@ class UniversalArcAction(Action[TS, T], InferenceAction[IS, IT]):
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
         return [self]
 
-    def perform(self, state: TS, task: T)->Optional[TS]:
-        return self.execute(state)  # type:ignore
+    def perform_train(self, state: TS, task: T)->Optional[TS]:
+        return self.perform(state, True)  # type:ignore
 
-    def apply(self, state: IS, task: IT)->Optional[IS]:
-        return self.execute(state)  # type:ignore
+    def perform_infer(self, state: IS, task: IT)->Optional[IS]:
+        return self.perform(state, False)  # type:ignore
 
     def get_cost(self)->int:
         return default_cost(self)
 
     @abstractmethod
-    def execute(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, is_training: bool)->Optional[ArcState]:
         pass
 
 

@@ -110,7 +110,7 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
         if runtime_task is None:
             continue
 
-        new_state = runtime_action.apply(state, runtime_task)
+        new_state = runtime_action.perform_infer(state, runtime_task)
         if new_state is None:
             continue
 

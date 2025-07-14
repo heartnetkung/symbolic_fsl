@@ -105,7 +105,7 @@ def _dispatch_expert(task: Task, state: TrainingState,
     result = []
     for new_action in new_actions:
         try:
-            new_state = new_action.perform(state, task)
+            new_state = new_action.perform_train(state, task)
             if new_state is not None:
                 result.append((new_action, new_state))
             else:

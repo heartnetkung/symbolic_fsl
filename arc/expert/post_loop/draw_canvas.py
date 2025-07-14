@@ -15,7 +15,7 @@ class DrawCanvas(UniversalArcAction):
         self.layer_model = layer_model
         super().__init__()
 
-    def execute(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, is_training: bool)->Optional[ArcState]:
         assert state.out_shapes is not None
         assert state.y_bg is not None
         if self.layer_model is not None:

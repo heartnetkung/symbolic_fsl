@@ -88,7 +88,7 @@ IT = TypeVar('IT', bound=InferenceTask)
 class Action(Generic[TS, T], ABC):
     '''Replayable actions for transforming the training part of the state.'''
     @abstractmethod
-    def perform(self, state: TS, task: T)->Optional[S]:
+    def perform_train(self, state: TS, task: T)->Optional[S]:
         pass
 
     @abstractmethod
@@ -103,7 +103,7 @@ class Action(Generic[TS, T], ABC):
 class InferenceAction(Generic[IS, IT], ABC):
     '''Replayable actions for transforming both train and test parts of the state.'''
     @abstractmethod
-    def apply(self, state: IS, task: IT)->Optional[IS]:
+    def perform_infer(self, state: IS, task: IT)->Optional[IS]:
         pass
 
     def get_cost(self)->int:
