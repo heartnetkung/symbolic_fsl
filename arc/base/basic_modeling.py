@@ -61,3 +61,16 @@ class BasicRecruiter(Recruiter):
 class ArcSuccessCriteria(SuccessCriteria[ArcTrainingState]):
     def is_success(self, state: ArcTrainingState)->bool:
         return state.out == state.y
+
+
+class TrainingOnlyAction(Action[TS, T]):
+    def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
+        return [DoNothing()]
+
+
+class DoNothing(InferenceAction[IS, IT]):
+    def perform_infer(self, state: IS, task: IT)->Optional[IS]:
+        return state
+
+    def get_cost(self)->int:
+        return 0
