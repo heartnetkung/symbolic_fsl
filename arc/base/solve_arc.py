@@ -29,7 +29,7 @@ class ArcResult:
 
     def __repr__(self)->str:
         time, correct = self.elapsed_time_s, self.correct
-        result = [f'ArcResult(elapsed_time_s={time:.1f}, correct={correct})']
+        result = [f'\nArcResult(elapsed_time_s={time:.1f}, correct={correct})']
 
         for i, grids in enumerate(self.predictions):
             result.append(f'=========== prediction #{i+1} ===========')
@@ -56,11 +56,15 @@ def solve_arc(
     start_time, _id, X_test_count = time.time(), dataset._id, len(dataset.X_test)
     criteria = ArcSuccessCriteria()
 
+    # plan
     planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
                            max_plan_depth, max_plan_itr, max_time_s)
+    time_left = int(max_time_s - (time.time()-start_time))
+    if logger.isEnabledFor(logging.INFO):
+        planning_result.plan.trim()
     logger.info('successful plans: %s', planning_result.plan)
 
-    time_left = int(max_time_s - (time.time()-start_time))
+    # reason
     reasoning_result = reason(planning_result.plan, dataset.to_inference_state(),
                               n_result, max_reason_path, time_left)
     elapsed_time = time.time()-start_time

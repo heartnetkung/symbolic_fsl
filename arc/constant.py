@@ -46,6 +46,9 @@ class GlobalParams:
         '''Shuffle the given array.'''
         self.nprandom.shuffle(arr)
 
+    def __repr__(self)->str:
+        return 'GlobalParams()'
+
 
 class FuzzyBool(Enum):
     no = 0

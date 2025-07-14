@@ -48,7 +48,7 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
     current_queue, next_queue = StateQueue(dedup), StateQueue(dedup)
     current_queue.queue(initial_state)
     plan = PlanningGraph(initial_state)
-    iteration_no, success_count = 0, 0
+    iteration_no = 0
 
     for depth in range(max_depth):
         while True:
@@ -74,16 +74,17 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
                 continue
 
             for task, local_state in task_states:
+                logger.info('task: %s', task)
                 for expert in hr.recruit(task):
                     new_action_states = _dispatch_expert(task, local_state, expert)
                     for new_action, new_state in new_action_states:
-                        success = criteria.is_success(new_state)
-                        if success:
-                            success_count += 1
-                            logger.info('success #%d', success_count)
-
+                        soltion_success = criteria.is_success(new_state)
                         next_queue.queue(new_state)
-                        plan.add_state(state, new_state, task, new_action, success)
+                        add_success = plan.add_state(
+                            state, new_state, task, new_action, soltion_success)
+
+                        if add_success:
+                            logger.info('new action: %s', new_action)
 
         if len(next_queue) == 0:
             logger.info('options exhausted')
@@ -108,8 +109,6 @@ def _dispatch_expert(task: Task, state: TrainingState,
             new_state = new_action.perform_train(state, task)
             if new_state is not None:
                 result.append((new_action, new_state))
-            else:
-                logger.info("new trace is None")
         except Exception:
             logger.info('action apply error', exc_info=True)
     return result

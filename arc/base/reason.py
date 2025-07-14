@@ -27,18 +27,23 @@ class ResultCollection:
     def append(self, trace: Trace)->None:
         key = repr(trace.prediction.out)
         value = self.min_cost_traces.get(key, None)
+        has_new_trace = False
+
         if value is None:
             self.min_cost_traces[key] = (trace, 1)
+            has_new_trace = True
         else:
             existing_trace, count = value
             if trace.cost < existing_trace.cost:
                 self.min_cost_traces[key] = (trace, 1)
+                has_new_trace = True
             elif trace.cost == existing_trace.cost:
                 self.min_cost_traces[key] = (existing_trace, count+1)
 
-        all_costs = sorted([trace.cost for trace, _ in self.min_cost_traces.values()])
-        if len(all_costs) > self.max_result:
-            self.acceptable_cost = all_costs[self.max_result-1]
+        if has_new_trace:
+            all_costs = sorted([t.cost for t, _ in self.min_cost_traces.values()])
+            if len(all_costs) > self.max_result:
+                self.acceptable_cost = all_costs[self.max_result-1]
 
     def to_list(self)->list[Trace]:
         if len(self.min_cost_traces) == 0:
@@ -82,6 +87,7 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
     for path_no, path in enumerate(plan.shortest_simple_paths()):
         logger.info('\n========= path_no: %d', path_no)
         if path_no > max_path:
+            logger.info('max_path limit')
             return ReasoningResult(result.to_list(), path_no, 'max_path limit')
 
         if time.time() > end_time:
@@ -89,6 +95,8 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
             return ReasoningResult(result.to_list(), path_no, 'time limit')
 
         _fill_traces(init_state, path, 0, plan, [], result, model_cache)
+
+    logger.info('options exhausted')
     return ReasoningResult(result.to_list(), max_path, 'options exhausted')
 
 

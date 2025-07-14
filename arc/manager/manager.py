@@ -6,9 +6,6 @@ import logging
 from ..attention import *
 
 
-logger = logging.getLogger(__name__)
-
-
 class ArcManager(Manager[ArcTrainingState]):
     def __init__(self, params: GlobalParams):
         self.params = params
@@ -26,7 +23,6 @@ class ArcManager(Manager[ArcTrainingState]):
         if _all_shapes_matched(state.out_shapes, state.y_shapes):
             return [(DrawCanvasTask(), state)]
 
-        logger.info('attention_task')
         return self._make_attention_task(state)
 
     def _make_attention_task(self, state: ArcTrainingState)->list[
