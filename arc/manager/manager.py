@@ -4,6 +4,7 @@ from ..graphic import *
 from .task import *
 import logging
 from ..attention import *
+from .reparse.reparse_creator import *
 
 
 class ArcManager(Manager[ArcTrainingState]):
@@ -16,6 +17,14 @@ class ArcManager(Manager[ArcTrainingState]):
         # parse and reparse
         if state.x_shapes is None:
             return [(ParseGridTask(), state)]
+        if state.stack_reparse is False:
+            return [(ReparseStackTask(), state.update(stack_reparse=True))]
+        if state.split_reparse is False:
+            return [(create_reparse_split(state), state.update(split_reparse=True))]
+        if state.edge_reparse is False:
+            return [(create_reparse_edge(state), state.update(edge_reparse=True))]
+        if state.merge_nearby_reparse is False:
+            return ([(MergeNearbyTask(), state.update(merge_nearby_reparse=True))])
 
         # finish up
         if state.out is not None:

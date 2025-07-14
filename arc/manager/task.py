@@ -2,20 +2,14 @@ from ..base import Task, ArcTrainingState, ModelFreeTask
 from dataclasses import dataclass
 from typing import Callable
 from .attention_task import TrainingAttentionTask, AttentionTask
+from .reparse.reparse_creator import (
+    ReparseStackTask, ReparseSplitTask, ReparseEdgeTask, MergeNearbyTask)
 # no import star
-
-# =========================
-# parse reparse
-# =========================
 
 
 @dataclass(frozen=True)
 class ParseGridTask(ModelFreeTask):
     pass
-
-# =========================
-# finish up
-# =========================
 
 
 @dataclass(frozen=True)

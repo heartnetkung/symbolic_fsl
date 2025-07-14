@@ -36,7 +36,7 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     attention_cache: Optional[Attention] = field(
         repr=False, default=None, compare=False)
 
-    def update(self, **kwargs)->ArcState:
+    def update(self, **kwargs)->ArcTrainingState:
         return replace(self, **kwargs)
 
     def __hash__(self)->int:
@@ -58,7 +58,7 @@ class ArcInferenceState(InferenceState[Grid, Grid]):
     x_shapes: Optional[list[list[Shape]]] = field(repr=False, default=None)
     out_shapes: Optional[list[list[Shape]]] = None
 
-    def update(self, **kwargs)->ArcState:
+    def update(self, **kwargs)->ArcInferenceState:
         return replace(self, **kwargs)
 
     def __hash__(self)->int:
