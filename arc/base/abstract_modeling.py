@@ -139,10 +139,10 @@ class Expert(Generic[TS, T], ABC):
         pass
 
 
-class Program(Generic[IS], ABC):
+class Program(Generic[S], ABC):
     '''A test-friendly construct used to run a series of actions.'''
     @abstractmethod
-    def run(self, state: IS)->Optional[IS]:
+    def run(self, state: S)->Optional[S]:
         pass
 
 

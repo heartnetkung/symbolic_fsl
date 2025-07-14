@@ -30,10 +30,13 @@ class UniversalArcAction(Action[TS, T], InferenceAction[IS, IT]):
         return [self]
 
     def perform(self, state: TS, task: T)->Optional[TS]:
-        return self.execute(IS)  # type:ignore
+        return self.execute(state)  # type:ignore
 
     def apply(self, state: IS, task: IT)->Optional[IS]:
-        return self.execute(IS)  # type:ignore
+        return self.execute(state)  # type:ignore
+
+    def get_cost(self)->int:
+        return default_cost(self)
 
     @abstractmethod
     def execute(self, state: ArcState)->Optional[ArcState]:

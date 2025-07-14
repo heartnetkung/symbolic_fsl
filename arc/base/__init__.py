@@ -6,7 +6,7 @@ from .arc_state import ArcState, ArcTrainingState, ArcInferenceState, default_ha
 from .abstract_modeling import (
     State, Task, Manager, Recruiter, Expert, Action, Program, SuccessCriteria,
     InferenceTask, InferenceAction, TrainingState, InferenceState)
-from .basic_modeling import (UniversalTask, BasicRecruiter,
+from .basic_modeling import (UniversalTask, BasicRecruiter, UniversalArcAction,
                              ArcSuccessCriteria, default_cost)
 from .plan import plan, PlanningResult
 from .reason import reason, ReasoningResult
