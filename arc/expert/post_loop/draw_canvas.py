@@ -60,7 +60,6 @@ def _sort_shapes(grid: Grid, shapes: list[Shape], model: MLModel)->list[Shape]:
     def _compare(a: Shape, b: Shape)->int:
         df = generate_df([grid], [[a, b]])
         result = model.predict_bool(df)[0]
-        print(a, b, result)
         return 1 if result else -1
     return sorted(shapes, key=cmp_to_key(_compare))
 
