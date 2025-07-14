@@ -28,13 +28,13 @@ class TrainingAttention:
     # percentage of relationship between x and y in each cluster
     # example columns: x_label, overlap, same_shape, ...
     # example value: 0, 1, 0.5,...
-    relationship_info: pd.DataFrame = field(compare=False)
+    relationship_info: pd.DataFrame = field(compare=False, repr=False)
     # count of columns for each x cluster from left to right
     x_cluster_info: list[int]
     # extra shapes to attend to regardless of row
     extra_shapes: list[Shape]
     # model for predicting extra shapes
-    syntactic_model: Optional[MLModel] = None
+    syntactic_model: Optional[MLModel] = field(compare=False, repr=False, default=None)
 
     def __post_init__(self):
         # check n

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from .plan import *
 from .reason import *
 import time
+import logging
 
 MAX_TIME_S = 600
 MAX_PLAN_DEPTH = 15
@@ -14,6 +15,7 @@ MAX_PLAN_ITR = 5000
 MAX_REASON_PATH = 10
 N_RESULT = 2
 DUMMY_PRED = Grid([[0]])
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -30,7 +32,7 @@ class ArcResult:
         result = [f'ArcResult(elapsed_time_s={time:.1f}, correct={correct})']
 
         for i, grids in enumerate(self.predictions):
-            result.append(f'#{i} prediction ===========')
+            result.append(f'=========== prediction #{i+1} ===========')
             for grid in grids:
                 result.append('\n'.join([repr(row) for row in grid.data]))
         return '\n'.join(result)
@@ -56,6 +58,8 @@ def solve_arc(
 
     planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
                            max_plan_depth, max_plan_itr, max_time_s)
+    logger.info('successful plans: %s', planning_result.plan)
+
     time_left = int(max_time_s - (time.time()-start_time))
     reasoning_result = reason(planning_result.plan, dataset.to_inference_state(),
                               n_result, max_reason_path, time_left)
@@ -66,7 +70,7 @@ def solve_arc(
     else:
         correct = False
         for trace in reasoning_result.traces:
-            correct |= trace.prediction == dataset.y_test
+            correct |= trace.prediction.out == dataset.y_test
     return ArcResult(_id, X_test_count, elapsed_time, planning_result,
                      reasoning_result, correct)
 

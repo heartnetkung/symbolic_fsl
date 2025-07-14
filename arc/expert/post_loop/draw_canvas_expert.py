@@ -39,7 +39,6 @@ class DrawCanvasExpert(Expert[ArcTrainingState, DrawCanvasTask]):
         if not self.cache_calculated:
             assert state.x is not None
             assert state.y is not None
-            assert state.out is not None
 
             x_width, x_height = _create_labels(state.x)
             y_width, y_height = _create_labels(state.y)

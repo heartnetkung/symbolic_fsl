@@ -65,5 +65,5 @@ class PlanningGraph:
                 count += 1
                 result.append(f'\n  path #{count}')
                 for i, node in enumerate(path[:-1]):
-                    result.append(f'  {self.get_edge_data(node, path[i+1])}')
+                    result.append(f'\n  {self.get_edge_data(node, path[i+1])}')
         return '\n'.join(result+['}'])

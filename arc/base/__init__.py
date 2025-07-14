@@ -10,3 +10,4 @@ from .basic_modeling import (ModelFreeTask, BasicRecruiter, ModelFreeArcAction,
                              ArcSuccessCriteria, default_cost)
 from .plan import plan, PlanningResult
 from .reason import reason, ReasoningResult
+from .solve_arc import ArcResult, solve_arc
