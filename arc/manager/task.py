@@ -1,4 +1,4 @@
-from ..base import Task, ArcTrainingState, UniversalTask
+from ..base import Task, ArcTrainingState, ModelFreeTask
 from dataclasses import dataclass
 from typing import Callable
 # no import star
@@ -9,7 +9,7 @@ from typing import Callable
 
 
 @dataclass(frozen=True)
-class ParseGridTask(UniversalTask):
+class ParseGridTask(ModelFreeTask):
     pass
 
 # =========================
@@ -18,5 +18,5 @@ class ParseGridTask(UniversalTask):
 
 
 @dataclass(frozen=True)
-class DrawCanvasTask(UniversalTask):
+class DrawCanvasTask(ModelFreeTask):
     pass

@@ -17,7 +17,7 @@ def default_cost(obj: Any)->int:
     return score
 
 
-class UniversalTask(Task[TS], ModeledTask[IS], InferenceTask):
+class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
     def to_models(self, before: TS, after: TS)->list[ModeledTask]:
         return [self]
 
@@ -25,7 +25,7 @@ class UniversalTask(Task[TS], ModeledTask[IS], InferenceTask):
         return self
 
 
-class UniversalArcAction(Action[TS, T], InferenceAction[IS, IT]):
+class ModelFreeArcAction(Action[TS, T], InferenceAction[IS, IT]):
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
         return [self]
 

@@ -34,7 +34,7 @@ class MockInferenceState(TrainingState[int, int]):
         return hash(values)
 
 
-class MockTask(UniversalTask):
+class MockTask(ModelFreeTask):
     pass
 
 

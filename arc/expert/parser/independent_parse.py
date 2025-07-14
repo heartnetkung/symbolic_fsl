@@ -18,7 +18,7 @@ class ParseMode(Enum):
     partition = 5
 
 
-class IndependentParse(UniversalArcAction):
+class IndependentParse(ModelFreeArcAction):
     def __init__(self, x_mode: ParseMode, y_mode: ParseMode, x_bg_model: MLModel,
                  y_bg_model: MLModel, unknown_background: bool)->None:
         self.x_mode = x_mode

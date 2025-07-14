@@ -7,7 +7,7 @@ from itertools import permutations
 from functools import cmp_to_key
 
 
-class DrawCanvas(UniversalArcAction):
+class DrawCanvas(ModelFreeArcAction):
     def __init__(self, width_model: MLModel, height_model: MLModel,
                  layer_model: Optional[MLModel] = None)->None:
         self.width_model = width_model

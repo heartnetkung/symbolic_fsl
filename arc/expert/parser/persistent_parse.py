@@ -14,7 +14,7 @@ class PersistentParseMode(Enum):
     # color_proximity_normal = 3
 
 
-class PersistentParse(UniversalArcAction):
+class PersistentParse(ModelFreeArcAction):
     def __init__(self, x_mode: PersistentParseMode, y_mode: PersistentParseMode,
                  x_bg_model: MLModel, y_bg_model: MLModel)->None:
         self.x_mode = x_mode
