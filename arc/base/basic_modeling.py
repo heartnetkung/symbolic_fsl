@@ -24,6 +24,9 @@ class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
     def to_runtimes(self, before: IS)->Optional[InferenceTask]:
         return self
 
+    def get_cost(self)->int:
+        return 0
+
 
 class ModelFreeArcAction(Action[TS, T], InferenceAction[IS, IT]):
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
@@ -36,7 +39,7 @@ class ModelFreeArcAction(Action[TS, T], InferenceAction[IS, IT]):
         return self.perform(state, False)  # type:ignore
 
     def get_cost(self)->int:
-        return default_cost(self)
+        return 0
 
     @abstractmethod
     def perform(self, state: ArcState, is_training: bool)->Optional[ArcState]:

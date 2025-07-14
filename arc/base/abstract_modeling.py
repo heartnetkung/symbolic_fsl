@@ -47,13 +47,14 @@ class InferenceTask(ABC):
     including the subset of inputs/outputs in the state to work on.
     '''
 
+    @abstractmethod
     def get_cost(self)->int:
         '''
         Used for tie-breaking when there are many solutions.
         Larger score means worse solution.
         Score must not be negative.
         '''
-        return 0
+        pass
 
     def __repr__(self)->str:
         return default_repr(self)
@@ -106,13 +107,14 @@ class InferenceAction(Generic[IS, IT], ABC):
     def perform_infer(self, state: IS, task: IT)->Optional[IS]:
         pass
 
+    @abstractmethod
     def get_cost(self)->int:
         '''
         Used for tie-breaking when there are many solutions.
         Larger score means worse solution.
         Score must not be negative.
         '''
-        return 0
+        pass
 
     def __repr__(self)->str:
         return default_repr(self)
