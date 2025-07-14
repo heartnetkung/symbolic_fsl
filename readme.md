@@ -12,9 +12,6 @@ pytest -k pattern -log-level=INFO
 python3 -m arc.script.visualize 30
 ```
 
-## Implementation Note
-- don't forget the action ordering in Expert.solve_problem
-
 ## Architecture
 ![diagram](arc_modules.png)
 
