@@ -30,7 +30,7 @@ def init(log_level: int)->GlobalParams:
     return GlobalParams()
 
 
-def plan_one(index: int, choice: DatasetChoice, log_level: int)->ArcResult:
+def plan_one(index: int, choice: DatasetChoice, log_level: int)->None:
     params = init(logging.ERROR)
     dataset = read_datasets(choice)[index]
     start = time.time()
@@ -46,7 +46,6 @@ def plan_one(index: int, choice: DatasetChoice, log_level: int)->ArcResult:
     print('\nmessage:',result.message)
     print('elapsed time:', time.time()-start)
     print('\a', file=sys.stderr)
-    return result
 
 
 if __name__ == "__main__":
