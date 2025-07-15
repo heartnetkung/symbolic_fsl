@@ -14,9 +14,6 @@ class ColorizeExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
     def solve_problem(self, state: ArcTrainingState,
                       task: TrainingAttentionTask)->list[Action]:
-        assert state.y_shapes is not None
-        assert state.out_shapes is not None
-
         label = extract_label(get_y_shapes(state, task.atn))
         if label is None:
             return []
