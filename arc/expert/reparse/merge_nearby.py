@@ -15,7 +15,7 @@ class MergeNearbyParam(Enum):
     normal = 1
 
 
-class MergeNearby(ModelFreeArcAction):
+class MergeNearby(ModelFreeArcAction[MergeNearbyTask]):
     '''
     Look for y_shapes near the image's edge and check if they are partially visible.
     The source of full shapes come from x_shapes.
@@ -25,7 +25,7 @@ class MergeNearby(ModelFreeArcAction):
         self.param = param
         super().__init__()
 
-    def perform(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, task: MergeNearbyTask)->Optional[ArcState]:
         assert state.x_shapes is not None
         if self.param == MergeNearbyParam.skip:
             return state

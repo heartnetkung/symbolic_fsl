@@ -7,7 +7,7 @@ from itertools import permutations
 from functools import cmp_to_key
 
 
-class DrawCanvas(ModelFreeArcAction):
+class DrawCanvas(ModelFreeArcAction[DrawCanvasTask]):
     def __init__(self, width_model: MLModel, height_model: MLModel,
                  layer_model: Optional[MLModel] = None)->None:
         self.width_model = width_model
@@ -15,7 +15,7 @@ class DrawCanvas(ModelFreeArcAction):
         self.layer_model = layer_model
         super().__init__()
 
-    def perform(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, task: DrawCanvasTask)->Optional[ArcState]:
         assert state.out_shapes is not None
         assert state.y_bg is not None
         if self.layer_model is not None:

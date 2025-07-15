@@ -18,7 +18,7 @@ class ParseMode(Enum):
     partition = 5
 
 
-class IndependentParse(ModelFreeArcAction):
+class IndependentParse(ModelFreeArcAction[ParseGridTask]):
     def __init__(self, x_mode: ParseMode, y_mode: ParseMode, x_bg_model: MLModel,
                  y_bg_model: MLModel, unknown_background: bool)->None:
         self.x_mode = x_mode
@@ -28,7 +28,7 @@ class IndependentParse(ModelFreeArcAction):
         self.unknown_background = unknown_background
         super().__init__()
 
-    def perform(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, task: ParseGridTask)->Optional[ArcState]:
         df = make_background_df(state)
         x_bg = self.x_bg_model.predict_int(df)
         y_bg = self.y_bg_model.predict_int(df)

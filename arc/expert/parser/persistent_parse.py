@@ -14,7 +14,7 @@ class PersistentParseMode(Enum):
     # color_proximity_normal = 3
 
 
-class PersistentParse(ModelFreeArcAction):
+class PersistentParse(ModelFreeArcAction[ParseGridTask]):
     def __init__(self, x_mode: PersistentParseMode, y_mode: PersistentParseMode,
                  x_bg_model: MLModel, y_bg_model: MLModel)->None:
         self.x_mode = x_mode
@@ -23,7 +23,7 @@ class PersistentParse(ModelFreeArcAction):
         self.y_bg_model = y_bg_model
         super().__init__()
 
-    def perform(self, state: ArcState)->Optional[ArcState]:
+    def perform(self, state: ArcState, task: ParseGridTask)->Optional[ArcState]:
         df = make_background_df(state)
         x_bg = self.x_bg_model.predict_int(df)
         y_bg = self.y_bg_model.predict_int(df)
