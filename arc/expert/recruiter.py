@@ -21,6 +21,6 @@ class ArcRecruiter(BasicRecruiter):
             ReparseStackTask: [ReparseStackExpert()],
             TrainingAttentionTask: [
                 MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
-                GeomTransformExpert(params)]
+                GeomTransformExpert(params), MoveUntilExpert()]
         }
         super().__init__(expert_directory)  # type:ignore
