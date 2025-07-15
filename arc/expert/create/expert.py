@@ -8,6 +8,7 @@ from ..util import *
 from .create_diagonal import CreateDiagonal
 from .create_rectangle import CreateRectangle
 from .create_hollow_rectangle import CreateHollowRectangle
+from .create_boundless_diagonal import CreateBoundlessDiagonal
 
 
 class CreateExpert(Expert[ArcTrainingState, TrainingAttentionTask]):

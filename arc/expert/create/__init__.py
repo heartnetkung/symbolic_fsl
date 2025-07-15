@@ -1,2 +1,2 @@
-from .expert import (CreateExpert, CreateRectangle,
+from .expert import (CreateExpert, CreateRectangle, CreateBoundlessDiagonal,
                      CreateHollowRectangle, CreateDiagonal)
