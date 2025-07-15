@@ -15,3 +15,7 @@ def make_single_shape_df(state: ArcState)->pd.DataFrame:
             grids.append(grid)
             all_shapes.append([shape])
     return generate_df(grids, all_shapes)
+
+
+def deduplicate_all_shapes(all_shapes: list[list[Shape]])->list[list[Shape]]:
+    return [list(dict.fromkeys(shapes)) for shapes in all_shapes]

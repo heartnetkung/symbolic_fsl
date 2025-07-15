@@ -5,6 +5,7 @@ from .parser import *
 from .edit import *
 from .post_loop import *
 from .reparse import *
+from .etc import *
 # no import star except manager.task, reparser.experts, and subfolders
 
 
@@ -18,6 +19,6 @@ class ArcRecruiter(BasicRecruiter):
             ReparseEdgeTask: [ReparseEdgeExpert()],
             ReparseSplitTask: [ReparseSplitExpert()],
             ReparseStackTask: [ReparseStackExpert()],
-            TrainingAttentionTask: [MoveExpert(params)]
+            TrainingAttentionTask: [MoveExpert(params), IntersectExpert()]
         }
         super().__init__(expert_directory)  # type:ignore
