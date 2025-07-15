@@ -36,10 +36,8 @@ class Move(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
     def train_models(self, state: ArcTrainingState,
                      task: TrainingAttentionTask)->list[InferenceAction]:
-        if not isinstance(self.x_model, MemorizedModel):
-            return []
-        if not isinstance(self.y_model, MemorizedModel):
-            return []
+        assert isinstance(self.x_model, MemorizedModel)
+        assert isinstance(self.y_model, MemorizedModel)
 
         df = default_make_df(state, task.atn, self.feat_index)
         x_models = regressor_factory(df, self.x_model.result, self.params, 'move.x')

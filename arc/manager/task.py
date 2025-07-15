@@ -13,5 +13,10 @@ class ParseGridTask(ModelFreeTask):
 
 
 @dataclass(frozen=True)
+class CleanUpTask(ModelFreeTask):
+    pass
+
+
+@dataclass(frozen=True)
 class DrawCanvasTask(ModelFreeTask):
     pass

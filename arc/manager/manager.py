@@ -31,6 +31,8 @@ class ArcManager(Manager[ArcTrainingState]):
             return []
         if _all_shapes_matched(state.out_shapes, state.y_shapes):
             return [(DrawCanvasTask(), state)]
+        if _all_shapes_subset(state.out_shapes, state.y_shapes):
+            return [(CleanUpTask(), state)]
 
         return self._make_attention_task(state)
 
