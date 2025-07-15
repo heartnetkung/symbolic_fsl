@@ -1,6 +1,7 @@
 from ..base import BasicRecruiter, GlobalParams
 from ..manager.task import *
 
+from .create import *
 from .parser import *
 from .edit import *
 from .post_loop import *
@@ -21,6 +22,6 @@ class ArcRecruiter(BasicRecruiter):
             ReparseStackTask: [ReparseStackExpert()],
             TrainingAttentionTask: [
                 MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
-                GeomTransformExpert(params), MoveUntilExpert()]
+                GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params)]
         }
         super().__init__(expert_directory)  # type:ignore
