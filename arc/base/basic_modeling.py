@@ -18,6 +18,11 @@ def default_cost(obj: Any)->int:
 
 
 class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
+    '''
+    A task without modeling capability which means
+    it stays the same throughout lifecycle.
+    '''
+
     def to_models(self, before: TS, after: TS)->list[ModeledTask]:
         return [self]
 
@@ -32,20 +37,25 @@ class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
 
 
 class ModelFreeArcAction(Action[TS, T], InferenceAction[IS, IT]):
+    '''
+    An action without model which means it stays the same throughout lifecycle.
+    Use isinstance(state, ArcTrainingState) to access training-time features.
+    '''
+
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
         return [self]
 
     def perform_train(self, state: TS, task: T)->Optional[TS]:
-        return self.perform(state, True)  # type:ignore
+        return self.perform(state)  # type:ignore
 
     def perform_infer(self, state: IS, task: IT)->Optional[IS]:
-        return self.perform(state, False)  # type:ignore
+        return self.perform(state)  # type:ignore
 
     def get_cost(self)->int:
         return 0
 
     @abstractmethod
-    def perform(self, state: ArcState, is_training: bool)->Optional[ArcState]:
+    def perform(self, state: ArcState)->Optional[ArcState]:
         pass
 
 
@@ -67,6 +77,8 @@ class ArcSuccessCriteria(SuccessCriteria[ArcTrainingState]):
 
 
 class TrainingOnlyAction(Action[TS, T]):
+    '''An action that only performs during training.'''
+
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
         return [DoNothing()]
 

@@ -28,7 +28,7 @@ class IndependentParse(ModelFreeArcAction):
         self.unknown_background = unknown_background
         super().__init__()
 
-    def perform(self, state: ArcState, is_training: bool)->Optional[ArcState]:
+    def perform(self, state: ArcState)->Optional[ArcState]:
         df = make_background_df(state)
         x_bg = self.x_bg_model.predict_int(df)
         y_bg = self.y_bg_model.predict_int(df)
@@ -36,11 +36,10 @@ class IndependentParse(ModelFreeArcAction):
         x_shapes = self._perform(state.x, self.x_mode, x_bg)
         if x_shapes is None:
             return None
-        if not is_training:
+        if not isinstance(state, ArcTrainingState):
             return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                                 x_bg=x_bg, y_bg=y_bg)
 
-        assert isinstance(state, ArcTrainingState)
         y_shapes = self._perform(state.y, self.y_mode, y_bg)
         if y_shapes is None:
             return None
