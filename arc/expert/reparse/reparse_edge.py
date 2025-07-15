@@ -43,6 +43,7 @@ class ReparseEdge(TrainingOnlyAction[ArcTrainingState, ReparseEdgeTask]):
     def _reparse(self, graph: ShapeGraph, all_shapes: list[list[Shape]],
                  grids: list[Grid])->Optional[list[list[Shape]]]:
         all_results, found = [], False
+        is_colorless = self.param == ReparseEdgeParam.colorless
 
         for shapes, grid in zip(all_shapes, grids):
             new_result = []
@@ -53,7 +54,7 @@ class ReparseEdge(TrainingOnlyAction[ArcTrainingState, ReparseEdgeTask]):
                     continue
 
                 subshape = subshape_tuples[0][0]
-                result = resolve_edge(shape, subshape, grid, self.param.is_colorless())
+                result = resolve_edge(shape, subshape, grid, is_colorless)
                 if result is None:
                     new_result.append(shape)
                 else:
