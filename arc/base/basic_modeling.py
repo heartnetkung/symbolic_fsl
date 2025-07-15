@@ -27,6 +27,9 @@ class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
     def get_cost(self)->int:
         return 0
 
+    def to_inference(self)->InferenceTask:
+        return self
+
 
 class ModelFreeArcAction(Action[TS, T], InferenceAction[IS, IT]):
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:

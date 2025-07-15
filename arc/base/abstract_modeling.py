@@ -78,6 +78,11 @@ class Task(Generic[TS], ABC):
         '''For any parameterized task, train the models to predict new inputs.'''
         pass
 
+    @abstractmethod
+    def to_inference(self)->InferenceTask:
+        '''Transform into a polymorphic form with less information.'''
+        pass
+
     def __repr__(self)->str:
         return default_repr(self)
 

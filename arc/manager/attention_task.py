@@ -30,7 +30,7 @@ class TrainingAttentionTask(Task[ArcTrainingState]):
         models = to_models(self.atn, before.out_shapes, before.x, self.params)
         return [ModeledAttentionTask(model) for model in models]
 
-    def to_inference(self)->AttentionTask:
+    def to_inference(self)->InferenceTask:
         return AttentionTask(self.atn)
 
 
