@@ -37,21 +37,6 @@ class ShapeGraph:
     def number_of_nodes(self)->int:
         return self.graph.number_of_nodes()
 
-    def connected_components(self)->tuple[dict[int, int], int]:
-        '''
-        Find and return connected components.
-        The result format is {shape_id: component_id}, component_count.
-        '''
-
-        result = {}
-        cluster_id = 0
-        for cluster in nx.connected_components(self.graph):
-            cluster_id += 1
-
-            for node in cluster:
-                result[node] = cluster_id
-        return result, cluster_id
-
     def __repr__(self)->str:
         n_nodes, n_edges = self.number_of_nodes(), self.number_of_edges()
         return f'ShapeGraph(n_nodes={n_nodes},n_edges={n_edges})\n'

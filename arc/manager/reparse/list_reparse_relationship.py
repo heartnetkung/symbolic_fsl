@@ -52,21 +52,3 @@ def _find_subshape(smaller: Grid, larger: Grid)->dict[str, int]:
         if larger.find_subgrid(transformed_grid) is not None:
             return result | {'transformed_subshape': 1}
     return result
-
-
-def is_nearby(a: Shape, b: Shape)->dict[str, int]:
-    x_a_range, x_b_range = range(a.x, a.x+a.width), range(b.x, b.x+b.width)
-    if not _is_range_nearby(x_a_range, x_b_range):
-        return {}
-    y_a_range, y_b_range = range(a.y, a.y+a.height), range(b.y, b.y+b.height)
-    if not _is_range_nearby(y_a_range, y_b_range):
-        return {}
-    return {'nearby': 1}
-
-
-def _is_range_nearby(a: range, b: range)->bool:
-    if a.start-b.stop > NEARBY_THRESHOLD:
-        return False
-    if b.start-a.stop > NEARBY_THRESHOLD:
-        return False
-    return True
