@@ -8,7 +8,7 @@ import pandas as pd
 from ..util import *
 
 
-class Move(AttentionAction):
+class Move(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def __init__(self, x_model: MLModel, y_model: MLModel, params: GlobalParams,
                  feat_index: int = 0)->None:
         self.x_model = x_model
@@ -34,14 +34,14 @@ class Move(AttentionAction):
             result[id1][id2] = current_shape
         return state.update(out_shapes=result)
 
-    def to_runtimes(self, before: ArcTrainingState, after: ArcTrainingState,
-                    task: TrainingAttentionTask)->list[InferenceAction]:
+    def train_models(self, state: ArcTrainingState,
+                     task: TrainingAttentionTask)->list[InferenceAction]:
         if not isinstance(self.x_model, MemorizedModel):
             return []
         if not isinstance(self.y_model, MemorizedModel):
             return []
 
-        df = default_make_df(before, task.atn, self.feat_index)
+        df = default_make_df(state, task.atn, self.feat_index)
         x_models = regressor_factory(df, self.x_model.result, self.params, 'move.x')
         y_models = regressor_factory(df, self.y_model.result, self.params, 'move.y')
         return [Move(x_model, y_model, self.params, self.feat_index)

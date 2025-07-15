@@ -7,7 +7,8 @@ from .abstract_modeling import (
     State, Task, Manager, Recruiter, Expert, Action, Program, SuccessCriteria,
     InferenceTask, InferenceAction, TrainingState, InferenceState, ModeledTask)
 from .basic_modeling import (ModelFreeTask, BasicRecruiter, ModelFreeArcAction,
-                             ArcSuccessCriteria, default_cost, TrainingOnlyAction)
+                             ArcSuccessCriteria, default_cost, TrainingOnlyAction,
+                             ModelBasedArcAction)
 from .plan import plan, PlanningResult
 from .reason import reason, ReasoningResult
 from .solve_arc import ArcResult, solve_arc

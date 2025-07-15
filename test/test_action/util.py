@@ -21,8 +21,7 @@ class AttentionExpertProgram(Program[ArcTrainingState]):
         task_states = self.manager.decide(state)
         assert len(task_states) > self.attention_index
         task, local_state = task_states[self.attention_index]
-        print(local_state,task)
-        return self.action.perform(local_state, task)
+        return self.action.perform_train(local_state, task)
 
 
 def create_test_state(x_shapes: list[list[Shape]],

@@ -6,25 +6,6 @@ from functools import lru_cache
 import pandas as pd
 import numpy as np
 from ...ml import *
-from abc import abstractmethod
-
-
-class AttentionAction(Action[ArcTrainingState, TrainingAttentionTask],
-                      InferenceAction[ArcInferenceState, AttentionTask]):
-    def perform_train(self, state: ArcTrainingState,
-                      task: TrainingAttentionTask)->Optional[ArcTrainingState]:
-        return self.perform(state, task.to_inference())  # type:ignore
-
-    def perform_infer(self, state: ArcInferenceState,
-                      task: AttentionTask)->Optional[ArcInferenceState]:
-        return self.perform(state, task)  # type:ignore
-
-    def get_cost(self)->int:
-        return default_cost(self)
-
-    @abstractmethod
-    def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
-        pass
 
 
 @lru_cache
