@@ -30,5 +30,5 @@ class CleanUp(ModelBasedArcAction[CleanUpTask, CleanUpTask]):
         assert isinstance(self.filter_model, MemorizedModel)
 
         df = make_single_shape_df(state)
-        models = regressor_factory(df, self.filter_model.result, self.params, 'cleanup')
+        models = classifier_factory(df, self.filter_model.result, self.params, 'cleanup')
         return [CleanUp(model, self.params) for model in models]

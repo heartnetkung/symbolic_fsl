@@ -109,6 +109,8 @@ class MemorizedModel(MLModel):
     '''Model that memorized answer.'''
 
     def __init__(self, result: np.ndarray)->None:
+        if result.dtype.name == 'bool':
+            result = result.astype(int)
         self.result = result
 
     def _to_code(self) -> str:
