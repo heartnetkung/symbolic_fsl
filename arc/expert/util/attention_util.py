@@ -50,8 +50,11 @@ def get_y_shapes(state: ArcTrainingState, atn: TrainingAttention)->list[Shape]:
             for id1, id2 in zip(atn.sample_index, atn.y_index)]
 
 
-def get_x_col(state: ArcTrainingState, atn: TrainingAttention,
-              feat_index: int)->list[Shape]:
+def get_x_col(state: ArcState, atn: Attention, feat_index: int)->list[Shape]:
     assert state.out_shapes is not None
     return [state.out_shapes[id1][index[feat_index]]
             for id1, index in zip(atn.sample_index, atn.x_index)]
+
+
+def get_grids(state: ArcState, atn: Attention)->list[Grid]:
+    return [state.x[id1] for id1 in atn.sample_index]
