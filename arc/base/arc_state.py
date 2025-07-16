@@ -27,10 +27,10 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     out_shapes: Optional[list[list[Shape]]] = None
 
     # reparsing checklist, exclusively used by ArcManager
-    stack_reparse: bool = False
-    split_reparse: bool = False
     edge_reparse: bool = False
     merge_nearby_reparse: bool = False
+    stack_reparse: bool = False
+    split_reparse: bool = False
 
     # attention cache, exclusively used by ArcManager
     attention_cache: Optional[Attention] = field(
