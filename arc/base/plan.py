@@ -9,7 +9,7 @@ from collections import deque
 
 
 logger = logging.getLogger(__name__)
-DEBUG_ITR: set[int] = {}
+DEBUG_ITR: set[int] = set()
 
 
 @dataclass(frozen=True)
