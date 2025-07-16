@@ -22,7 +22,6 @@ class CreateExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
         result, atn, params = [], task.atn, self.params
         y_shapes = get_y_shapes(state, atn)
-        df = default_make_df(state, atn)
 
         rectangles = _to_rect(y_shapes)
         if rectangles is not None:
