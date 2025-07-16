@@ -70,6 +70,7 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
 
             if iteration_no in DEBUG_ITR:
                 logger.info('state: %s', state)
+                logger.info('trace: %s', plan.find_action_path(state))
 
             try:
                 task_states = manager.decide(state)

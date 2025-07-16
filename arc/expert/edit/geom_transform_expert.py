@@ -38,7 +38,7 @@ def extract_label(x_shapes: list[Shape], y_shapes: list[Shape])->Optional[np.nda
                 break
         if found_type is None:
             return None
-        result.append(found_type)
+        result.append(found_type.value)
 
     if len(set(result)) == 1:
         if result[0] == TransformType.normal.value:

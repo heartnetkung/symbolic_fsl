@@ -39,6 +39,14 @@ class PlanningGraph:
                     self.graph, self.start_state, end_state):
                 yield path
 
+    def find_action_path(self, terminal: TrainingState)->list[Action]:
+        result = []
+        path = next(nx.shortest_simple_paths(self.graph, self.start_state, terminal))
+        for i in range(len(path)-1):
+            action = self.get_edge_data(path[i], path[i+1])[0][1]
+            result.append(action)
+        return result
+
     def get_edge_data(self, before: TrainingState,
                       after: TrainingState)->list[tuple[Task, Action]]:
         result = self.graph.get_edge_data(before, after, default={'data': []})
