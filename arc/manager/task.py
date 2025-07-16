@@ -2,9 +2,10 @@ from ..base import Task, ArcTrainingState, ModelFreeTask
 from dataclasses import dataclass
 from typing import Callable
 from .attention_task import TrainingAttentionTask, AttentionTask
+from .draw_line import *
 from .reparse.reparse_creator import (
     ReparseStackTask, ReparseSplitTask, ReparseEdgeTask, MergeNearbyTask)
-# no import star
+# no import star unless subfolder
 
 
 @dataclass(frozen=True)

@@ -34,7 +34,9 @@ class ArcManager(Manager[ArcTrainingState]):
         if _all_shapes_subset(state.out_shapes, state.y_shapes):
             return [(CleanUpTask(), state)]
 
-        return self._make_attention_task(state)
+        attentions = self._make_attention_task(state)
+        draw_lines = _to_task_states(state, make_line_tasks(state, self.params))
+        return attentions+draw_lines
 
     def _make_attention_task(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
@@ -81,3 +83,9 @@ def _all_shapes_subset(all_x: Optional[list[list[Shape]]],
         if not set(y_shapes).issubset(set(x_shapes)):
             return False
     return True
+
+
+def _to_task_states(
+    state: ArcTrainingState, tasks: list[Task[ArcTrainingState]])->list[
+        tuple[Task[ArcTrainingState], ArcTrainingState]]:
+    return [(task, state) for task in tasks]
