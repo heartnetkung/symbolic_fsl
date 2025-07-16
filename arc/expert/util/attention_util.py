@@ -53,5 +53,5 @@ def get_y_shapes(state: ArcTrainingState, atn: TrainingAttention)->list[Shape]:
 def get_x_col(state: ArcTrainingState, atn: TrainingAttention,
               feat_index: int)->list[Shape]:
     assert state.x_shapes is not None
-    return [state.x_shapes[id1][index[feat_index]]
+    return [state.out_shapes[id1][index[feat_index]]
             for id1, index in zip(atn.sample_index, atn.x_index)]
