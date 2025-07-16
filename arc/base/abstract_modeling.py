@@ -171,7 +171,8 @@ class Trace:
 
     def __repr__(self)->str:
         result = [f'Trace(cost={self.cost}):']
-        for task, action in self.task_actions:
+        for i, (task, action) in enumerate(self.task_actions):
+            result.append(f'{i}')
             result.append(f'  {task} {action}')
         result.append(f'  {self.prediction.out}')
         return '\n'.join(result)

@@ -53,6 +53,14 @@ class ResultCollection:
                             key=lambda x: (LARGE_VALUE * x[0].cost)-x[1])
         return [trace for trace, _ in all_traces][:self.max_result]
 
+    def __repr__(self)->str:
+        result = ['ResultCollection{']
+        for pred, (trace, count) in self.min_cost_traces.items():
+            result.append(f'\nprediction: {pred}')
+            result.append(f'trace: {trace}')
+            result.append(f'count: {count}')
+        return '\n'.join(result+['}'])
+
 
 class ModelCache:
     def __init__(self)->None:
@@ -87,16 +95,16 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
     for path_no, path in enumerate(plan.shortest_simple_paths()):
         logger.info('\n========= path_no: %d', path_no)
         if path_no > max_path:
-            logger.info('max_path limit')
+            logger.info('max_path limit \n%s', result)
             return ReasoningResult(result.to_list(), path_no, 'max_path limit')
 
         if time.time() > end_time:
-            logger.info('time limit')
+            logger.info('time limit \n%s', result)
             return ReasoningResult(result.to_list(), path_no, 'time limit')
 
         _fill_traces(init_state, path, 0, plan, [], result, model_cache)
 
-    logger.info('options exhausted')
+    logger.info('options exhausted \n%s', result)
     return ReasoningResult(result.to_list(), max_path, 'options exhausted')
 
 

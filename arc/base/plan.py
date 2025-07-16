@@ -9,6 +9,7 @@ from collections import deque
 
 
 logger = logging.getLogger(__name__)
+DEBUG_ITR: set[int] = {}
 
 
 @dataclass(frozen=True)
@@ -67,8 +68,13 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
             if state is None:
                 break
 
+            if iteration_no in DEBUG_ITR:
+                logger.info('state: %s', state)
+
             try:
                 task_states = manager.decide(state)
+                if len(task_states) == 0:
+                    logger.info('no task')
             except Exception:
                 logger.info('manager.decide error', exc_info=True)
                 continue
@@ -85,11 +91,14 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
 
                         if add_success:
                             logger.info('new action: %s', new_action)
+                        if soltion_success:
+                            logger.info('solution success')
 
         if len(next_queue) == 0:
             logger.info('options exhausted')
             return PlanningResult(plan, iteration_no, 'options exhausted')
         current_queue, next_queue = next_queue, current_queue
+        logger.info('next queue size: %d', len(current_queue))
 
     logger.info('depth limit reached')
     return PlanningResult(plan, iteration_no, 'depth limit reached')
