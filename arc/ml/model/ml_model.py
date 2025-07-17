@@ -120,6 +120,24 @@ class MemorizedModel(MLModel):
         return self.result
 
 
+class StepMemoryModel(MLModel):
+    '''Model that memorized answer but return one at a time.'''
+
+    def __init__(self, result: np.ndarray)->None:
+        if result.dtype.name == 'bool':
+            result = result.astype(int)
+        self.result = result
+        self.offset = 0
+
+    def _to_code(self) -> str:
+        return f'return {self.result}'
+
+    def predict(self, X: pd.DataFrame)->np.ndarray:
+        ret_val = self.result[self.offset: self.offset+1]
+        self.offset += 1
+        return ret_val
+
+
 class FunctionModel(MLModel):
     '''
     Model represented by a deterministic function used for testing.

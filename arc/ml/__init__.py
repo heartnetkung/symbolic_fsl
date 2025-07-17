@@ -1,4 +1,4 @@
-from .model.ml_model import (MLModel, ConstantModel, MemorizedModel,
+from .model.ml_model import (MLModel, ConstantModel, MemorizedModel, StepMemoryModel,
                              FunctionModel, ColumnModel, ConstantColumnModel)
 from .model.model_factory import (regressor_factory, classifier_factory,
                                   model_selection, make_models)
