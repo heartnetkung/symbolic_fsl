@@ -42,7 +42,7 @@ def extract_label(shapes: list[Shape])->Optional[np.ndarray]:
         elif isinstance(shape, Diagonal):
             result.append(shape.color)
         elif isinstance(shape, Unknown):
-            colors = shape.grid.list_colors()
+            colors = shape.grid.list_colors()-{NULL_COLOR}
             if len(colors) != 1:
                 return None
             result.append(colors.pop())
