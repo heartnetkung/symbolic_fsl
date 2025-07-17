@@ -1,8 +1,7 @@
 from ..test_action.util import *
 
 
-def test_basic():
-    params = GlobalParams()
+def get_parsed_state():
     problem_no = 1
     dataset = read_datasets(DatasetChoice.train_v1)[problem_no]
     init_state = dataset.to_training_state()
@@ -17,7 +16,12 @@ def test_basic():
         ReparseStack(param=ReparseStackParam.skip),
         ReparseSplit(param=ReparseSplitParam.skip)
     ]
-    parsed_state = run_actions(init_state, parsing_actions)
+    return run_actions(init_state, parsing_actions)
+
+
+def test_basic():
+    params = GlobalParams()
+    parsed_state = get_parsed_state()
 
     def func(df):
         return np.where(df['is_outside(x,y)'] == 1, -1, 4)
@@ -30,3 +34,23 @@ def test_basic():
     program = AttentionExpertProgram(action, params)
     result = program.run(parsed_state)
     assert result.out_shapes == result.y_shapes
+
+
+def test_expert_action():
+    params = GlobalParams()
+    parsed_state = get_parsed_state()
+
+    attentions = make_attentions(parsed_state.out_shapes,
+                                 parsed_state.y_shapes, parsed_state.x)
+    task = TrainingAttentionTask(attentions[0],params)
+    expert = FillInTheBlankExpert(params)
+    actions = expert.solve_problem(parsed_state, task)
+    result = actions[0].perform(parsed_state, task)
+
+    for out_shapes, y_shapes in zip(result.out_shapes, result.y_shapes):
+        assert out_shapes == y_shapes
+
+    infer_actions = actions[0].train_models(parsed_state, task)
+    result2 = infer_actions[0].perform(parsed_state, task)
+    for out_shapes, y_shapes in zip(result2.out_shapes, result.y_shapes):
+        assert out_shapes == y_shapes

@@ -1,5 +1,6 @@
 from ...arc.base import *
 from ...arc.ml import *
+from ...arc.attention import *
 from ...arc.graphic import *
 from ...arc.expert.recruiter import *
 from ...arc.manager import *
@@ -40,3 +41,24 @@ def _to_canvas(all_shapes: list[list[Shape]])->list[Grid]:
             shape.draw(canvas)
         result.append(canvas)
     return result
+
+
+def print_pair(state: ArcTrainingState)->None:
+    for x_shapes, y_shapes in zip(state.out_shapes, state.y_shapes):
+        print('==================')
+        print(x_shapes)
+        print(y_shapes)
+        print('equals:', x_shapes == y_shapes)
+
+
+def run_actions(
+        state: ArcTrainingState, actions: list[Action])->Optional[ArcTrainingState]:
+    current_state = state
+    for action in actions:
+        current_state = action.perform_train(current_state, ModelFreeTask())
+        if current_state is None:
+            return None
+    return current_state.update(edge_reparse=True,
+                                merge_nearby_reparse=True,
+                                stack_reparse=True,
+                                split_reparse=True)
