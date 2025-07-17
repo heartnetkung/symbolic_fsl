@@ -25,7 +25,7 @@ class ArcRecruiter(BasicRecruiter):
             TrainingAttentionTask: [
                 MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
-                FilleInTheBlankExpert(params)],
+                FillInTheBlankExpert(params)],
             TrainingDrawLineTask: [DrawLineExpert(params)]
         }
         super().__init__(expert_directory)  # type:ignore

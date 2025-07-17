@@ -68,6 +68,7 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
         for width, height, grid, id1, shape_ids in zip(
                 new_widths, new_heights, grids, atn.sample_index, atn.x_index):
+
             id2 = shape_ids[self.feat_index]
             shape = result[id1][id2]
             new_shape = self.expansion.expand(shape, width, height)
@@ -86,7 +87,7 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
                      task: TrainingAttentionTask)->list[InferenceAction]:
         assert isinstance(self.width_model, MemorizedModel)
         assert isinstance(self.height_model, MemorizedModel)
-        assert isinstance(self.pixel_model, MemorizedModel)
+        assert isinstance(self.pixel_model, StepMemoryModel)
 
         shape_df = default_make_df(state, task.atn, self.feat_index)
         w_models = regressor_factory(

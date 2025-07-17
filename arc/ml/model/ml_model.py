@@ -133,8 +133,9 @@ class StepMemoryModel(MLModel):
         return f'return {self.result}'
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
-        ret_val = self.result[self.offset: self.offset+1]
-        self.offset += 1
+        _len = len(X)
+        ret_val = self.result[self.offset: self.offset+_len]
+        self.offset += _len
         return ret_val
 
 

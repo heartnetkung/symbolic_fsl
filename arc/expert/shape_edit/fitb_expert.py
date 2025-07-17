@@ -8,7 +8,7 @@ import pandas as pd
 from ..util import *
 
 
-class FilleInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
+class FillInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
     def __init__(self, params: GlobalParams)->None:
         self.params = params
 
@@ -38,7 +38,7 @@ class FilleInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
             result.append(FillInTheBlank(
                 mode, i, MemorizedModel(widths), MemorizedModel(heights),
-                MemorizedModel(pixels), self.params))
+                StepMemoryModel(pixels), self.params))
         return result
 
 
