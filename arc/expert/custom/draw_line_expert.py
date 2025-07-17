@@ -15,6 +15,11 @@ class DrawLineExpert(Expert[ArcTrainingState, TrainingDrawLineTask]):
 
     def solve_problem(self, state: ArcTrainingState,
                       task: TrainingDrawLineTask)->list[Action]:
+        x_lens = _extract_grid_lens(state.x)
+        y_lens = _extract_grid_lens(state.y)
+        if x_lens != y_lens:
+            return []
+
         blob = _extract_labels(task.get_attention_aligned_lines())
         if blob is None:
             return []
@@ -44,3 +49,7 @@ def _extract_labels(lines: list[Line])->Optional[tuple[
 
     return (np.array(x_values), np.array(y_values), np.array(color_values),
             np.array(dir_values), np.array(nav_values))
+
+
+def _extract_grid_lens(grids: list[Grid])->list[tuple[int, int]]:
+    return [(grid.width, grid.height) for grid in grids]

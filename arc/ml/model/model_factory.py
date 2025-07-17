@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 import logging
 from .association_factory import make_association
+from .decision_tree_factory import make_tree
 
 logger = logging.getLogger(__name__)
 
@@ -52,20 +53,24 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         return [ConstantModel(y_set.pop())]
 
     # preprocess
-    X = _drop_redundants(X)
-    if X.empty:
+    X2 = _drop_redundants(X)
+    if X2.empty:
         return []
 
     # exact answer
     exact_result = []
-    for col in X.columns:
-        if np.allclose(y, X[col]):
+    for col in X2.columns:
+        if np.allclose(y, X2[col]):
             exact_result.append(ColumnModel(col))
     if len(exact_result) > 0:
         return exact_result
 
-    logger.info('solving: %s %s %s', X.shape, y, print_str)
-    return make_models(TrainingData(X, y, params), type)+make_association(X, y, params)
+    logger.info('solving: %s %s %s', X2.shape, y, print_str)
+
+    ppdt_models = make_models(TrainingData(X2, y, params), type)
+    assoc_models = make_association(X, y, params)
+    tree_models = make_tree(X, y, params)
+    return ppdt_models+assoc_models+tree_models
 
 
 @lru_cache

@@ -6,6 +6,9 @@ from ..util import *
 from ...manager.draw_line import *
 from ...manager.task import TrainingDrawLineTask, DrawLineTask
 import numpy as np
+from .draw_line_df import *
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.metrics import accuracy_score
 
 
 class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
@@ -47,7 +50,33 @@ class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
 
     def train_models(self, state: ArcTrainingState,
                      task: TrainingDrawLineTask)->list[InferenceAction]:
-        return []
+        assert isinstance(self.init_x_model, MemorizedModel)
+        assert isinstance(self.init_y_model, MemorizedModel)
+        assert isinstance(self.dir_model, MemorizedModel)
+        assert isinstance(self.color_model, MemorizedModel)
+        assert isinstance(self.nav_model, StepMemoryModel)
+
+        atn = task.atn
+        shape_df = default_make_df(state, atn)
+        x_models = regressor_factory(
+            shape_df, self.init_x_model.result, self.params, 'draw.x')
+        y_models = regressor_factory(
+            shape_df, self.init_y_model.result, self.params, 'draw.y')
+        d_models = classifier_factory(
+            shape_df, self.dir_model.result, self.params, 'draw.d')
+        c_models = regressor_factory(
+            shape_df, self.color_model.result, self.params, 'draw.c')
+
+        pixel_df = make_training_nav_df(state, task)
+        if pixel_df is None:
+            return []
+
+        n_models = classifier_factory(
+            pixel_df, self.nav_model.result, self.params, 'draw.n')
+
+        return [DrawLine(x_model, y_model, d_model, n_model, c_model, self.params)
+                for x_model, y_model, d_model, n_model, c_model in model_selection(
+            x_models, y_models, d_models, n_models, c_models)]
 
 
 def _make_line(full_grid: Grid, init_x: int, init_y: int, init_dir: Direction,
@@ -60,7 +89,6 @@ def _make_line(full_grid: Grid, init_x: int, init_y: int, init_dir: Direction,
 
     for _ in range(MAX_LINE_LENGTH):
         df = generate_step_df(temp_grid, current_coord, current_dir, color)
-        # TODO not done
         nav = nav_model.predict_enum(df, Navigation)[0]
         if nav == Navigation.stop:
             normal_break = True
@@ -77,17 +105,3 @@ def _make_line(full_grid: Grid, init_x: int, init_y: int, init_dir: Direction,
     if not normal_break:
         return None
     return Line.make(coords, color)
-
-
-def generate_step_df(
-        grid: Grid, pos: Coordinate, dir_: Direction, color: int)->pd.DataFrame:
-    result = {
-        'color': [color],
-        'next_cell': [grid.safe_access_c(dir_.proceed(pos, 1))],
-        'next_2_cell': [grid.safe_access_c(dir_.proceed(pos, 2))],
-        'left_cell': [grid.safe_access_c(dir_.left().proceed(pos, 1))],
-        'left_2_cell': [grid.safe_access_c(dir_.left().proceed(pos, 2))],
-        'right_cell': [grid.safe_access_c(dir_.right().proceed(pos, 1))],
-        'right_2_cell': [grid.safe_access_c(dir_.right().proceed(pos, 2))]
-    }
-    return pd.DataFrame(result)

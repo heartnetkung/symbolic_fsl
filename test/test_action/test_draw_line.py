@@ -8,7 +8,7 @@ def test_basic():
     x = [make_grid(shapes[0].width, shapes[0].height, 0)
          for shapes in all_x_shapes]
     state = create_test_state(all_x_shapes, all_y_shapes)
-    state = state.update(x=x)
+    state = state.update(x=x, y=x)
 
     def nav(df):
         nc, n2c = df['next_cell'][0], df['next_2_cell'][0]
@@ -44,13 +44,18 @@ def test_expert_action():
     x = [make_grid(shapes[0].width, shapes[0].height, 0)
          for shapes in all_x_shapes]
     state = create_test_state(all_x_shapes, all_y_shapes)
-    state = state.update(x=x)
+    state = state.update(x=x, y=x)
 
     tasks = make_line_tasks(state, params)
     expert = DrawLineExpert(params)
     actions = expert.solve_problem(state, tasks[0])
     result = actions[0].perform(state, tasks[0])
     for out_shapes, y_shapes in zip(result.out_shapes, all_y_shapes):
+        assert out_shapes[1] == y_shapes[0]
+
+    infer_actions = actions[0].train_models(state, tasks[0])
+    result2 = infer_actions[0].perform(state, tasks[0])
+    for out_shapes, y_shapes in zip(result2.out_shapes, all_y_shapes):
         assert out_shapes[1] == y_shapes[0]
 
 
