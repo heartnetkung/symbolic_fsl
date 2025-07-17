@@ -15,6 +15,7 @@ from .reparse_line import *
 @dataclass(frozen=True)
 class DrawLineTask(InferenceTask):
     atn: Attention
+    all_lines: AllLineShapes
 
     def get_cost(self)->int:
         return default_cost(self)
@@ -23,13 +24,14 @@ class DrawLineTask(InferenceTask):
 @dataclass(frozen=True)
 class ModeledDrawLineTask(ModeledTask[ArcInferenceState]):
     model: AttentionModel
+    all_lines: AllLineShapes
 
     def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
         assert before.out_shapes is not None
         atn = to_runtimes(self.model, before.out_shapes, before.x)
         if atn is None:
             return None
-        return DrawLineTask(atn)
+        return DrawLineTask(atn, self.all_lines)
 
 
 @dataclass(frozen=True)
@@ -42,10 +44,17 @@ class TrainingDrawLineTask(Task[ArcTrainingState]):
                   after: ArcTrainingState)->list[ModeledTask]:
         assert before.out_shapes is not None
         models = to_models(self.atn, before.out_shapes, before.x, self.params)
-        return [ModeledDrawLineTask(model) for model in models]
+        return [ModeledDrawLineTask(model, self.all_lines) for model in models]
 
     def to_inference(self)->InferenceTask:
-        return DrawLineTask(self.atn)
+        return DrawLineTask(self.atn, self.all_lines)
+
+    def get_attention_aligned_lines(self)->list[Line]:
+        result = []
+        for id1, y_index in zip(self.atn.sample_index, self.atn.y_index):
+            id2 = int(math.floor(y_index/2))
+            result.append(self.all_lines.all_lines[id1][id2])
+        return result
 
 
 class AllLineShapes:
