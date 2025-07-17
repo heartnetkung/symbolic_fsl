@@ -121,14 +121,16 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
     node, next_node, is_end = path[index], path[index+1], index == (len(path)-2)
     task_actions = cache.get_models(node, next_node, plan)
     for modeled_task, runtime_action in task_actions:
+        try:
+            runtime_task = modeled_task.to_runtimes(state)
+            if runtime_task is None:
+                continue
 
-        runtime_task = modeled_task.to_runtimes(state)
-        if runtime_task is None:
-            continue
+            new_state = runtime_action.perform_infer(state, runtime_task)
+            if new_state is None:
+                continue
 
-        new_state = runtime_action.perform_infer(state, runtime_task)
-        if new_state is None:
-            continue
-
-        new_prefix = prefix + [(runtime_task, runtime_action)]
-        _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
+            new_prefix = prefix + [(runtime_task, runtime_action)]
+            _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
+        except Exception:
+            logger.info('runtime action error', exc_info=True)

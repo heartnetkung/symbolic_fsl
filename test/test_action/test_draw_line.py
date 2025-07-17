@@ -59,6 +59,7 @@ def test_expert_action():
         assert out_shapes[1] == y_shapes[0]
 
 
+# 57
 all_y_shapes = [
     [Unknown(0, 0, Grid([
         [3, 3, 3, 3, 3, 3],

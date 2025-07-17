@@ -8,6 +8,7 @@ from .post_loop import *
 from .reparse import *
 from .etc import *
 from .shape_edit import *
+from .custom import *
 # no import star except manager.task, reparser.experts, and subfolders
 
 
@@ -24,6 +25,7 @@ class ArcRecruiter(BasicRecruiter):
             TrainingAttentionTask: [
                 MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
-                FilleInTheBlankExpert(params)]
+                FilleInTheBlankExpert(params)],
+            TrainingDrawLineTask: [DrawLineExpert(params)]
         }
         super().__init__(expert_directory)  # type:ignore
