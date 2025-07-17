@@ -33,6 +33,8 @@ class GlobalParams:
     ppdt_max_nested_regressors: int = 3
     # linear programming time limit
     linprog_time_limit: int = 10
+    # maximum reparse operations per solution
+    max_reparse:int = 2
 
     @cached_property
     def nprandom(self):
