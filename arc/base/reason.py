@@ -5,6 +5,7 @@ import time
 import logging
 from .planning_graph import PlanningGraph
 from itertools import product
+from ..constant import IgnoredException
 
 
 logger = logging.getLogger(__name__)
@@ -132,5 +133,7 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
 
             new_prefix = prefix + [(runtime_task, runtime_action)]
             _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
+        except IgnoredException:
+            pass
         except Exception:
             logger.info('runtime action error', exc_info=True)

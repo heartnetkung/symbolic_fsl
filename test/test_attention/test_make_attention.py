@@ -72,7 +72,7 @@ def test_predict():
     assert attentions[0].x_cluster_info == [1]
 
     models = to_models(attentions[0], all_x_shapes, x_train_grids, params)
-    assert len(models) == 5
+    assert len(models) == 4
     assert repr(models[0]).find('top_color') > 0
 
     attention2 = to_runtimes(models[0], all_x_test_shapes, x_test_grids)

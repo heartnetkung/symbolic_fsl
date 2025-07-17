@@ -66,3 +66,7 @@ def default_hash(obj: Any)->int:
     dict_ = asdict(obj)
     values = tuple(repr(dict_[f]) for f in comparable_fields)
     return hash(values)
+
+
+class IgnoredException(Exception):
+    pass

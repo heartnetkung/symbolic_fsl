@@ -1,4 +1,4 @@
-from ...constant import GlobalParams, MISSING_VALUE
+from ...constant import GlobalParams, MISSING_VALUE, IgnoredException
 import numpy as np
 import pandas as pd
 from .ml_model import MLModel
@@ -15,13 +15,13 @@ class Association(MLModel):
     def predict(self, X: pd.DataFrame)->np.ndarray:
         col = X[self.column]
         if col is None:
-            raise KeyError()
+            raise IgnoredException()
 
         result = []
         for k in col:
             v = self.kv.get(k)
             if v is None:
-                raise KeyError()
+                raise IgnoredException()
             result.append(v)
         return np.array(result)
 
