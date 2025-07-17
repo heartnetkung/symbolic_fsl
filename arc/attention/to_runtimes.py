@@ -44,6 +44,9 @@ def to_runtimes(
         if correct:
             result_sample_index.append(sample_index)
             result_x_index.append(index)
+
+    if len(result_sample_index) == 0:
+        return None
     return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes,
                               model.model, model.syntactic_model)
 

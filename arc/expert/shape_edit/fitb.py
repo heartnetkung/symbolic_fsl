@@ -64,9 +64,10 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         new_widths = self.width_model.predict_int(shape_df)
         new_heights = self.height_model.predict_int(shape_df)
         result = deepcopy(state.out_shapes)
+        grids = get_grids(state, atn)
 
         for width, height, grid, id1, shape_ids in zip(
-                new_widths, new_heights, state.x, atn.sample_index, atn.x_index):
+                new_widths, new_heights, grids, atn.sample_index, atn.x_index):
             id2 = shape_ids[self.feat_index]
             shape = result[id1][id2]
             new_shape = self.expansion.expand(shape, width, height)

@@ -96,6 +96,9 @@ def _filter_constant_arity(x_cluster: pd.DataFrame)->Optional[pd.DataFrame]:
 
 def _generate_permutation(grouped: dict[int, dict[str, pd.DataFrame]])->list[
         pd.DataFrame]:
+    if len(grouped) == 0:
+        return []
+
     all_x_dfs = []
     for group in grouped.values():
         all_x_dfs.append(list(group.values()))
