@@ -59,13 +59,13 @@ class DrawCanvasExpert(Expert[ArcTrainingState, DrawCanvasTask]):
             are_constants = len(set(y_width)) == len(set(y_height)) == 1
 
             if are_constants:
-                self.cached_action = (
+                self.cached_models = (
                     [ConstantModel(y_width[0])], [ConstantModel(y_height[0])])
             elif are_same:
-                self.cached_action = (
+                self.cached_models = (
                     [ColumnModel('grid_width')], [ColumnModel('grid_height')])
             self.cache_calculated = True
-        return self.cached_action  # type:ignore
+        return self.cached_models
 
 
 def _create_labels(grids: list[Grid])->tuple[np.ndarray, np.ndarray]:
