@@ -15,7 +15,7 @@ from .custom import *
 class ArcRecruiter(BasicRecruiter):
     def __init__(self, params: GlobalParams)->None:
         expert_directory = {
-            ParseGridTask: [ParseGridExpert()],
+            ParseGridTask: [ParseGridExpert(params)],
             CleanUpTask: [CleanUpExpert(params)],
             DrawCanvasTask: [DrawCanvasExpert(params)],
             MergeNearbyTask: [MergeNearbyExpert(params)],

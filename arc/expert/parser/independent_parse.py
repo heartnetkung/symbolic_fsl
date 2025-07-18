@@ -4,18 +4,10 @@ from enum import Enum
 from ...manager.task import ParseGridTask
 from ...algorithm.find_background import make_background_df
 from ...ml import *
+from ...constant import *
 
 
 MASS_THRESHOLD = 0.4
-
-
-class ParseMode(Enum):
-    proximity_diag = 0
-    proximity_normal = 1
-    color_proximity_diag = 2
-    color_proximity_normal = 3
-    crop = 4
-    partition = 5
 
 
 class IndependentParse(ModelFreeArcAction[ParseGridTask]):

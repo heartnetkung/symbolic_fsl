@@ -90,6 +90,9 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
                         add_success = plan.add_state(
                             state, new_state, task, new_action, soltion_success)
 
+                        if iteration_no in DEBUG_ITR:
+                            logger.info('new action: %s', new_action)
+                            logger.info('new state: %s', new_state)
                         if add_success:
                             logger.info('new action: %s', new_action)
                         if soltion_success:

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, Iterable
 from dataclasses import fields, asdict, replace
 
 ANY_PATTERN = re.compile('.*')
@@ -13,6 +13,15 @@ MISSING_VALUE = -5
 NULL_COLOR = -1
 NULL_DF = pd.DataFrame([])
 BOOLS = [False, True]
+
+
+class ParseMode(Enum):
+    proximity_diag = 0
+    proximity_normal = 1
+    color_proximity_diag = 2
+    color_proximity_normal = 3
+    crop = 4
+    partition = 5
 
 
 @dataclass(frozen=True)
@@ -34,7 +43,10 @@ class GlobalParams:
     # linear programming time limit
     linprog_time_limit: int = 10
     # maximum reparse operations per solution
-    max_reparse:int = 2
+    max_reparse: int = 2
+    # list of parse modes to try
+    parser_x_modes: Iterable[ParseMode] = ParseMode
+    parser_y_modes: Iterable[ParseMode] = ParseMode
 
     @cached_property
     def nprandom(self):

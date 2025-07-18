@@ -8,13 +8,17 @@ from ...algorithm.find_background import find_backgrounds
 
 
 class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
+    def __init__(self, params: GlobalParams)->None:
+        self.params = params
+
     def solve_problem(self, state: ArcTrainingState, task: ParseGridTask)->list[Action]:
         result = []
         backgrounds = find_backgrounds(state)
 
         # independent parse
         for x_mode, y_mode, (x_model, y_model), unknown_bg in product(
-                ParseMode, ParseMode, backgrounds, BOOLS):
+                self.params.parser_x_modes, self.params.parser_y_modes,
+                backgrounds, BOOLS):
             if unknown_bg:  # proximity + unknown_bg == crop
                 if x_mode in (ParseMode.proximity_diag, ParseMode.proximity_normal):
                     continue
