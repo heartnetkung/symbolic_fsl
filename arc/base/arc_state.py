@@ -5,6 +5,7 @@ from typing import Optional, Any, Union
 from ..graphic import Shape, Grid
 from ..constant import default_hash
 from ..attention import Attention
+from functools import cached_property
 
 
 @dataclass(frozen=True)
@@ -39,8 +40,12 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     def update(self, **kwargs)->ArcTrainingState:
         return replace(self, **kwargs)
 
-    def __hash__(self)->int:
+    @cached_property
+    def _hash(self)->int:
         return default_hash(self)
+
+    def __hash__(self)->int:
+        return self._hash
 
 
 @dataclass(frozen=True)
@@ -61,8 +66,12 @@ class ArcInferenceState(InferenceState[Grid, Grid]):
     def update(self, **kwargs)->ArcInferenceState:
         return replace(self, **kwargs)
 
-    def __hash__(self)->int:
+    @cached_property
+    def _hash(self)->int:
         return default_hash(self)
+
+    def __hash__(self)->int:
+        return self._hash
 
 
 ArcState = Union[ArcTrainingState, ArcInferenceState]
