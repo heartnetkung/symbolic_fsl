@@ -174,7 +174,6 @@ class Trace:
         for i, (task, action) in enumerate(self.task_actions):
             result.append(f'{i}')
             result.append(f'  {task} {action}')
-        result.append(f'  {self.prediction.out}')
         return '\n'.join(result)
 
     @staticmethod

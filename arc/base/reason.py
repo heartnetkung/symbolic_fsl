@@ -58,8 +58,8 @@ class ResultCollection:
         result = ['ResultCollection{']
         for pred, (trace, count) in self.min_cost_traces.items():
             result.append(f'\nprediction: {pred}')
-            result.append(f'trace: {trace}')
             result.append(f'count: {count}')
+            result.append(f'trace: {trace}')
         return '\n'.join(result+['}'])
 
 

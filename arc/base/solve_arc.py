@@ -12,7 +12,7 @@ import logging
 MAX_TIME_S = 600
 MAX_PLAN_DEPTH = 10
 MAX_PLAN_ITR = 5000
-MAX_REASON_PATH = 10
+MAX_REASON_PATH = 50
 N_RESULT = 2
 DUMMY_PRED = Grid([[0]])
 logger = logging.getLogger(__name__)
