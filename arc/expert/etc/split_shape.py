@@ -22,19 +22,31 @@ class SplitShape(ModelFreeArcAction[AttentionTask]):
         x_index = [index[self.feat_index] for index in atn.x_index]
         new_out_shapes = self._split_shape(
             atn.sample_index, x_index, state.out_shapes, atn.extra_shapes)
+        if new_out_shapes is None:
+            return None
+
         if not isinstance(state, ArcTrainingState):
             return state.update(out_shapes=new_out_shapes)
 
         assert state.y_shapes is not None
         new_y_shapes = self._split_shape(
-            atn.sample_index, atn.y_index, state.y_shapes, atn.extra_shapes)
+            atn.sample_index, task.atn.y_index, state.y_shapes,  # type:ignore
+            atn.extra_shapes)
+        if new_y_shapes is None:
+            return None
+
         return state.update(out_shapes=new_out_shapes, y_shapes=new_y_shapes)
 
-    def _split_shape(
-            self, sample_index: list[int], shape_index: list[int],
-            all_shapes: list[list[Shape]], subshapes: list[Shape])->list[list[Shape]]:
+    def _split_shape(self, sample_index: list[int], shape_index: list[int],
+                     all_shapes: list[list[Shape]],
+                     subshapes: list[Shape])->Optional[list[list[Shape]]]:
         seen_shapes, appending = set(), {}
+        dedup = Deduplicator()
+
         for id1, id2 in zip(sample_index, shape_index):
+            if dedup.has_seen_before((id1, id2)):
+                continue
+
             container = all_shapes[id1][id2]
             new_shapes = recursive_shape_split(container, subshapes, True, True)
             if new_shapes is None:
