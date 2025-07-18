@@ -17,8 +17,9 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
     possible_sample_index, possible_x_index = index_blob
     df = create_df(x_train, output_train_shapes,
                    possible_sample_index, possible_x_index)
+    has_syntactic = atn.syntactic_model is not None
     label = create_label(atn.sample_index, atn.x_index,
-                         possible_sample_index, possible_x_index)
+                         possible_sample_index, possible_x_index, has_syntactic)
     models = train_model(df, label, params)
     return [AttentionModel(model, atn.x_cluster_info, atn.extra_shapes,
                            atn.syntactic_model) for model in models]

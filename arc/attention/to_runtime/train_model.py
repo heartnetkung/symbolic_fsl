@@ -6,12 +6,16 @@ import pandas as pd
 
 
 def create_label(correct_sample_index: list[int], correct_x_index: list[list[int]],
-                 possible_sample_index: list[int],
-                 possible_x_index: list[list[int]])->np.ndarray:
+                 possible_sample_index: list[int], possible_x_index: list[list[int]],
+                 has_synactic: bool)->np.ndarray:
     assert len(correct_sample_index) == len(correct_x_index)
     assert len(possible_sample_index) == len(possible_x_index)
-    correct_pairs = {repr((sample_id, x_index)) for sample_id, x_index in zip(
-        correct_sample_index, correct_x_index)}
+
+    correct_pairs = set()
+    for sample_id, x_index in zip(correct_sample_index, correct_x_index):
+        if has_synactic:
+            x_index = x_index[:-1]
+        correct_pairs.add(repr((sample_id, x_index)))
 
     return np.array([
         repr((sample_id, x_index)) in correct_pairs
