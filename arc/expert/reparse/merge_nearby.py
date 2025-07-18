@@ -45,11 +45,13 @@ class MergeNearby(ModelFreeArcAction[MergeNearbyTask]):
         all_new_shapes = []
         for shapes, grid in zip(all_shapes, grids):
             new_shapes, graph = [], NearbyGraph(shapes)
+            processed_shapes = set()
             for cluster in graph.connected_components():
-                if len(cluster) == 1:
-                    new_shapes.append(cluster.pop())
-                else:
-                    new_shapes.append(_merge_shapes(cluster, grid))
+                processed_shapes |= cluster
+                new_shapes.append(_merge_shapes(cluster, grid))
+            for shape in shapes:
+                if shape not in processed_shapes:
+                    new_shapes.append(shape)
             all_new_shapes.append(new_shapes)
         return all_new_shapes
 
