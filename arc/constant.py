@@ -43,8 +43,11 @@ class GlobalParams:
     # linear programming time limit
     linprog_time_limit: int = 10
     # maximum reparse operations per solution
+    # max_reparse: int = 0
     max_reparse: int = 2
     # list of parse modes to try
+    # parser_x_modes: Iterable[ParseMode] = (ParseMode.proximity_diag,)
+    # parser_y_modes: Iterable[ParseMode] = (ParseMode.proximity_diag,)
     parser_x_modes: Iterable[ParseMode] = ParseMode
     parser_y_modes: Iterable[ParseMode] = ParseMode
 

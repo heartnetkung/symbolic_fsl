@@ -42,18 +42,17 @@ class ArcManager(Manager[ArcTrainingState]):
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
         assert state.out_shapes is not None
         assert state.y_shapes is not None
-        attention = state.attention_cache
+        cache = state.attention_cache
 
         results, attentions = [], []
-        if attention is not None:
-            assert isinstance(attention, TrainingAttention)
-            is_solved = is_attention_solved(
-                attention, state.out_shapes, state.y_shapes)
+        if cache is not None:
+            assert isinstance(cache, TrainingAttention)
+            is_solved = is_attention_solved(cache, state.out_shapes, state.y_shapes)
             if is_solved == FuzzyBool.maybe:
                 return []
             if is_solved == FuzzyBool.no:
                 attentions = remake_attentions(
-                    attention, state.out_shapes, state.y_shapes, state.x)
+                    cache, state.out_shapes, state.y_shapes, state.x)
 
         if attentions == []:
             attentions = make_attentions(state.out_shapes, state.y_shapes, state.x)

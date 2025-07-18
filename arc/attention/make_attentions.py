@@ -9,7 +9,7 @@ from .make_attention.cluster_x import *
 from .make_attention.find_shapes import *
 from .to_runtime.align_x import *
 
-MAX_ATTENDING_SHAPE = 3
+MAX_ATTENDING_SHAPE = 5
 
 
 def make_attentions(
