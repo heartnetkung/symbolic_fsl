@@ -21,6 +21,7 @@ class IntersectExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
         for index1, index2 in combinations(feat_indexes, 2):
             related_shapes = (get_x_col(state, task.atn, index1) +
                               get_x_col(state, task.atn, index2))
+
             for color in _find_common_colors(related_shapes):
                 candidate = Intersect([index1, index2], color)
                 produced_shapes = candidate.intersect(state, task.atn)
@@ -37,11 +38,13 @@ def _find_common_colors(shapes: list[Shape])->set[int]:
         result &= shape._grid.list_colors()
         if len(result) == 0:
             break
-    return result
+    return result-{NULL_COLOR}
 
 
 def _check_result(a_shapes: list[Shape], b_shapes: list[Shape])->bool:
     assert len(a_shapes) == len(b_shapes)
-    a_values = [list_shape_representations(a) for a in a_shapes]
-    b_values = [list_shape_representations(b) for b in b_shapes]
+    a_values = [list_shape_representations(a)['colorless_transformed_shape']
+                for a in a_shapes]
+    b_values = [list_shape_representations(b)['colorless_transformed_shape']
+                for b in b_shapes]
     return a_values == b_values
