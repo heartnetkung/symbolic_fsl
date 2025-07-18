@@ -20,9 +20,9 @@ class CleanUp(ModelBasedArcAction[CleanUpTask, CleanUpTask]):
         all_new_shapes, offset = [], 0
 
         for shapes in state.out_shapes:
-            row = [shape for include, shape in zip(is_selected, shapes) if include]
+            row = [shapes[i] for i in range(len(shapes)) if is_selected[offset+i]]
             all_new_shapes.append(row)
-            offset += len(row)
+            offset += len(shapes)
         return state.update(out_shapes=all_new_shapes)
 
     def train_models(self, state: ArcTrainingState,
@@ -30,5 +30,6 @@ class CleanUp(ModelBasedArcAction[CleanUpTask, CleanUpTask]):
         assert isinstance(self.filter_model, MemorizedModel)
 
         df = make_single_shape_df(state)
-        models = classifier_factory(df, self.filter_model.result, self.params, 'cleanup')
+        models = classifier_factory(
+            df, self.filter_model.result, self.params, 'cleanup')
         return [CleanUp(model, self.params) for model in models]
