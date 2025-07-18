@@ -2,40 +2,52 @@ from ...base import *
 from ...graphic import *
 from ...ml import *
 from ...manager.task import *
-from .draw_canvas import DrawCanvas, create_df
+from .draw_canvas import DrawCanvas, create_df, make_sort_label
 import numpy as np
+from itertools import permutations
 
 DYNAMIC_WIDTH = ColumnModel('bound_width(shapes)')
 DYNAMIC_HEIGHT = ColumnModel('bound_height(shapes)')
+Cache = Optional[tuple[list[MLModel], list[MLModel]]]
 
 
 class DrawCanvasExpert(Expert[ArcTrainingState, DrawCanvasTask]):
     def __init__(self, params: GlobalParams)->None:
         self.params = params
         self.cache_calculated = False
-        self.cached_action: Optional[DrawCanvas] = None
+        self.cached_models: Cache = None
 
     def solve_problem(self, state: ArcTrainingState,
                       task: DrawCanvasTask)->list[Action]:
-        static_action = self._get_static_action(state)
-        if static_action is not None:
-            return [static_action]
-
         assert state.out_shapes is not None
-        y_width, y_height = _create_labels(state.y)
-        df = create_df(state.x, state.out_shapes)
-        are_dynamic = (np.allclose(DYNAMIC_WIDTH.predict(df), y_width) and
-                       np.allclose(DYNAMIC_HEIGHT.predict(df), y_height))
-        if are_dynamic:
-            return [DrawCanvas(DYNAMIC_WIDTH, DYNAMIC_HEIGHT)]
+        assert state.y_shapes is not None
 
-        width_models = regressor_factory(df, y_width, self.params, 'draw_all_w')
-        height_models = regressor_factory(df, y_height, self.params, 'draw_all_h')
-        return [DrawCanvas(width_model, height_model)
-                for width_model, height_model in model_selection(
-                    width_models, height_models)]
+        cache = self._get_cache(state)
+        if cache is not None:
+            w_models, h_models = cache
+        else:
+            y_width, y_height = _create_labels(state.y)
+            df = create_df(state.x, state.out_shapes)
+            are_dynamic = (np.allclose(DYNAMIC_WIDTH.predict(df), y_width) and
+                           np.allclose(DYNAMIC_HEIGHT.predict(df), y_height))
+            if are_dynamic:
+                w_models: list[MLModel] = [DYNAMIC_WIDTH]
+                h_models: list[MLModel] = [DYNAMIC_HEIGHT]
+            else:
+                w_models = regressor_factory(df, y_width, self.params, 'draw_all_w')
+                h_models = regressor_factory(df, y_height, self.params, 'draw_all_h')
 
-    def _get_static_action(self, state: ArcTrainingState)->Optional[DrawCanvas]:
+        if not state.has_layer:
+            return [DrawCanvas(w_model, h_model, self.params)
+                    for w_model, h_model in model_selection(w_models, h_models)]
+
+        l_models: list[MLModel] = [MemorizedModel(
+            _create_sort_label(state.y, state.y_shapes))]
+        return [DrawCanvas(w_model, h_model, self.params, l_model)
+                for w_model, h_model, l_model in model_selection(
+                    w_models, h_models, l_models)]
+
+    def _get_cache(self, state: ArcTrainingState)->Cache:
         if not self.cache_calculated:
             assert state.x is not None
             assert state.y is not None
@@ -47,15 +59,28 @@ class DrawCanvasExpert(Expert[ArcTrainingState, DrawCanvasTask]):
             are_constants = len(set(y_width)) == len(set(y_height)) == 1
 
             if are_constants:
-                self.cached_action = DrawCanvas(ConstantModel(y_width[0]),
-                                                ConstantModel(y_height[0]))
+                self.cached_action = (
+                    [ConstantModel(y_width[0])], [ConstantModel(y_height[0])])
             elif are_same:
-                self.cached_action = DrawCanvas(ColumnModel('grid_width'),
-                                                ColumnModel('grid_height'))
+                self.cached_action = (
+                    [ColumnModel('grid_width')], [ColumnModel('grid_height')])
             self.cache_calculated = True
-        return self.cached_action
+        return self.cached_action  # type:ignore
 
 
 def _create_labels(grids: list[Grid])->tuple[np.ndarray, np.ndarray]:
     return (np.array([grid.width for grid in grids]),
             np.array([grid.height for grid in grids]))
+
+
+def _create_sort_label(grids: list[Grid], all_shapes: list[list[Shape]])->np.ndarray:
+    labels = []
+    for grid, shapes in zip(grids, all_shapes):
+        for shape1, shape2 in permutations(shapes, 2):
+            label = make_sort_label(grid, shape1, shape2)
+            if label is None:
+                continue
+
+            labels.append(not label)
+            labels.append(label)
+    return np.array(labels)

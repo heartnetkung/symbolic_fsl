@@ -3,16 +3,18 @@ from ...graphic import *
 from ...ml import *
 from ...manager.task import *
 import pandas as pd
+import numpy as np
 from itertools import permutations
 from functools import cmp_to_key
 
 
-class DrawCanvas(ModelFreeArcAction[DrawCanvasTask]):
+class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
     def __init__(self, width_model: MLModel, height_model: MLModel,
-                 layer_model: Optional[MLModel] = None)->None:
+                 params: GlobalParams, layer_model: Optional[MLModel] = None)->None:
         self.width_model = width_model
         self.height_model = height_model
         self.layer_model = layer_model
+        self.params = params
         super().__init__()
 
     def perform(self, state: ArcState, task: DrawCanvasTask)->Optional[ArcState]:
@@ -36,6 +38,19 @@ class DrawCanvas(ModelFreeArcAction[DrawCanvasTask]):
             canvases.append(canvas)
         return state.update(out=canvases)
 
+    def train_models(self, state: ArcTrainingState,
+                     task: DrawCanvasTask)->list[InferenceAction]:
+        assert state.y_shapes is not None
+        if self.layer_model is None:
+            return [self]
+
+        assert isinstance(self.layer_model, MemorizedModel)
+        df = _create_sort_df(state.y, state.y_shapes)
+        models = classifier_factory(
+            df, self.layer_model.result, self.params, 'draw_canvas.l')
+        return [DrawCanvas(self.width_model, self.height_model, self.params, model)
+                for model in models]
+
 
 def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     assert len(grids) == len(all_shapes)
@@ -46,14 +61,50 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     return pd.DataFrame(result)
 
 
-def create_sort_df(grids: list[Grid],
-                   all_shapes: list[list[Shape]])->pd.DataFrame:
+def _create_sort_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     grids2, all_shapes2 = [], []
     for grid, shapes in zip(grids, all_shapes):
         for shape1, shape2 in permutations(shapes, 2):
+            label = make_sort_label(grid, shape1, shape2)
+            if label is None:
+                continue
+
+            grids2.append(grid)
             grids2.append(grid)
             all_shapes2.append([shape1, shape2])
+            all_shapes2.append([shape2, shape1])
     return generate_df(grids2, all_shapes2)
+
+
+def make_sort_label(grid: Grid, a: Shape, b: Shape)->Optional[bool]:
+    range_x_a, range_x_b = range(a.x, a.x+a.width), range(b.x, b.x+b.width)
+    if not range_intersect(range_x_a, range_x_b):
+        return None
+
+    range_y_a, range_y_b = range(a.y, a.y+a.height), range(b.y, b.y+b.height)
+    if not range_intersect(range_y_a, range_y_b):
+        return None
+
+    count1, count2 = _diff_count(grid, a, b), _diff_count(grid, b, a)
+    if count1 == count2:
+        return None
+    return count1 > count2
+
+
+def _diff_count(grid: Grid, a: Shape, b: Shape)->int:
+    canvas = make_grid(grid.width, grid.height)
+    a.draw(canvas)
+    b.draw(canvas)
+
+    count = 0
+    for i in range(grid.height):
+        for j in range(grid.width):
+            canvas_cell = canvas.data[i][j]
+            if canvas_cell == NULL_COLOR:
+                continue
+            if canvas_cell == grid.data[i][j]:
+                count += 1
+    return count
 
 
 def _sort_shapes(grid: Grid, shapes: list[Shape], model: MLModel)->list[Shape]:
