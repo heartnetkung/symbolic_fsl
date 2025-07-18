@@ -64,10 +64,23 @@ def _clean_subshapes(subshapes: list[Grid],
 
     result = {}
     for subshape, orig_subshape in zip(subshapes, original_subshapes):
-        if subshape.width == 1 and subshape.height == 1:
+        if not _has_two_or_more_mass(subshape):
             continue
         result[repr(subshape)] = (subshape, orig_subshape)
     return [pair[0] for pair in result.values()], [pair[1] for pair in result.values()]
+
+
+def _has_two_or_more_mass(grid: Grid)->bool:
+    '''This is required because a subshape of mass 1 causes combinatorial explosion.'''
+    mass = 0
+    for i in range(grid.height):
+        for j in range(grid.width):
+            if not valid_color(grid.data[i][j]):
+                continue
+            if mass > 1:
+                return True
+            mass += 1
+    return False
 
 
 def _subtract(shape: Shape, subshape: Grid, offset_x: int, offset_y: int)->Shape:
