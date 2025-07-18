@@ -60,8 +60,6 @@ def solve_arc(
     planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
                            max_plan_depth, max_plan_itr, max_time_s)
     time_left = int(max_time_s - (time.time()-start_time))
-    if logger.isEnabledFor(logging.INFO):
-        planning_result.plan.trim()
     logger.info('successful plans: %s', planning_result.plan)
 
     # reason

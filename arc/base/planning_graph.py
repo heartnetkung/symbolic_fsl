@@ -65,14 +65,6 @@ class PlanningGraph:
         result = ['PlanningGraph{',
                   f'node_count: {self.graph.number_of_nodes()}',
                   f'edge_count: {self.graph.number_of_edges()}',
-                  f'terminal_count: {len(self.end_states)}']
-        count = 0
-        for end_state in self.end_states:
-            for path in nx.all_simple_paths(
-                    self.graph, source=self.start_state, target=end_state):
-                count += 1
-                result.append(f'\n  path #{count}')
-                for i, node in enumerate(path[:-1]):
-                    data = self.get_edge_data(node, path[i+1])
-                    result.append(f'\n  {data} (len={len(data)})')
-        return '\n'.join(result+['}'])
+                  f'terminal_count: {len(self.end_states)}',
+                  '}']
+        return '\n'.join(result)
