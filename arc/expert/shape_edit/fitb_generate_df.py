@@ -15,8 +15,8 @@ COLS = {
     'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)',
     'cell(y,x)', 'cell(y,-x)', 'cell(-y,x)', 'cell(-y,-x)',
     # feat_eng
-    'adjacent(x,y)', 'diagonal(x,y)',
-    'is_plus_path(x,y)', 'is_cross_path(x,y)', 'mirror(x,y)', 'tile(x,y)',
+    'adjacent(x,y)', 'diagonal(x,y)', 'is_plus_path(x,y)', 'is_cross_path(x,y)',
+    'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)',
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)'
@@ -82,6 +82,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
             result['diagonal(x,y)'].append(diagonal(grid, x, y))
             result['mirror(x,y)'].append(mirror(grid, x, y))
+            result['double_mirror(x,y)'].append(double_mirror(grid, x, y))
             if grid.width == grid.height:
                 result['is_cross_path(x,y)'].append(is_cross_path(grid, x, y))
             if (grid.width % 2 == 1) and (grid.height % 2 == 1):

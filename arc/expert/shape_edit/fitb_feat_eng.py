@@ -101,6 +101,15 @@ def mirror(grid: Grid, x: int, y: int)->int:
         grid.safe_access(neg_x, neg_y)])
 
 
+def double_mirror(grid: Grid, x: int, y: int)->int:
+    neg_x, neg_y = grid.width-x-1, grid.height-y-1
+    return _merge_pixels([
+        grid.safe_access(neg_x, y), grid.safe_access(x, neg_y),
+        grid.safe_access(neg_x, neg_y), grid.safe_access(y, x),
+        grid.safe_access(neg_y, x), grid.safe_access(y, neg_x),
+        grid.safe_access(neg_y, neg_x)])
+
+
 def get_tile(tile: Grid, x: int, y: int)->int:
     return tile.data[y % tile.height][x % tile.width]
 

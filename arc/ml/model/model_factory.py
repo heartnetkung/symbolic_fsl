@@ -52,18 +52,18 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if len(y_set) == 1:
         return [ConstantModel(y_set.pop())]
 
+    # exact answer
+    exact_result = []
+    for col in X.columns:
+        if np.allclose(y, X[col]):
+            exact_result.append(ColumnModel(col))
+    if len(exact_result) > 0:
+        return exact_result
+
     # preprocess
     X2 = _drop_redundants(X)
     if X2.empty:
         return []
-
-    # exact answer
-    exact_result = []
-    for col in X2.columns:
-        if np.allclose(y, X2[col]):
-            exact_result.append(ColumnModel(col))
-    if len(exact_result) > 0:
-        return exact_result
 
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
