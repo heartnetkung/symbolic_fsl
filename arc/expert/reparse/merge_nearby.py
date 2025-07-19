@@ -31,19 +31,27 @@ class MergeNearby(ModelFreeArcAction[MergeNearbyTask]):
             return state
 
         new_x_shapes = self._reparse(state.x_shapes, state.x)
+        if new_x_shapes is None:
+            return None
         if not isinstance(state, ArcTrainingState):
             return state.update(x_shapes=new_x_shapes, out_shapes=new_x_shapes)
 
         assert state.y_shapes is not None
         new_y_shapes = self._reparse(state.y_shapes, state.y)
+        if new_y_shapes is None:
+            return None
+
         return state.update(
             x_shapes=new_x_shapes, out_shapes=new_x_shapes,
             y_shapes=new_y_shapes, reparse_count=state.reparse_count+1)
 
     def _reparse(self, all_shapes: list[list[Shape]],
-                 grids: list[Grid])->list[list[Shape]]:
+                 grids: list[Grid])->Optional[list[list[Shape]]]:
         all_new_shapes = []
         for shapes, grid in zip(all_shapes, grids):
+            if len(shapes) > MAX_SHAPES_PER_GRID:
+                return None
+
             new_shapes, graph = [], NearbyGraph(shapes)
             processed_shapes = set()
             for cluster in graph.connected_components():

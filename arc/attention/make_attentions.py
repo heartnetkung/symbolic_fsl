@@ -10,7 +10,6 @@ from .make_attention.find_shapes import *
 from .to_runtime.align_x import *
 
 MAX_ATTENDING_SHAPE = 5
-MAX_RELATIONSHIP = 500
 
 
 def make_attentions(
@@ -22,7 +21,7 @@ def make_attentions(
     '''
 
     rel_df = gen_rel_product(output_train_shapes, y_train_shapes)
-    if len(rel_df) > MAX_RELATIONSHIP:
+    if rel_df is None:
         return []
 
     possible_y_clusters = cluster_y(rel_df)
@@ -58,7 +57,7 @@ def remake_attentions(attention: TrainingAttention,
     '''
 
     rel_df = gen_rel_product(output_train_shapes, y_train_shapes)
-    if len(rel_df) > MAX_RELATIONSHIP:
+    if rel_df is None:
         return []
 
     possible_y_clusters = [_copy_cluster_y(attention, rel_df)]

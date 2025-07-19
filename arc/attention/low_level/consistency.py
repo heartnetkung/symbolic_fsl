@@ -5,12 +5,19 @@ from itertools import product, combinations
 from .prop import *
 from .rel import *
 from sklearn.metrics.pairwise import pairwise_distances
+from ...constant import MAX_SHAPES_PER_GRID
+from typing import Optional
 
 
 def gen_rel_product(all_x_shapes: list[list[Shape]],
-                    all_y_shapes: list[list[Shape]])->pd.DataFrame:
+                    all_y_shapes: list[list[Shape]])->Optional[pd.DataFrame]:
     result = {'sample_id': [], 'x_index': [], 'y_index': [], 'rel': []}
     for sample_id, (x_shapes, y_shapes) in enumerate(zip(all_x_shapes, all_y_shapes)):
+        if len(x_shapes)> MAX_SHAPES_PER_GRID:
+            return None
+        if len(y_shapes)> MAX_SHAPES_PER_GRID:
+            return None
+
         x_shapes_set = set(x_shapes)
         for x_index, y_index in product(range(len(x_shapes)), range(len(y_shapes))):
             x_shape, y_shape = x_shapes[x_index], y_shapes[y_index]
@@ -21,19 +28,6 @@ def gen_rel_product(all_x_shapes: list[list[Shape]],
                 result['sample_id'].append(sample_id)
                 result['x_index'].append(x_index)
                 result['y_index'].append(y_index)
-                result['rel'].append(rel)
-    return filter_consistency(pd.DataFrame(result), 'rel')
-
-
-def gen_rel_combination(all_shapes: list[list[Shape]])->pd.DataFrame:
-    result = {'sample_id': [], 'index1': [], 'index2': [], 'rel': []}
-    for sample_id, shapes in enumerate(all_shapes):
-        for index1, index2 in combinations(range(len(shapes)), 2):
-            shape1, shape2 = shapes[index1], shapes[index2]
-            for rel in list_relationship(shape1, shape2):
-                result['sample_id'].append(sample_id)
-                result['index1'].append(index1)
-                result['index2'].append(index2)
                 result['rel'].append(rel)
     return filter_consistency(pd.DataFrame(result), 'rel')
 
@@ -94,6 +88,7 @@ def filter_constant_arity(df: pd.DataFrame, unit_cols: list[str],
     result = df[df[value_col].isin(keep_values)].reset_index(drop=True)
     assert isinstance(result, pd.DataFrame)
     return result
+
 
 def to_distance_matrix(df: pd.DataFrame, metric: str)->np.ndarray:
     # There are many metric types as listed below

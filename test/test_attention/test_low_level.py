@@ -14,16 +14,6 @@ def test_gen_rel_product():
     assert expect.issubset(set(result['rel']))
 
 
-def test_gen_rel_combination():
-    all_shapes = [
-        [FilledRectangle(1, 1, 1, 1, 1), FilledRectangle(1, 2, 2, 2, 2)],
-        [FilledRectangle(3, 3, 3, 3, 3), FilledRectangle(3, 4, 4, 4, 4)]]
-    result = gen_rel_combination(all_shapes)
-    expect = {'sample_id': [0, 0, 0, 0, 1, 1, 1, 1], 'index1': [0]*8, 'index2': [1]*8}
-    assert pd.DataFrame(expect).equals(result[['sample_id', 'index1', 'index2']])
-    assert set(result['rel']) == {'subset_x_or_y', 'same_x_or_y', 'subset_x', 'same_x'}
-
-
 def test_gen_prop():
     all_shapes = [
         [FilledRectangle(1, 1, 1, 1, 1), FilledRectangle(2, 2, 2, 2, 2)],

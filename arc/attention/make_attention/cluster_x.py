@@ -7,6 +7,8 @@ from sklearn.cluster import OPTICS, DBSCAN
 from itertools import product
 from typing import Optional
 
+MAX_PERMUTATION = 50
+
 
 def cluster_x(rel_df: pd.DataFrame, y_cluster: pd.DataFrame)->list[pd.DataFrame]:
     '''
@@ -23,7 +25,7 @@ def cluster_x(rel_df: pd.DataFrame, y_cluster: pd.DataFrame)->list[pd.DataFrame]
     for y_label, (x_df, feat_arr) in data_blob.items():
         x_labels = _cluster_x(x_df, feat_arr)
         for x_label in x_labels:
-            grouped_results[y_label][repr(x_label)] = x_label
+            grouped_results[y_label][repr(x_label['x_label'])] = x_label
 
     return _generate_permutation(grouped_results)
 
@@ -99,9 +101,14 @@ def _generate_permutation(grouped: dict[int, dict[str, pd.DataFrame]])->list[
     if len(grouped) == 0:
         return []
 
-    all_x_dfs = []
+    all_x_dfs, permutation_count = [], 1
     for group in grouped.values():
-        all_x_dfs.append(list(group.values()))
+        combination = list(group.values())
+        all_x_dfs.append(combination)
+        permutation_count *= len(combination)
+
+    if permutation_count > MAX_PERMUTATION:
+        return []
 
     results = []
     for df_combination in product(*all_x_dfs):
