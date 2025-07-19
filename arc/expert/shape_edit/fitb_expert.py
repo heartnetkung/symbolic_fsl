@@ -57,8 +57,12 @@ def _get_expansions(x_shapes: list[Shape], y_shapes: list[Shape], widths: np.nda
         new_shapes = []
         for x_shape, y_shape, width, height in zip(x_shapes, y_shapes, widths, heights):
             new_shape = mode.expand(x_shape, width, height)
+            if new_shape is None:
+                new_shapes = []
+                break
+
             is_equal = nonnull_equal(new_shape._grid, y_shape._grid)
-            if (new_shape is None) or (not is_equal):
+            if not is_equal:
                 new_shapes = []
                 break
             new_shapes.append(new_shape)

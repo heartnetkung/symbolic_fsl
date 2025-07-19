@@ -95,8 +95,13 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         h_models = regressor_factory(shape_df, heights, self.params, 'fitb.h')
 
         x_shapes = get_x_col(state, task.atn, self.feat_index)
-        expanded_shapes = [self.expansion.expand(shape, w, h)
-                           for shape, w, h in zip(x_shapes, widths, heights)]
+        expanded_shapes = []
+        for shape, w, h in zip(x_shapes, widths, heights):
+            expanded_shape = self.expansion.expand(shape, w, h)
+            if expanded_shape is None:
+                return []
+            expanded_shapes.append(expanded_shape)
+
         grids = get_grids(state, task.atn)
         pixel_df = generate_pixel_df(grids, expanded_shapes)
         p_models = regressor_factory(
