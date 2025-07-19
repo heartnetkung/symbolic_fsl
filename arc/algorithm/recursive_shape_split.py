@@ -2,6 +2,8 @@ from ..base import *
 from ..graphic import *
 from copy import deepcopy
 
+MAX_COLORLESS_SHAPE_MASS = 100
+
 
 def recursive_shape_split(
         shape: Shape, subshapes: list[Shape],
@@ -21,6 +23,9 @@ def recursive_shape_split(
 
     if colorless:
         shape = Unknown(shape.x, shape.y, shape._grid.normalize_color())
+        if _mass_larger_than(shape.grid, MAX_COLORLESS_SHAPE_MASS):
+            return None
+
         subshape_grids_original = subshape_grids
         subshape_grids = [grid.normalize_color() for grid in subshape_grids]
     else:
@@ -64,20 +69,20 @@ def _clean_subshapes(subshapes: list[Grid],
 
     result = {}
     for subshape, orig_subshape in zip(subshapes, original_subshapes):
-        if not _has_two_or_more_mass(subshape):
+        if not _mass_larger_than(subshape, 1):
             continue
         result[repr(subshape)] = (subshape, orig_subshape)
     return [pair[0] for pair in result.values()], [pair[1] for pair in result.values()]
 
 
-def _has_two_or_more_mass(grid: Grid)->bool:
+def _mass_larger_than(grid: Grid, n: int)->bool:
     '''This is required because a subshape of mass 1 causes combinatorial explosion.'''
     mass = 0
     for i in range(grid.height):
         for j in range(grid.width):
             if not valid_color(grid.data[i][j]):
                 continue
-            if mass > 1:
+            if mass > n:
                 return True
             mass += 1
     return False
