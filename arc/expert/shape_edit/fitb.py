@@ -90,14 +90,15 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.pixel_model, StepMemoryModel)
 
         shape_df = default_make_df(state, task.atn, self.feat_index)
-        w_models = regressor_factory(
-            shape_df, self.width_model.result, self.params, 'fitb.w')
-        h_models = regressor_factory(
-            shape_df, self.height_model.result, self.params, 'fitb.h')
+        widths, heights = self.width_model.result, self.height_model.result
+        w_models = regressor_factory(shape_df, widths, self.params, 'fitb.w')
+        h_models = regressor_factory(shape_df, heights, self.params, 'fitb.h')
 
         x_shapes = get_x_col(state, task.atn, self.feat_index)
+        expanded_shapes = [self.expansion.expand(shape, w, h)
+                           for shape, w, h in zip(x_shapes, widths, heights)]
         grids = get_grids(state, task.atn)
-        pixel_df = generate_pixel_df(grids, x_shapes)
+        pixel_df = generate_pixel_df(grids, expanded_shapes)
         p_models = regressor_factory(
             pixel_df, self.pixel_model.result, self.params, 'fitb.p')
 

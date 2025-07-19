@@ -26,6 +26,9 @@ class FillInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             if not has_relationship(atn, 'subshape', i):
                 continue
 
+            if has_relationship(atn, 'same_shape', i):
+                continue
+
             x_shapes = get_x_col(state, atn, i)
             expansions = _get_expansions(x_shapes, y_shapes, widths, heights)
             if expansions is None:
@@ -54,8 +57,8 @@ def _get_expansions(x_shapes: list[Shape], y_shapes: list[Shape], widths: np.nda
         new_shapes = []
         for x_shape, y_shape, width, height in zip(x_shapes, y_shapes, widths, heights):
             new_shape = mode.expand(x_shape, width, height)
-            is_equal = nonnull_equal(x_shape._grid, y_shape._grid)
-            if new_shape is None or (not is_equal):
+            is_equal = nonnull_equal(new_shape._grid, y_shape._grid)
+            if (new_shape is None) or (not is_equal):
                 new_shapes = []
                 break
             new_shapes.append(new_shape)
@@ -72,7 +75,7 @@ def nonnull_equal(a: Grid, b: Grid)->bool:
     for i in range(a.height):
         for j in range(a.width):
             cell_a, cell_b = a.data[i][j], b.data[i][j]
-            if cell_a == NULL_COLOR or cell_b == NULL_COLOR:
+            if cell_a == NULL_COLOR:
                 continue
             if cell_b != cell_a:
                 return False
