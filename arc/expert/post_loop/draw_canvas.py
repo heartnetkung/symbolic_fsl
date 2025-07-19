@@ -107,15 +107,51 @@ def _diff_count(grid: Grid, a: Shape, b: Shape)->int:
     return count
 
 
-def _sort_shapes(grid: Grid, shapes: list[Shape], model: MLModel)->list[Shape]:
-    def _compare(a: Shape, b: Shape)->int:
-        df = generate_df([grid], [[a, b]])
-        result = model.predict_bool(df)[0]
-        return 1 if result else -1
-    return sorted(shapes, key=cmp_to_key(_compare))
-
-
 def _sort_all_shapes(grids: list[Grid],  all_shapes: list[list[Shape]],
                      model: MLModel)->list[list[Shape]]:
-    return [_sort_shapes(grid, shapes, model)
-            for grid, shapes in zip(grids, all_shapes)]
+    table = _gen_sorting_table(grids, all_shapes, model)
+    comp = Comparator(table)
+
+    result = []
+    for id1, (grid, shapes) in enumerate(zip(grids, all_shapes)):
+        shape_with_index = [(id1, id2, shape) for id2, shape in enumerate(shapes)]
+        shape_with_index.sort(key=cmp_to_key(comp.compare))
+        result.append([shape for _, _, shape in shape_with_index])
+    return result
+
+
+def _gen_sorting_table(grids: list[Grid], all_shapes: list[list[Shape]],
+                       model: MLModel)->dict[tuple[int, int, int], bool]:
+    index, grid_df, shapes_df = [], [], []
+    for id1, (grid, shapes) in enumerate(zip(grids, all_shapes)):
+        for i, j in permutations(range(len(shapes)), 2):
+            shape1, shape2 = shapes[i], shapes[j]
+            label = make_sort_label(grid, shape1, shape2)
+            if label is None:
+                continue
+
+            index.append((id1, i, j))
+            grid_df.append(grid)
+            shapes_df.append([shape1, shape2])
+
+    if len(grid_df) == 0:
+        return {}
+
+    df = generate_df(grid_df, shapes_df)
+    prediction = model.predict_bool(df)
+    return {key: pred for pred, key in zip(prediction, index)}
+
+
+class Comparator:
+    def __init__(self, table: dict[tuple[int, int, int], bool])->None:
+        self.table = table
+
+    def compare(self, a: tuple[int, int, Shape], b: tuple[int, int, Shape])->int:
+        key1, key2 = (a[0], a[1], b[1]), (a[0], b[1], a[1])
+        value1, value2 = self.table.get(key1, None), self.table.get(key2, None)
+        if value1 == True or value2 == False:
+            return 1
+        elif value1 == False or value2 == True:
+            return -1
+        else:
+            return 1  # lookup fails
