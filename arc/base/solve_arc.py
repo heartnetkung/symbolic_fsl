@@ -12,7 +12,8 @@ import logging
 MAX_TIME_S = 600
 MAX_PLAN_DEPTH = 10
 MAX_PLAN_ITR = 5000
-MAX_REASON_PATH = 50
+MAX_REASON_PATH = 200
+PLAN_TIME_RATIO = 0.8
 N_RESULT = 2
 DUMMY_PRED = Grid([[0]])
 logger = logging.getLogger(__name__)
@@ -57,8 +58,9 @@ def solve_arc(
     criteria = ArcSuccessCriteria()
 
     # plan
+    planning_time = int(max_time_s*PLAN_TIME_RATIO)
     planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
-                           max_plan_depth, max_plan_itr, max_time_s)
+                           max_plan_depth, max_plan_itr, planning_time)
     time_left = int(max_time_s - (time.time()-start_time))
     logger.info('successful plans: %s', planning_result.plan)
 
