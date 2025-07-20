@@ -20,6 +20,9 @@ def generate_df(
     if grids is not None:
         result['grid_width'] = []
         result['grid_height'] = []
+        result['grid_top_color'] = []
+        result['grid_second_top_color'] = []
+
         for grid in grids:
             _append_grid(grid, result)
     if all_shapes is not None:
@@ -64,6 +67,8 @@ def _check_input(grids: Optional[list[Grid]],
 def _append_grid(grid: Grid, result: dict[str, list])->None:
     result['grid_width'].append(grid.width)
     result['grid_height'].append(grid.height)
+    result['grid_top_color'].append(grid.get_top_color())
+    result['grid_second_top_color'].append(grid.get_second_top_color())
 
 
 def _append_shapes(shapes: list[Shape], result: dict[str, list], index: int)->None:
