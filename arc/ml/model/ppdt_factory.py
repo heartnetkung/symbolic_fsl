@@ -8,6 +8,8 @@ from scipy.stats import mode
 import re
 from enum import Enum
 from itertools import product
+from typing import Optional
+
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
 
@@ -83,11 +85,11 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 def _select_trivial_values(X: pd.DataFrame, y: np.ndarray)->list[MLModel]:
     mode_result, (n_row, n_col) = mode(y), X.shape
     match_count = mode_result.count+1  # mode has 1 extra score since it's simpler
-    result = [ConstantModel(mode(y).mode)]
+    result: list[MLModel] = [ConstantModel(mode(y).mode)]
     if match_count >= n_row:
         return result
 
-    single_column_model: Optional[MLModel] = None
+    single_column_model: Optional[ColumnModel] = None
     for col in X.columns:
         new_count = np.sum(X[col] == y)
         if new_count > match_count:

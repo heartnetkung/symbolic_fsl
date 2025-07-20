@@ -73,8 +73,8 @@ def cal_plus(grid: Grid)->int:
         return NULL_COLOR
 
     middle_x, middle_y = math.floor(grid.width/2), math.floor(grid.height/2)
-    horizontal = [grid.data[i][middle_y] for i in range(w)]
-    vertical = [grid.data[middle_x][i] for i in range(h)]
+    horizontal = [grid.data[middle_y][i] for i in range(w)]
+    vertical = [grid.data[i][middle_x] for i in range(h)]
     return _vote_pixels(horizontal+vertical)
 
 
