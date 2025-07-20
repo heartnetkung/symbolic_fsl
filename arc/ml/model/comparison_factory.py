@@ -19,8 +19,8 @@ class ComparisonModel(MLModel):
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
         if self.eq:
-            return np.where(X[self.col1] == X[self.col2], 1, 0)
-        return np.where(X[self.col1] == X[self.col2], 0, 1)
+            return X[self.col1] == X[self.col2]
+        return X[self.col1] != X[self.col2]
 
     def _to_code(self) -> str:
         if self.eq:
