@@ -4,6 +4,7 @@ from ...ml import to_rank
 import math
 from typing import Optional
 from collections import Counter
+from scipy.stats import mode
 
 # =======================
 # public functions
@@ -64,6 +65,26 @@ def cal_tile(grid: Grid)->Optional[Grid]:
             if result is not None:
                 return result
     return None
+
+
+def cal_plus(grid: Grid)->int:
+    w, h = grid.width, grid.height
+    if (w % 2 == 0) or (h % 2 == 0):
+        return NULL_COLOR
+
+    middle_x, middle_y = math.floor(grid.width/2), math.floor(grid.height/2)
+    horizontal = [grid.data[i][middle_y] for i in range(w)]
+    vertical = [grid.data[middle_x][i] for i in range(h)]
+    return _vote_pixels(horizontal+vertical)
+
+
+def cal_cross(grid: Grid)->int:
+    if grid.width != grid.height:
+        return NULL_COLOR
+
+    top_left = [grid.data[i][i] for i in range(grid.height)]
+    top_right = [grid.data[i][i] for i in range(grid.height-1, -1, -1)]
+    return _vote_pixels(top_left+top_right)
 
 
 def is_plus_path(grid: Grid, x: int, y: int)->int:
@@ -175,3 +196,14 @@ def _merge_pixels(pixels: list[int])->int:
         elif result != pixel:  # multiple colors are unacceptable
             return MISSING_VALUE
     return result
+
+
+def _vote_pixels(pixels: list[int])->int:
+    result = []
+    for pixel in pixels:
+        if not valid_color(pixel):
+            continue
+        result.append(pixel)
+    if len(result) == 0:
+        return NULL_COLOR
+    return mode(result).mode

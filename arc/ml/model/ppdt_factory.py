@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from ...constant import GlobalParams
-from .ml_model import MLModel, CLS_FIELD_SUFFIX, ConstantModel
+from .ml_model import MLModel, CLS_FIELD_SUFFIX, ConstantModel, ColumnModel
 from ..linprog import *
 from .base_models import *
 from scipy.stats import mode
@@ -76,8 +76,25 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
                 result.append(new_model)
 
     if len(result) == 0:
-        mode_model = ConstantModel(mode(y).mode)
-        result.append(mode_model)
+        return _select_trivial_values(X, y)
+    return result
+
+
+def _select_trivial_values(X: pd.DataFrame, y: np.ndarray)->list[MLModel]:
+    mode_result, (n_row, n_col) = mode(y), X.shape
+    match_count = mode_result.count+1  # mode has 1 extra score since it's simpler
+    result = [ConstantModel(mode(y).mode)]
+    if match_count >= n_row:
+        return result
+
+    single_column_model: Optional[MLModel] = None
+    for col in X.columns:
+        new_count = np.sum(X[col] == y)
+        if new_count > match_count:
+            single_column_model = ColumnModel(col)
+
+    if single_column_model is not None:
+        result.append(single_column_model)
     return result
 
 

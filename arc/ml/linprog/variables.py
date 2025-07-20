@@ -55,6 +55,8 @@ def make_variables(counts: VariableCount, is_cls: bool, lambda_: int = 0)->Varia
     c_integrality = 1 if is_cls else 0
     c_max = 1 if is_cls else C_MAX
 
+    #TODO relax integrality constraints?
+
     # make variables
     lb = [0]*counts.total
     ub = [C0_MAX]*counts.c0 + [c_max]*(counts.c1+counts.c2) + [1]*(counts.b+counts.t)

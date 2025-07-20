@@ -16,7 +16,7 @@ COLS = {
     'cell(y,x)', 'cell(y,-x)', 'cell(-y,x)', 'cell(-y,-x)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'is_plus_path(x,y)', 'is_cross_path(x,y)',
-    'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)',
+    'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)', 'plus(x,y)', 'cross(x,y)',
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)'
@@ -40,6 +40,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
     outside_pixels = cal_outside_pixels(grid)
     row_blank_count_rank = cal_row_blank_count_rank(grid)
     col_blank_count_rank = cal_col_blank_count_rank(grid)
+    plus_color, cross_color = cal_plus(grid), cal_cross(grid)
     tile = cal_tile(grid)
 
     for y in range(grid.height):
@@ -84,9 +85,13 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             result['mirror(x,y)'].append(mirror(grid, x, y))
             result['double_mirror(x,y)'].append(double_mirror(grid, x, y))
             if grid.width == grid.height:
-                result['is_cross_path(x,y)'].append(is_cross_path(grid, x, y))
+                success = is_cross_path(grid, x, y)
+                result['is_cross_path(x,y)'].append(success)
+                result['cross(x,y)'].append(cross_color if success else NULL_COLOR)
             if (grid.width % 2 == 1) and (grid.height % 2 == 1):
-                result['is_plus_path(x,y)'].append(is_plus_path(grid, x, y))
+                success = is_plus_path(grid, x, y)
+                result['is_plus_path(x,y)'].append(success)
+                result['plus(x,y)'].append(plus_color if success else NULL_COLOR)
             if tile is not None:
                 result['tile(x,y)'].append(get_tile(tile, x, y))
 
