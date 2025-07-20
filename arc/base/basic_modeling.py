@@ -6,7 +6,7 @@ from ..graphic import Deduplicator
 from .arc_state import ArcTrainingState, ArcInferenceState, ArcState
 
 logger = logging.getLogger(__name__)
-COST_PATTERN = re.compile(r'\*|\+|\- |<|>|==|<=|>=')
+COST_PATTERN = re.compile(r'\*|\+|\- |<|>|==|<=|>=|!=')
 
 
 def default_cost(obj: Any)->int:

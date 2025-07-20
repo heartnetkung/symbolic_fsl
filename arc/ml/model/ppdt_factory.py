@@ -9,6 +9,7 @@ import re
 from enum import Enum
 from itertools import product
 from typing import Optional
+from .comparison_factory import make_comparison_models
 
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
@@ -78,15 +79,16 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
                 result.append(new_model)
 
     if len(result) == 0:
-        return _select_trivial_values(X, y)
+        return _select_trivial_values(X, y, type)
     return result
 
 
-def _select_trivial_values(X: pd.DataFrame, y: np.ndarray)->list[MLModel]:
+def _select_trivial_values(X: pd.DataFrame, y: np.ndarray,
+                           type: LabelType)->list[MLModel]:
     mode_result, (n_row, n_col) = mode(y), X.shape
     match_count = mode_result.count+1  # mode has 1 extra score since it's simpler
     result: list[MLModel] = [ConstantModel(mode(y).mode)]
-    if match_count >= n_row:
+    if (match_count >= n_row) or (type == LabelType.classification):
         return result
 
     single_column_model: Optional[ColumnModel] = None
@@ -108,8 +110,9 @@ def _make_all_classifiers(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     for regressor in regressors[:-1]:
         assert isinstance(X_remain, pd.DataFrame)
         correct_pred = np.isclose(y_remain, regressor.predict(X_remain))
-        classifiers = make_classifiers(X_remain, correct_pred, params)
-        result.append(classifiers)
+        classifiers1 = make_classifiers(X_remain, correct_pred, params)
+        classifiers2 = make_comparison_models(X_remain, correct_pred, params)
+        result.append(classifiers1+classifiers2)
 
         wrong_pred = np.logical_not(correct_pred)
         X_remain = X_remain[wrong_pred].reset_index(drop=True)

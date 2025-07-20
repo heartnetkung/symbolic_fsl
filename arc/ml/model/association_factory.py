@@ -5,7 +5,7 @@ from .ml_model import MLModel
 
 
 class Association(MLModel):
-    '''Ensemble model composing of classifiers and regressors'''
+    '''A simple association model implemented using dictionary.'''
 
     def __init__(self, column: str, kv: dict, params: GlobalParams)->None:
         super().__init__(params)
