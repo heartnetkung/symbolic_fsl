@@ -4,6 +4,8 @@ from ..constant import NULL_COLOR, MISSING_VALUE
 from dataclasses import dataclass
 import math
 from typing import Optional
+from functools import cached_property
+from collections import Counter
 
 EPSILON = 0.01
 
@@ -94,25 +96,31 @@ class Grid:
             for j in x:
                 dest_grid.data[i+offset_y][j+offset_x] = self.data[i][j]
 
-    def get_color_count(self)->dict[int, int]:
-        color_count = {}
+    @cached_property
+    def color_count(self)->Counter[int]:
+        result = Counter()
         for row in self.data:
-            for cell in row:
-                if cell != NULL_COLOR:
-                    color_count[cell] = color_count.get(cell, 0)+1
-        return color_count
+            to_add = [cell for cell in row if cell != NULL_COLOR]
+            result.update(to_add)
+        return result
 
     def get_top_color(self)->int:
-        color_count = self.get_color_count()
-        if len(color_count) == 0:
+        color_ranks = self.color_count.most_common(1)
+        if len(color_ranks) == 0:
             return -1
-        return max(color_count.items(), key=lambda x: x[1])[0]
+        return color_ranks[0][0]
+
+    def get_second_top_color(self)->int:
+        color_ranks = self.color_count.most_common(1)
+        if len(color_ranks) < 2:
+            return -1
+        return color_ranks[1][0]
 
     def get_least_color(self)->int:
-        color_count = self.get_color_count()
-        if len(color_count) == 0:
+        color_ranks = self.color_count.most_common()
+        if len(color_ranks) == 0:
             return -1
-        return min(color_count.items(), key=lambda x: x[1])[0]
+        return color_ranks[-1][0]
 
     def print_grid(self)->None:
         for row in self.data:

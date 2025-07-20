@@ -34,7 +34,7 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
     if len(set(X_train_top_colors)) > 1:
         x_dynamic = True
         for x_grid, y_grid in zip(state.x, state.y):
-            x_colors = x_grid.get_color_count()
+            x_colors = x_grid.color_count
             x_top_color = x_grid.get_top_color()
             if x_top_color not in y_grid.list_colors():
                 x_dynamic = False
