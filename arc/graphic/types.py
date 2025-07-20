@@ -111,7 +111,7 @@ class Grid:
         return color_ranks[0][0]
 
     def get_second_top_color(self)->int:
-        color_ranks = self.color_count.most_common(1)
+        color_ranks = self.color_count.most_common(2)
         if len(color_ranks) < 2:
             return -1
         return color_ranks[1][0]
