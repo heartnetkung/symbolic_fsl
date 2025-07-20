@@ -25,8 +25,14 @@ def default_make_df(
 def has_relationship(atn: TrainingAttention, relationship: str, column: int)->bool:
     '''Check if all x shapes in a column has a relationship of a given type.'''
     try:
+        x_label = 0
+        for cluster_column in atn.x_cluster_info:
+            if column < cluster_column:
+                break
+            column -= cluster_column
+            x_label += 1
         info = atn.relationship_info
-        filtered = info.loc[info['x_label'] == column, relationship]
+        filtered = info.loc[info['x_label'] == x_label, relationship]
         return (len(filtered) > 0) and np.allclose(filtered, 1)
     except KeyError:
         return False

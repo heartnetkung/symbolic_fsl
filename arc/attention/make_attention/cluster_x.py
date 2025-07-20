@@ -51,7 +51,8 @@ def _cluster_x(x_df: pd.DataFrame, feat_arr: pd.DataFrame)->list[pd.DataFrame]:
 
         new_result2 = _filter_constant_arity(new_result)
         if new_result2 is not None:
-            results[repr(new_result2['x_label'])] = new_result2
+            key = repr(new_result2['x_label'])
+            results[key] = _fix_x_label(new_result2)
     return list(results.values())
 
 
@@ -63,6 +64,16 @@ def _preprocess(rel_df: pd.DataFrame,
         exclude_columns = ['sample_id', 'y_index', 'x_index', 'y_label']
         results[key] = (x_df, x_df.drop(columns=exclude_columns))
     return results
+
+
+def _fix_x_label(df: pd.DataFrame)->pd.DataFrame:
+    '''
+    x_label tends to skip numbers which is problematic to work with.
+    Thus, we relabel to not skip. Example 0,2,4,5 -> 0,1,2,3
+    '''
+    values = df['x_label'].to_list()
+    fix_table = {v: i for i, v in enumerate(dict.fromkeys(sorted(values)))}
+    return df.assign(x_label=df['x_label'].replace(fix_table))
 
 
 def _to_x_df(rel_df: pd.DataFrame, y_cluster: pd.DataFrame)->dict[int, pd.DataFrame]:
