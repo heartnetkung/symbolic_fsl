@@ -56,14 +56,15 @@ def cal_col_blank_count_rank(grid: Grid)->list[int]:
     return cal_row_blank_count_rank(grid.transpose())
 
 
-def cal_tile(grid: Grid, bound: tuple[int, int, int, int])->Optional[Grid]:
+def cal_tile(grid: Grid, bound: tuple[int, int, int, int],
+             check_null: bool)->Optional[Grid]:
     min_x, max_x, min_y, max_y = bound
     original_grid = grid.crop(min_x, min_y, max_x-min_x, max_y-min_y)
     for i in range(2, original_grid.height+1):
         for j in range(2, original_grid.width+1):
             if i == original_grid.height and j == original_grid.width:
                 continue
-            result = _check_tile(original_grid, j, i)
+            result = _check_tile(original_grid, j, i, check_null)
             if result is not None:
                 return result
     return None
@@ -145,13 +146,16 @@ def get_tile(tile: Grid, x: int, y: int, bound: tuple[int, int, int, int])->int:
 # =======================
 
 
-def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
+def _check_tile(grid: Grid, tile_width: int, tile_height: int,
+                check_null: bool)->Optional[Grid]:
     tile_grid = make_grid(tile_width, tile_height)
     for i in range(grid.height):
         for j in range(grid.width):
             tile_i, tile_j = i % tile_height, j % tile_width
             tile_cell = tile_grid.data[tile_i][tile_j]
             cell = grid.data[i][j]
+            if (cell == NULL_COLOR) and check_null:
+                continue
             if tile_cell == NULL_COLOR:
                 tile_grid.data[tile_i][tile_j] = cell
             elif tile_cell != cell:

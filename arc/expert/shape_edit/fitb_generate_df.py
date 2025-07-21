@@ -16,7 +16,8 @@ COLS = {
     'cell(y,x)', 'cell(y,-x)', 'cell(-y,x)', 'cell(-y,-x)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'is_plus_path(x,y)', 'is_cross_path(x,y)',
-    'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)', 'plus(x,y)', 'cross(x,y)',
+    'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)', 'tile2(x,y)',
+    'plus(x,y)', 'cross(x,y)',
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)'
@@ -43,7 +44,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
     row_blank_count_rank = cal_row_blank_count_rank(grid)
     col_blank_count_rank = cal_col_blank_count_rank(grid)
     plus_color, cross_color = cal_plus(grid), cal_cross(grid)
-    tile = cal_tile(grid, bound)
+    tile, tile2 = cal_tile(grid, bound, True), cal_tile(grid, bound, False)
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -96,6 +97,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
                 result['plus(x,y)'].append(plus_color if success else NULL_COLOR)
             if tile is not None:
                 result['tile(x,y)'].append(get_tile(tile, x, y, bound))
+            if tile2 is not None:
+                result['tile2(x,y)'].append(get_tile(tile2, x, y, bound))
 
             # global feat_eng
             coord = Coordinate(x, y)
