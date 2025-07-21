@@ -33,6 +33,15 @@ class ExpansionMode(Enum):
             return int(offset_x), int(offset_y)
         raise Exception('unknown mode')
 
+    def get_bound(self, shape: Shape, width: int, height: int)->Optional[
+            tuple[int, int, int, int]]:
+        diff_width, diff_height = width-shape.width, height-shape.height
+        offsets = self._get_offset(diff_width, diff_height)
+        if offsets is None:
+            return None
+        return (offsets[0], offsets[0]+shape.width,
+                offsets[1], offsets[1]+shape.height)
+
     def expand(self, shape: Shape, width: int, height: int)->Optional[Unknown]:
         diff_width, diff_height = width-shape.width, height-shape.height
         offsets = self._get_offset(diff_width, diff_height)
@@ -75,7 +84,9 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             if new_shape is None:
                 return None
 
-            pixel_df = generate_pixel_df([grid], [new_shape])
+            bound = self.expansion.get_bound(shape, width, height)
+            assert bound is not None
+            pixel_df = generate_pixel_df([grid], [new_shape], [bound])
             pixel_color = self.pixel_model.predict_int(pixel_df)
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
                 new_shape.grid.safe_assign(x, y, color)
@@ -95,15 +106,19 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         h_models = regressor_factory(shape_df, heights, self.params, 'fitb.h')
 
         x_shapes = get_x_col(state, task.atn, self.feat_index)
-        expanded_shapes = []
+        expanded_shapes, bounds = [], []
         for shape, w, h in zip(x_shapes, widths, heights):
             expanded_shape = self.expansion.expand(shape, w, h)
             if expanded_shape is None:
                 return []
+
+            bound = self.expansion.get_bound(shape, w, h)
+            assert bound is not None
             expanded_shapes.append(expanded_shape)
+            bounds.append(bound)
 
         grids = get_grids(state, task.atn)
-        pixel_df = generate_pixel_df(grids, expanded_shapes)
+        pixel_df = generate_pixel_df(grids, expanded_shapes, bounds)
         p_models = regressor_factory(
             pixel_df, self.pixel_model.result, self.params, 'fitb.p')
 

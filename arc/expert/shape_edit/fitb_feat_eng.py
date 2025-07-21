@@ -56,12 +56,14 @@ def cal_col_blank_count_rank(grid: Grid)->list[int]:
     return cal_row_blank_count_rank(grid.transpose())
 
 
-def cal_tile(grid: Grid)->Optional[Grid]:
-    for i in range(2, grid.height+1):
-        for j in range(2, grid.width+1):
-            if i == grid.height and j == grid.width:
+def cal_tile(grid: Grid, bound: tuple[int, int, int, int])->Optional[Grid]:
+    min_x, max_x, min_y, max_y = bound
+    original_grid = grid.crop(min_x, min_y, max_x-min_x, max_y-min_y)
+    for i in range(2, original_grid.height+1):
+        for j in range(2, original_grid.width+1):
+            if i == original_grid.height and j == original_grid.width:
                 continue
-            result = _check_tile(grid, j, i)
+            result = _check_tile(original_grid, j, i)
             if result is not None:
                 return result
     return None
@@ -131,8 +133,11 @@ def double_mirror(grid: Grid, x: int, y: int)->int:
         grid.safe_access(neg_y, neg_x)])
 
 
-def get_tile(tile: Grid, x: int, y: int)->int:
-    return tile.data[y % tile.height][x % tile.width]
+def get_tile(tile: Grid, x: int, y: int, bound: tuple[int, int, int, int])->int:
+    min_x, max_x, min_y, max_y = bound
+    offset_x = (tile.width - (min_x % tile.width)) % tile.width
+    offset_y = (tile.height - (min_y % tile.height)) % tile.height
+    return tile.data[(y+offset_y) % tile.height][(x+offset_x) % tile.width]
 
 
 # =======================
@@ -144,12 +149,9 @@ def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
     tile_grid = make_grid(tile_width, tile_height)
     for i in range(grid.height):
         for j in range(grid.width):
-            cell = grid.data[i][j]
-            if cell == NULL_COLOR:
-                continue
-
             tile_i, tile_j = i % tile_height, j % tile_width
             tile_cell = tile_grid.data[tile_i][tile_j]
+            cell = grid.data[i][j]
             if tile_cell == NULL_COLOR:
                 tile_grid.data[tile_i][tile_j] = cell
             elif tile_cell != cell:

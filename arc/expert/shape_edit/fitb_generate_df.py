@@ -23,14 +23,16 @@ COLS = {
 }
 
 
-def generate_pixel_df(grids: list[Grid], shapes: list[Shape])->pd.DataFrame:
+def generate_pixel_df(grids: list[Grid], shapes: list[Shape],
+                      bounds: list[tuple[int, int, int, int]])->pd.DataFrame:
     result = {col: [] for col in COLS}
-    for grid, shape in zip(grids, shapes):
-        _gen_df(grid, shape, result)
+    for grid, shape, bound in zip(grids, shapes, bounds):
+        _gen_df(grid, shape, result, bound)
     return pd.DataFrame(_ensure_size(result))
 
 
-def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
+def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
+            bound: tuple[int, int, int, int])->None:
     properties = shape.to_input_var() | _get_extra_property(shape)
     grid, canvas_width, canvas_height = shape._grid, canvas.width, canvas.height
     leftside_pixels = cal_leftside_pixels(grid)
@@ -41,7 +43,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
     row_blank_count_rank = cal_row_blank_count_rank(grid)
     col_blank_count_rank = cal_col_blank_count_rank(grid)
     plus_color, cross_color = cal_plus(grid), cal_cross(grid)
-    tile = cal_tile(grid)
+    tile = cal_tile(grid, bound)
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -93,7 +95,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
                 result['is_plus_path(x,y)'].append(success)
                 result['plus(x,y)'].append(plus_color if success else NULL_COLOR)
             if tile is not None:
-                result['tile(x,y)'].append(get_tile(tile, x, y))
+                result['tile(x,y)'].append(get_tile(tile, x, y, bound))
 
             # global feat_eng
             coord = Coordinate(x, y)
