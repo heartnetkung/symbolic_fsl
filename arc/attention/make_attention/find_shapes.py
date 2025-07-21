@@ -80,17 +80,20 @@ def _make_syntactic_df(
         for index in indexes:
             mentioned_index.add((sample_id, index))
 
-    extra_features = {'sample_index': [], 'shape_index': []}
     relevant_shapes = []
+    relevant_sample_index, relevant_shape_index = [], []
     for i, shapes in enumerate(all_x_shapes):
         for j, shape in enumerate(shapes):
             if intersect == ((i, j) in mentioned_index):
                 relevant_shapes.append([shape])
-                extra_features['sample_index'].append(i)
-                extra_features['shape_index'].append(j)
+                relevant_sample_index.append(i)
+                relevant_shape_index.append(j)
     if len(relevant_shapes) == 0:
         return None
-    return generate_df(all_shapes=relevant_shapes, extra_features=extra_features)
+    df = generate_df(all_shapes=relevant_shapes)
+    df['sample_index']=relevant_sample_index
+    df['shape_index']=relevant_shape_index
+    return df
 
 
 def _generate_models(df: pd.DataFrame, n_samples: int)->list[MLModel]:
