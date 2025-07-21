@@ -19,3 +19,10 @@ def make_single_shape_df(state: ArcState)->pd.DataFrame:
 
 def deduplicate_all_shapes(all_shapes: list[list[Shape]])->list[list[Shape]]:
     return [list(dict.fromkeys(shapes)) for shapes in all_shapes]
+
+
+def exceed_max_shapes(all_shapes: list[list[Shape]])->bool:
+    for shapes in all_shapes:
+        if len(shapes) > MAX_SHAPES_PER_GRID:
+            return True
+    return False

@@ -5,6 +5,7 @@ from ...manager.task import ParseGridTask
 from ...algorithm.find_background import make_background_df
 from ...ml import *
 from ...constant import *
+from ..util import exceed_max_shapes
 
 
 MASS_THRESHOLD = 0.4
@@ -28,12 +29,16 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         x_shapes = self._perform(state.x, self.x_mode, x_bg)
         if x_shapes is None:
             return None
+        if exceed_max_shapes(x_shapes):
+            return None
         if not isinstance(state, ArcTrainingState):
             return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                                 x_bg=x_bg, y_bg=y_bg)
 
         y_shapes = self._perform(state.y, self.y_mode, y_bg)
         if y_shapes is None:
+            return None
+        if exceed_max_shapes(y_shapes):
             return None
         return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                             x_bg=x_bg, y_bg=y_bg, y_shapes=y_shapes)
