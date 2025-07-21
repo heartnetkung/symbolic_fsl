@@ -115,6 +115,7 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
                  result: ResultCollection, cache: ModelCache)->None:
     if index == len(path)-1:
         result.append(Trace(prefix, state))
+        logger.info('path reached')
         return
     if Trace.cal_cost(prefix) > result.acceptable_cost:
         return
