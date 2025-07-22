@@ -45,7 +45,8 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
                            ColumnModel('x_top_color')))
             if len(X_train_top_colors) > len(set(X_train_top_colors)):
                 dynamic_mode = mode(X_train_top_colors).mode
-                result.append((ConstantModel(dynamic_mode),
+                if dynamic_mode in x_common_colors:
+                    result.append((ConstantModel(dynamic_mode),
                                ConstantModel(dynamic_mode)))
 
     if ((X_global_top_color in x_common_colors) and
