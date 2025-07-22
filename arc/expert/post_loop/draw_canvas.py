@@ -57,11 +57,10 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
 
 def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     assert len(grids) == len(all_shapes)
-    result = {'grid_width': [grid.width for grid in grids],
-              'grid_height': [grid.height for grid in grids],
-              'bound_width(shapes)': [bound_width(shapes) for shapes in all_shapes],
-              'bound_height(shapes)': [bound_height(shapes) for shapes in all_shapes]}
-    return pd.DataFrame(result)
+    df = generate_df(grids)
+    df['bound_width(shapes)'] = [bound_width(shapes) for shapes in all_shapes]
+    df['bound_height(shapes)'] = [bound_height(shapes) for shapes in all_shapes]
+    return df
 
 
 def _create_sort_df(grids: list[Grid],

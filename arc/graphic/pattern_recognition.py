@@ -4,27 +4,6 @@ from typing import Optional
 from ..constant import NULL_COLOR
 
 
-def find_separators(grid: Grid, color: int = NULL_COLOR)->tuple[
-        list[int], list[int], list[int], list[int]]:
-    rows, row_colors = _find_row_separator(grid, color)
-    cols, col_colors = _find_row_separator(grid.transpose(), color)
-    return rows, cols, row_colors, col_colors
-
-
-def _find_row_separator(grid: Grid, color: int = NULL_COLOR
-                        )->tuple[list[int], list[int]]:
-    rows, row_colors = [], []
-    for row in range(grid.height):
-        unique_el = {grid.data[row][i] for i in range(grid.width)}
-        first_el = unique_el.pop()
-        if len(unique_el) != 0 or first_el == NULL_COLOR:
-            continue
-        if color == NULL_COLOR or first_el == color:
-            rows.append(row)
-            row_colors.append(first_el)
-    return rows+[grid.height], row_colors
-
-
 def find_tiles(grid: Grid)->Optional[Grid]:
     template1 = _find_row_tiles(grid)
     if template1 is None:
