@@ -21,7 +21,8 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
     label = create_label(atn.sample_index, atn.x_index,
                          possible_sample_index, possible_x_index, has_syntactic)
     models = train_model(df, label, params)
-    return [AttentionModel(model, atn.x_cluster_info, atn.extra_shapes,
+    n_cols = len(atn.x_index[0])
+    return [AttentionModel(model, n_cols, atn.x_cluster_info, atn.extra_shapes,
                            atn.syntactic_model) for model in models]
 
 
@@ -46,7 +47,11 @@ def to_runtimes(
             result_sample_index.append(sample_index)
             result_x_index.append(index)
 
+    # need at least 1 row
     if len(result_sample_index) == 0:
+        return None
+    # the number of columns need to be the same
+    if model.n_columns != len(result_x_index[0]):
         return None
     return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes,
                               model.model, model.syntactic_model)

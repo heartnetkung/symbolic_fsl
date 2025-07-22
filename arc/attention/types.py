@@ -95,6 +95,7 @@ Attention = Union[TrainingAttention, InferenceAttention]
 class AttentionModel:
     '''Extra information required to infer new attentions.'''
     model: MLModel
+    n_columns: int
     x_cluster_info: list[int]
     extra_shapes: list[Shape]
     syntactic_model: Optional[MLModel] = None
