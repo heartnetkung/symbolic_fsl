@@ -70,7 +70,8 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 
     ppdt_models = make_models(TrainingData(X2, y, params), type)
     assoc_models = make_association(X, y, params)
-    tree_models = [MatchColumn(model, X2) for model in make_tree(X2, y, params)]
+    tree_models = [MatchColumn(FeatEng(model), X2)
+                   for model in make_tree(feat_eng(X2), y, params)]
     return ppdt_models+assoc_models+tree_models
 
 
@@ -99,6 +100,17 @@ def model_selection(*models: list[MLModel])->list[tuple[MLModel, ...]]:
 # ============================
 # Column manipulation
 # ============================
+
+
+class FeatEng(MLModel):
+    def __init__(self, inner_model: MLModel)->None:
+        self.inner_model = inner_model
+
+    def predict(self, X: pd.DataFrame)->np.ndarray:
+        return self.inner_model.predict(feat_eng(X))
+
+    def _to_code(self) -> str:
+        return self.inner_model.code
 
 
 class MatchColumn(MLModel):
@@ -159,3 +171,10 @@ def _drop_repeated(df: pd.DataFrame)->pd.DataFrame:
         if np.array_equal(df[col1], df[col2]):
             to_drop.add(col2)
     return df.drop(list(to_drop), axis=1)
+
+
+def feat_eng(df: pd.DataFrame)->pd.DataFrame:
+    result = {}
+    for col1, col2 in combinations(df.columns, 2):
+        result[f'({col1} == {col2})'] = np.where(df[col1] == df[col2], 1, 0)
+    return pd.concat([df, pd.DataFrame(result)], axis=1, ignore_index=True)
