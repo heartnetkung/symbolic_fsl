@@ -92,6 +92,21 @@ class ShapeStatsColumns(ColumnMaker):
             result['bound_x(shapes)'].append(bound_x(shapes))
             result['bound_y(shapes)'].append(bound_y(shapes))
 
+        if len(all_shapes[0]) < 2:
+            return
+
+        result['inner_bound_width(shapes)'] = []
+        result['inner_bound_height(shapes)'] = []
+        result['inner_bound_x(shapes)'] = []
+        result['inner_bound_y(shapes)'] = []
+
+        for shapes in all_shapes:
+            inner_bound = find_inner_bound(shapes[0], shapes[1])
+            result['inner_bound_x(shapes)'].append(inner_bound.x)
+            result['inner_bound_y(shapes)'].append(inner_bound.y)
+            result['inner_bound_width(shapes)'].append(inner_bound.width)
+            result['inner_bound_height(shapes)'].append(inner_bound.height)
+
 
 def to_rank(values: list[int])->list[int]:
     lookup = {}

@@ -2,7 +2,7 @@ from .util import valid_color, make_grid, geom_transform_all, Deduplicator
 from .types import Grid, Coordinate, FloatCoordinate, range_intersect, find_separators
 from .shape import (Shape, NULL_SHAPE, Unknown, Diagonal, HollowRectangle,
                     FilledRectangle)
-from .arr_methods import (bound_width, bound_height, bound_x,
+from .arr_methods import (bound_width, bound_height, bound_x, find_inner_bound,
                           bound_y, total_mass, top_mass, duplicates)
 from .grid_methods import (from_grid, list_objects, list_sparse_objects,
                            list_cells, parse_noise, partition, trim)

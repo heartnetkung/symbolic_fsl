@@ -1,8 +1,9 @@
-from .shape import Shape
+from .shape import Shape, FilledRectangle
 from copy import deepcopy
 from .util import *
 import numpy as np
 from ..constant import NULL_COLOR
+from .types import range_intersect
 
 
 def bound_width(shapes: list[Shape])->int:
@@ -59,3 +60,20 @@ def duplicates(prototypes: list[Shape], new_coords: list[tuple[int, int]])->list
             new_shape.y += y
             result.append(new_shape)
     return result
+
+
+def find_inner_bound(a: Shape, b: Shape)->FilledRectangle:
+    inner_x = _find_inner_bound_1d(range(a.x, a.x+a.width), range(b.x, b.x+b.width))
+    inner_y = _find_inner_bound_1d(range(a.y, a.y+a.height), range(b.y, b.y+b.height))
+    return FilledRectangle(inner_x.start, inner_y.start,
+                           inner_x.stop-inner_x.start, inner_y.stop-inner_y.start, 0)
+
+
+def _find_inner_bound_1d(a: range, b: range)->range:
+    intersect_ = range_intersect(a, b)
+    if len(intersect_) > 0:
+        return intersect_
+    if a.start < b.start:
+        return range(a.stop, b.start)
+    else:
+        return range(b.stop, a.start)
