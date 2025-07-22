@@ -70,7 +70,8 @@ class EditColumns(ColumnMaker):
 
         for shapes in all_shapes:
             masses = [shape.mass for shape in shapes]
-            result['mass_rank'].append(to_rank(masses)[edit_index])
+            if edit_index < len(masses):
+                result['mass_rank'].append(to_rank(masses)[edit_index])
 
 
 class ShapeStatsColumns(ColumnMaker):
