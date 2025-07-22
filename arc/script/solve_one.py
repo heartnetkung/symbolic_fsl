@@ -12,7 +12,8 @@ from ..expert.recruiter import ArcRecruiter
 
 
 def init(log_level: int)->GlobalParams:
-    warnings.filterwarnings("ignore", category=ConvergenceWarning)
+    warnings.simplefilter("ignore", category=ConvergenceWarning)
+    warnings.simplefilter("ignore", category=UserWarning)
     logging.basicConfig(stream=sys.stdout, format='%(message)s')
     logging.getLogger('arc.base.plan').setLevel(log_level)
     logging.getLogger('arc.base.reason').setLevel(log_level)
