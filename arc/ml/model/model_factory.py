@@ -61,7 +61,8 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         return exact_result
 
     # preprocess
-    X2 = _drop_redundants(X)
+    X = _drop_constants(X)
+    X2 = _drop_repeated(X)
     if X2.empty:
         return []
 
@@ -69,7 +70,7 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 
     ppdt_models = make_models(TrainingData(X2, y, params), type)
     assoc_models = make_association(X, y, params)
-    tree_models = make_tree(X, y, params)
+    tree_models = [MatchColumn(model, X2) for model in make_tree(X2, y, params)]
     return ppdt_models+assoc_models+tree_models
 
 
@@ -139,6 +140,22 @@ def _drop_redundants(df: pd.DataFrame)->pd.DataFrame:
 
     leftover_cols = [col for col in df.columns if col not in to_drop]
     for col1, col2 in combinations(leftover_cols, 2):
+        if np.array_equal(df[col1], df[col2]):
+            to_drop.add(col2)
+    return df.drop(list(to_drop), axis=1)
+
+
+def _drop_constants(df: pd.DataFrame)->pd.DataFrame:
+    to_drop = set()
+    for col in df.columns:
+        if len(set(df[col])) == 1:
+            to_drop.add(col)
+    return df.drop(list(to_drop), axis=1)
+
+
+def _drop_repeated(df: pd.DataFrame)->pd.DataFrame:
+    to_drop = set()
+    for col1, col2 in combinations(df.columns, 2):
         if np.array_equal(df[col1], df[col2]):
             to_drop.add(col2)
     return df.drop(list(to_drop), axis=1)

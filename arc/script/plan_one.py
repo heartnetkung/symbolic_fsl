@@ -17,6 +17,7 @@ MAX_PLAN_ITR = 5000
 
 def init(log_level: int)->GlobalParams:
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
     logging.basicConfig(stream=sys.stdout, format='%(message)s')
     logging.getLogger('arc.base.plan').setLevel(log_level)
     logging.getLogger('arc.base.reason').setLevel(log_level)
