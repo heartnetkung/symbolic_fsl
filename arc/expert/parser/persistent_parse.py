@@ -5,7 +5,7 @@ from enum import Enum
 from copy import deepcopy
 from ...algorithm.find_background import make_background_df
 from ...ml import *
-from ..util import exceed_max_shapes
+from ..util import filter_overwhelming_shapes
 
 
 class PersistentParseMode(Enum):
@@ -30,15 +30,13 @@ class PersistentParse(ModelFreeArcAction[ParseGridTask]):
         y_bg = self.y_bg_model.predict_int(df)
 
         x_shapes = self._parse(state.x, self.x_mode, x_bg)
-        if exceed_max_shapes(x_shapes):
-            return None
+        x_shapes = filter_overwhelming_shapes(x_shapes)
         if not isinstance(state, ArcTrainingState):
             return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                                 x_bg=x_bg, y_bg=y_bg)
 
         y_shapes = self._parse(state.y, self.y_mode, y_bg)
-        if exceed_max_shapes(y_shapes):
-            return None
+        y_shapes = filter_overwhelming_shapes(y_shapes)
         return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                             x_bg=x_bg, y_bg=y_bg, y_shapes=y_shapes)
 

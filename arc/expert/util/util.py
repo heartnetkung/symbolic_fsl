@@ -21,8 +21,14 @@ def deduplicate_all_shapes(all_shapes: list[list[Shape]])->list[list[Shape]]:
     return [list(dict.fromkeys(shapes)) for shapes in all_shapes]
 
 
-def exceed_max_shapes(all_shapes: list[list[Shape]])->bool:
+def filter_overwhelming_shapes(all_shapes: list[list[Shape]])-> list[list[Shape]]:
+    result = []
     for shapes in all_shapes:
         if len(shapes) > MAX_SHAPES_PER_GRID:
-            return True
-    return False
+            filtered_shapes = [shape for shape in shapes if shape.mass > 1]
+            if len(filtered_shapes) > MAX_SHAPES_PER_GRID:
+                filtered_shapes = [shape for shape in shapes if shape.mass > 2]
+            result.append(filtered_shapes)
+        else:
+            result.append(shapes)
+    return result
