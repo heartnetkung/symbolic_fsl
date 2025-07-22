@@ -46,8 +46,11 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
 
         assert isinstance(self.layer_model, MemorizedModel)
         df = _create_sort_df(state.y, state.y_shapes)
-        models = classifier_factory(
-            df, self.layer_model.result, self.params, 'draw_canvas.l')
+        if df is not None:
+            models = classifier_factory(
+                df, self.layer_model.result, self.params, 'draw_canvas.l')
+        else:
+            models = [ConstantModel(1)]
         return [DrawCanvas(self.width_model, self.height_model, self.params, model)
                 for model in models]
 
@@ -61,7 +64,8 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     return pd.DataFrame(result)
 
 
-def _create_sort_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
+def _create_sort_df(grids: list[Grid],
+                    all_shapes: list[list[Shape]])->Optional[pd.DataFrame]:
     grids2, all_shapes2 = [], []
     for grid, shapes in zip(grids, all_shapes):
         for shape1, shape2 in permutations(shapes, 2):
@@ -73,6 +77,9 @@ def _create_sort_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFr
             grids2.append(grid)
             all_shapes2.append([shape1, shape2])
             all_shapes2.append([shape2, shape1])
+
+    if len(grids2) == 0:
+        return None
     return generate_df(grids2, all_shapes2)
 
 
