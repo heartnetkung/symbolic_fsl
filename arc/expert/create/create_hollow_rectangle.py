@@ -50,12 +50,12 @@ class CreateHollowRectangle(ModelBasedArcAction[TrainingAttentionTask, Attention
         assert isinstance(self.s_model, MemorizedModel)
 
         df = default_make_df(state, task.atn)
-        x_models = regressor_factory(df, self.x_model.result, self.params, 'rect.x')
-        y_models = regressor_factory(df, self.y_model.result, self.params, 'rect.y')
-        w_models = regressor_factory(df, self.w_model.result, self.params, 'rect.w')
-        h_models = regressor_factory(df, self.h_model.result, self.params, 'rect.h')
-        c_models = regressor_factory(df, self.c_model.result, self.params, 'rect.c')
-        s_models = regressor_factory(df, self.s_model.result, self.params, 'rect.s')
+        x_models = regressor_factory(df, self.x_model.result, self.params, 'hrect.x')
+        y_models = regressor_factory(df, self.y_model.result, self.params, 'hrect.y')
+        w_models = regressor_factory(df, self.w_model.result, self.params, 'hrect.w')
+        h_models = regressor_factory(df, self.h_model.result, self.params, 'hrect.h')
+        c_models = regressor_factory(df, self.c_model.result, self.params, 'hrect.c')
+        s_models = regressor_factory(df, self.s_model.result, self.params, 'hrect.s')
         return [CreateHollowRectangle(
             x_model, y_model, w_model, h_model, c_model, s_model, self.params)
             for x_model, y_model, w_model, h_model, c_model, s_model in model_selection(

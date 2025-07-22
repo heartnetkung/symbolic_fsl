@@ -46,11 +46,11 @@ class CreateDiagonal(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.o_model, MemorizedModel)
 
         df = default_make_df(state, task.atn)
-        x_models = regressor_factory(df, self.x_model.result, self.params, 'rect.x')
-        y_models = regressor_factory(df, self.y_model.result, self.params, 'rect.y')
-        w_models = regressor_factory(df, self.w_model.result, self.params, 'rect.w')
-        c_models = regressor_factory(df, self.c_model.result, self.params, 'rect.c')
-        o_models = classifier_factory(df, self.o_model.result, self.params, 'rect.o')
+        x_models = regressor_factory(df, self.x_model.result, self.params, 'diag.x')
+        y_models = regressor_factory(df, self.y_model.result, self.params, 'diag.y')
+        w_models = regressor_factory(df, self.w_model.result, self.params, 'diag.w')
+        c_models = regressor_factory(df, self.c_model.result, self.params, 'diag.c')
+        o_models = classifier_factory(df, self.o_model.result, self.params, 'diag.o')
         return [CreateDiagonal(
             x_model, y_model, w_model, c_model, o_model, self.params)
             for x_model, y_model, w_model, c_model, o_model in model_selection(
