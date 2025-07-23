@@ -57,7 +57,7 @@ class Shape(RuntimeObject):
 
     @cached_property
     def shape_value(self)->int:
-        return hash(repr(self.grid.normalize_color()))
+        return hash(repr(self._grid.normalize_color()))
 
     def draw(self, canvas: Grid, include_xy=True)->None:
         '''Draw this object on canvas'''
