@@ -7,7 +7,7 @@ from .fitb_feat_eng import *
 
 COLS = {
     # misc
-    'grid_width', 'grid_height', 'x', 'y',
+    'grid_width', 'grid_height', 'x', 'y','x%2','y%2',
     # nearby pixels
     'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)', 'cell(x,y+1)',
     'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
@@ -60,6 +60,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             result['grid_height'].append(canvas_height)
             result['x'].append(x)
             result['y'].append(y)
+            result['x%2'].append(x%2)
+            result['y%2'].append(y%2)
 
             # nearby pixels
             result['cell(x-1,y)'].append(grid.safe_access(x-1, y))
