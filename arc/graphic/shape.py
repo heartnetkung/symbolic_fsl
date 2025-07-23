@@ -55,6 +55,10 @@ class Shape(RuntimeObject):
     def shape_type(self)->int:
         return ShapeType.shape.value
 
+    @cached_property
+    def shape_value(self)->int:
+        return hash(repr(self.grid.normalize_color()))
+
     def draw(self, canvas: Grid, include_xy=True)->None:
         '''Draw this object on canvas'''
         grid_height, grid_width = canvas.height, canvas.width
