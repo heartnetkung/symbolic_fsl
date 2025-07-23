@@ -6,6 +6,15 @@ from .util import *
 from .types import Grid
 from functools import cached_property
 from ..constant import NULL_COLOR
+from enum import Enum
+
+
+class ShapeType(Enum):
+    filled_rectangle = 0
+    hollow_rectangle = 1
+    diagonal = 2
+    unknown = 3
+    shape = 4  # should not be used
 
 
 class Shape(RuntimeObject):
@@ -41,6 +50,10 @@ class Shape(RuntimeObject):
         result = make_grid(self.width, self.height)
         self.draw(result, False)
         return result
+
+    @property
+    def shape_type(self)->int:
+        return ShapeType.shape.value
 
     def draw(self, canvas: Grid, include_xy=True)->None:
         '''Draw this object on canvas'''
@@ -97,6 +110,10 @@ class FilledRectangle(Shape):
         del result['color']
         return result
 
+    @property
+    def shape_type(self)->int:
+        return ShapeType.filled_rectangle.value
+
     @staticmethod
     def is_valid(x: int, y: int, grid: Grid)->bool:
         grid_width, grid_height = grid.width, grid.height
@@ -140,6 +157,10 @@ class HollowRectangle(Shape):
         result = super().to_input_var()
         del result['color']
         return result
+
+    @property
+    def shape_type(self)->int:
+        return ShapeType.hollow_rectangle.value
 
     @staticmethod
     def _get_stroke(grid: Grid)->tuple[int, int]:
@@ -206,6 +227,10 @@ class Diagonal(Shape):
             return self.color
         return NULL_COLOR
 
+    @property
+    def shape_type(self)->int:
+        return ShapeType.diagonal.value
+
     @staticmethod
     def is_valid(x: int, y: int, grid: Grid)->bool:
         if grid.width != grid.height:
@@ -271,6 +296,10 @@ class Unknown(Shape):
 
     def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
         return self.grid.data[i][j]
+
+    @property
+    def shape_type(self)->int:
+        return ShapeType.unknown.value
 
     @property
     def _grid(self)->Grid:  # type:ignore
