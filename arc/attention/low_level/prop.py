@@ -5,6 +5,8 @@ from typing import Any
 def list_properties(a: Shape)->dict[str, Any]:
     '''List commonly useful property in a shape.'''
     result = a.to_input_var()
+    del result['shape_type']
+    del result['shape_value']
     result['center'] = (a.x+a.width/2, a.y+a.height/2)
     result['colors'] = list_shape_colors(a)
     result |= list_shape_representations(a)

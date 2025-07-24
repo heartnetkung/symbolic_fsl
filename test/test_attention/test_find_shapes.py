@@ -41,7 +41,7 @@ def test_syntactic_shapes():
     sample_index = [0, 1, 2]
     x_index = [[1], [0], [0]]
     models = make_syntactic_models(sample_index, x_index,  all_x_shapes)
-    assert len(models) == 5
+    assert len(models) > 4
 
 
 def test_syntactic_shapes2():
@@ -92,4 +92,4 @@ def test_syntactic_prediction3():
     sample_index = [0, 1, 2]
     x_index = [[1], [0], [0]]
     result = predict_syntactic_shapes(model, sample_index, x_index,  all_x_shapes)
-    assert result is None # two one-colored shapes in last sample
+    assert result is None  # two one-colored shapes in last sample

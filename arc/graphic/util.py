@@ -6,6 +6,8 @@ from copy import deepcopy
 from .types import Grid
 from ..constant import NULL_COLOR
 
+BANNED_PROP = {'mass', 'top_color', 'shape_type', 'shape_value'}
+
 
 class RuntimeObject(ABC):
     '''An interface for working with DAG'''
@@ -33,7 +35,8 @@ class RuntimeObject(ABC):
 
     def __repr__(self)->str:
         constructor_vars = [v for k, v in self.__dict__.items()
-                            if k[0] != '_' and k not in ('mass', 'top_color')]
+                            if k[0] != '_' and k not in BANNED_PROP]
+        print(self.__dict__.items())
         params = [repr(value) for value in constructor_vars]
         return '\n{}({})'.format(self.__class__.__name__, ','.join(params))
 

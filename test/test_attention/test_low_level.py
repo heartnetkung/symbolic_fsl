@@ -18,15 +18,15 @@ def test_gen_prop():
     all_shapes = [
         [FilledRectangle(1, 1, 1, 1, 1), FilledRectangle(2, 2, 2, 2, 2)],
         [FilledRectangle(3, 3, 3, 3, 1)]]
-    expect = {'sample_id': [0, 0, 1, 1],
-              'index': [0, 0, 0, 0],
+    expect = {'sample_id': [0, 0,  1, 1],
+              'index': [0, 0,  0, 0],
               'prop': ['top_color: 1', 'colors: {1}', 'top_color: 1', 'colors: {1}']}
     result = gen_prop(all_shapes)
     assert pd.DataFrame(expect).equals(result)
 
     all_shapes2 = [
         [FilledRectangle(1, 1, 1, 1, 1), FilledRectangle(2, 2, 2, 2, 2)],
-        [FilledRectangle(3, 3, 3, 3, 3)]]
+        [Unknown(3, 3, Grid([[0, 1, 2], [3, 4, 5], [6, 7, 8]]))]]
     result2 = gen_prop(all_shapes2)
     assert result2.empty
 

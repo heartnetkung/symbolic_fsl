@@ -5,7 +5,7 @@ from typing import Any, Optional
 from .util import *
 from .types import Grid
 from functools import cached_property
-from ..constant import NULL_COLOR
+from ..constant import NULL_COLOR, MISSING_VALUE
 from enum import Enum
 
 
@@ -57,7 +57,7 @@ class Shape(RuntimeObject):
 
     @cached_property
     def shape_value(self)->int:
-        return hash(repr(self._grid.normalize_color()))
+        return MISSING_VALUE
 
     def draw(self, canvas: Grid, include_xy=True)->None:
         '''Draw this object on canvas'''
@@ -304,6 +304,10 @@ class Unknown(Shape):
     @property
     def shape_type(self)->int:
         return ShapeType.unknown.value
+
+    @property
+    def shape_value(self)->int:
+        return hash(repr(self.grid.normalize_color()))
 
     @property
     def _grid(self)->Grid:  # type:ignore
