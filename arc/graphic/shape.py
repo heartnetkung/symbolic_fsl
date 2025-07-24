@@ -306,7 +306,7 @@ class Unknown(Shape):
         return ShapeType.unknown.value
 
     @property
-    def shape_value(self)->int:
+    def shape_value(self)->int:  # type:ignore
         return hash(repr(self.grid.normalize_color()))
 
     @property
