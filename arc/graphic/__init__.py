@@ -3,7 +3,7 @@ from .types import Grid, Coordinate, FloatCoordinate, range_intersect, find_sepa
 from .shape import (Shape, NULL_SHAPE, Unknown, Diagonal, HollowRectangle,
                     FilledRectangle)
 from .arr_methods import (bound_width, bound_height, bound_x, find_inner_bound,
-                          bound_y, total_mass, top_mass, duplicates)
+                          bound_y, total_mass, top_mass, duplicates, draw_canvas)
 from .grid_methods import (from_grid, list_objects, list_sparse_objects,
                            list_cells, parse_noise, partition, trim)
 from .geom import intersect, union, subtract

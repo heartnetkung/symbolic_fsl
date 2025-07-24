@@ -75,9 +75,7 @@ class NearbyGraph:
 
 
 def _merge_shapes(shapes: set[Shape], grid: Grid)->Shape:
-    canvas = make_grid(grid.width, grid.height)
-    for shape in shapes:
-        shape.draw(canvas)
+    canvas = draw_canvas(grid.width, grid.height, list(shapes))
     x, y, shape_grid = trim(np.array(canvas.data))
     return Unknown(x, y, shape_grid)
 

@@ -6,6 +6,14 @@ from ..constant import NULL_COLOR
 from .types import range_intersect
 
 
+def draw_canvas(width: int, height: int, shapes: list[Shape],
+                background=NULL_COLOR)->Grid:
+    canvas = make_grid(width, height, background)
+    for shape in shapes:
+        shape.draw(canvas)
+    return canvas
+
+
 def bound_width(shapes: list[Shape])->int:
     if len(shapes) == 0:
         return -1

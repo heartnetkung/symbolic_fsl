@@ -10,7 +10,7 @@ def make_training_nav_df(
         state: ArcTrainingState, task: TrainingDrawLineTask)->Optional[pd.DataFrame]:
     assert state.out_shapes is not None
 
-    updated_x_grids = [_draw_x_grid(grid, shapes).data
+    updated_x_grids = [draw_canvas(grid.width, grid.height, shapes).data
                        for grid, shapes in zip(state.x, state.out_shapes)]
     result = {'color': [], 'next_cell': [], 'next_2_cell': [],
               'left_cell': [], 'left_2_cell': [], 'right_cell': [], 'right_2_cell': []}
@@ -41,13 +41,6 @@ def _handle_line(result: dict[str, list], grid: Grid, color: int, init_dir: Dire
 
         current_coord = current_dir.proceed(current_coord)
         grid.safe_assign_c(current_coord, color)
-
-
-def _draw_x_grid(grid: Grid, shapes: list[Shape])->Grid:
-    canvas = make_grid(grid.width, grid.height)
-    for shape in shapes:
-        shape.draw(canvas)
-    return canvas
 
 
 def generate_step_df(

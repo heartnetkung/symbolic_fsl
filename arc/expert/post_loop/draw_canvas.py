@@ -32,10 +32,7 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
 
         for width, height, background, shapes in zip(
                 widths, heights, state.y_bg, out_shapes):
-            canvas = make_grid(width, height, background)
-            for shape in shapes:
-                shape.draw(canvas)
-            canvases.append(canvas)
+            canvases.append(draw_canvas(width, height, shapes, background))
         return state.update(out=canvases)
 
     def train_models(self, state: ArcTrainingState,
