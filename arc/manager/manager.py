@@ -5,11 +5,18 @@ from .task import *
 import logging
 from ..attention import *
 from .reparse.reparse_creator import *
+from .crop_manager import CropManager
 
 
 class ArcManager(Manager[ArcTrainingState]):
+    '''
+    Manager is responsible for deciding what to do in each planning iteration.
+    Do not reuse manager across different problems
+    '''
+
     def __init__(self, params: GlobalParams):
         self.params = params
+        self.crop_manager = CropManager()
 
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
@@ -36,7 +43,8 @@ class ArcManager(Manager[ArcTrainingState]):
 
         attentions = self._make_attention_task(state)
         draw_lines = _to_task_states(state, make_line_tasks(state, self.params))
-        return attentions+draw_lines
+        crop_tasks = self.crop_manager.decide(state)
+        return attentions+draw_lines+crop_tasks
 
     def _make_attention_task(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:

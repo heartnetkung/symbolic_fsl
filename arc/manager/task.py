@@ -14,6 +14,12 @@ class ParseGridTask(ModelFreeTask):
 
 
 @dataclass(frozen=True)
+class CropTask(ModelFreeTask):
+    # if true crop from state.out_shapes else state.x
+    crop_from_out_shapes: bool
+
+
+@dataclass(frozen=True)
 class CleanUpTask(ModelFreeTask):
     pass
 
