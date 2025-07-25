@@ -284,10 +284,6 @@ class Grid:
         return Grid([[color if cell == NULL_COLOR else NULL_COLOR for cell in row]
                      for row in self.data])
 
-    @cached_property
-    def separators(self)->tuple[list[int], list[int], list[int], list[int]]:
-        return find_separators(self)
-
 
 @dataclass(frozen=True)
 class Coordinate:

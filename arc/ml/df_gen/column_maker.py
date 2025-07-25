@@ -17,33 +17,6 @@ class ColumnMaker(ABC):
         pass
 
 
-class GridColumns(ColumnMaker):
-    def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
-            all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
-        if grids is None:
-            return
-
-        result['grid_width'] = []
-        result['grid_height'] = []
-        result['grid_top_color'] = []
-        result['grid_second_top_color'] = []
-        result['grid_least_top_color'] = []
-        result['grid_partition_cols'] = []
-        result['grid_partition_rows'] = []
-
-        for grid in grids:
-            result['grid_width'].append(grid.width)
-            result['grid_height'].append(grid.height)
-            result['grid_top_color'].append(grid.get_top_color())
-            result['grid_second_top_color'].append(grid.get_second_top_color())
-            result['grid_least_top_color'].append(grid.get_least_color())
-
-            rows, cols, _, _ = grid.separators
-            result['grid_partition_cols'].append(len(cols))
-            result['grid_partition_rows'].append(len(rows))
-
-
 class ShapeColumns(ColumnMaker):
     def append_all(
             self, result: dict[str, list[int]], grids: Optional[list[Grid]],
