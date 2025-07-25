@@ -15,6 +15,7 @@ class ColorizeExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
     def solve_problem(self, state: ArcTrainingState,
                       task: TrainingAttentionTask)->list[Action]:
+
         y_shapes = get_y_shapes(state, task.atn)
         label = extract_label(y_shapes)
         if label is None:
@@ -61,8 +62,8 @@ def _is_colorless_subshapes(x_shapes: list[Shape], y_shapes: list[Shape])->bool:
 
 
 def _is_colorless_subshape(x_shape: Shape, y_shape: Shape)->bool:
-    if 'colorless_subshape' in find_subshape(x_shape, y_shape):
+    if 'colorless_subshape' in find_subshape(x_shape, y_shape, True):
         return True
-    if 'colorless_subshape' in find_subshape(y_shape, x_shape):
+    if 'colorless_subshape' in find_subshape(y_shape, x_shape, True):
         return True
     return False

@@ -5,12 +5,15 @@ APPROX_THRESHOLD = 0.6
 NEARBY_THRESHOLD = 1
 
 
-def find_subshape(smaller: Shape, larger: Shape)->dict[str, int]:
+def find_subshape(smaller: Shape, larger: Shape, allow_exact=False)->dict[str, int]:
     if (larger.width < smaller.width or larger.height < smaller.height):
         return {}
 
     smaller_mass, larger_mass = smaller.mass, larger.mass
-    if smaller_mass >= larger_mass:
+    if smaller_mass > larger_mass:
+        return {}
+
+    if (not allow_exact) and (smaller_mass == larger_mass):
         return {}
 
     result = {}
