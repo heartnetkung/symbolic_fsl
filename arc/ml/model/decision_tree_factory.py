@@ -7,7 +7,7 @@ from ...constant import GlobalParams
 from typing import Callable, Any
 
 UNDEFINED_VALUE = -2
-MIN_LEN = 20 # DT is only for powerful prediction or it will overfit
+DT_MIN_LEN = 20  # DT is only for powerful prediction or it will overfit
 
 
 class DTClassifier(MLModel):
@@ -25,13 +25,16 @@ class DTClassifier(MLModel):
 
 
 def make_tree(X: pd.DataFrame, y: np.ndarray, params: GlobalParams)->list[MLModel]:
-    if len(y) < MIN_LEN:
-        return []
-    model = DecisionTreeClassifier(max_depth=3, random_state=params.seed)
-    model.fit(X, y)
-    if not np.isclose(1, accuracy_score(model.predict(X), y)):
-        return []
-    return [DTClassifier(model, list(X.columns))]
+    len_y = len(y)
+    result = []
+
+    if len_y > DT_MIN_LEN:
+        model = DecisionTreeClassifier(max_depth=3, random_state=params.seed)
+        model.fit(X, y)
+        if np.isclose(1, accuracy_score(model.predict(X), y)):
+            result.append(DTClassifier(model, list(X.columns)))
+
+    return result
 
 
 def _tree2code(model: DecisionTreeClassifier,
