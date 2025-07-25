@@ -28,6 +28,8 @@ def filter_overwhelming_shapes(all_shapes: list[list[Shape]])-> list[list[Shape]
             filtered_shapes = [shape for shape in shapes if shape.mass > 1]
             if len(filtered_shapes) > MAX_SHAPES_PER_GRID:
                 filtered_shapes = [shape for shape in shapes if shape.mass > 2]
+                if len(filtered_shapes) > MAX_SHAPES_PER_GRID:
+                    filtered_shapes = [shape for shape in shapes if shape.mass > 3]
             result.append(filtered_shapes)
         else:
             result.append(shapes)

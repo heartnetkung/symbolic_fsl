@@ -13,7 +13,7 @@ MISSING_VALUE = -5
 NULL_COLOR = -1
 NULL_DF = pd.DataFrame([])
 BOOLS = [False, True]
-MAX_SHAPES_PER_GRID = 50
+MAX_SHAPES_PER_GRID = 30
 
 
 class ParseMode(Enum):
