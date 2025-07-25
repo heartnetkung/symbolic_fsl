@@ -4,7 +4,7 @@ from ...ml import to_rank
 import math
 from typing import Optional
 from collections import Counter
-from scipy.stats import mode
+from ..util import *
 
 # =======================
 # public functions
@@ -78,7 +78,7 @@ def cal_plus(grid: Grid)->int:
     middle_x, middle_y = math.floor(grid.width/2), math.floor(grid.height/2)
     horizontal = [grid.data[middle_y][i] for i in range(w)]
     vertical = [grid.data[i][middle_x] for i in range(h)]
-    return _vote_pixels(horizontal+vertical)
+    return vote_pixels(horizontal+vertical)
 
 
 def cal_cross(grid: Grid)->int:
@@ -87,7 +87,7 @@ def cal_cross(grid: Grid)->int:
 
     top_left = [grid.data[i][i] for i in range(grid.height)]
     top_right = [grid.data[i][i] for i in range(grid.height-1, -1, -1)]
-    return _vote_pixels(top_left+top_right)
+    return vote_pixels(top_left+top_right)
 
 
 def is_plus_path(grid: Grid, x: int, y: int)->int:
@@ -107,27 +107,27 @@ def is_cross_path(grid: Grid, x: int, y: int)->int:
 
 
 def adjacent(grid: Grid, x: int, y: int)->int:
-    return _merge_pixels([
+    return merge_pixels([
         grid.safe_access(x-1, y), grid.safe_access(x, y-1),
         grid.safe_access(x+1, y), grid.safe_access(x, y+1)])
 
 
 def diagonal(grid: Grid, x: int, y: int)->int:
-    return _merge_pixels([
+    return merge_pixels([
         grid.safe_access(x-1, y-1), grid.safe_access(x+1, y-1),
         grid.safe_access(x-1, y+1), grid.safe_access(x+1, y+1)])
 
 
 def mirror(grid: Grid, x: int, y: int)->int:
     neg_x, neg_y = grid.width-x-1, grid.height-y-1
-    return _merge_pixels([
+    return merge_pixels([
         grid.safe_access(neg_x, y), grid.safe_access(x, neg_y),
         grid.safe_access(neg_x, neg_y)])
 
 
 def double_mirror(grid: Grid, x: int, y: int)->int:
     neg_x, neg_y = grid.width-x-1, grid.height-y-1
-    return _merge_pixels([
+    return merge_pixels([
         grid.safe_access(neg_x, y), grid.safe_access(x, neg_y),
         grid.safe_access(neg_x, neg_y), grid.safe_access(y, x),
         grid.safe_access(neg_y, x), grid.safe_access(y, neg_x),
@@ -190,26 +190,3 @@ def _copy_reverse(row: list[int])->list[int]:
     result = row.copy()
     result.reverse()
     return result
-
-
-def _merge_pixels(pixels: list[int])->int:
-    result = NULL_COLOR
-    for pixel in pixels:
-        if not valid_color(pixel):
-            continue
-        if result == NULL_COLOR:  # first encounter
-            result = pixel
-        elif result != pixel:  # multiple colors are unacceptable
-            return MISSING_VALUE
-    return result
-
-
-def _vote_pixels(pixels: list[int])->int:
-    result = []
-    for pixel in pixels:
-        if not valid_color(pixel):
-            continue
-        result.append(pixel)
-    if len(result) == 0:
-        return NULL_COLOR
-    return mode(result).mode
