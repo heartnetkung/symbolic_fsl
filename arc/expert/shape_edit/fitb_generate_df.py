@@ -7,13 +7,14 @@ from .fitb_feat_eng import *
 
 COLS = {
     # misc
-    'grid_width', 'grid_height', 'x', 'y','x%2','y%2',
+    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
     # nearby pixels
     'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)', 'cell(x,y+1)',
     'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
     # transformed pixels
     'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)',
     'cell(y,x)', 'cell(y,-x)', 'cell(-y,x)', 'cell(-y,-x)',
+    'cell(x mod w,y mod h)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'is_plus_path(x,y)', 'is_cross_path(x,y)',
     'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)', 'tile2(x,y)',
@@ -45,6 +46,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
     col_blank_count_rank = cal_col_blank_count_rank(grid)
     plus_color, cross_color = cal_plus(grid), cal_cross(grid)
     tile, tile2 = cal_tile(grid, bound, True), cal_tile(grid, bound, False)
+    bound_w, bound_h = bound[1]-bound[0], bound[3]-bound[2]
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -60,8 +62,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             result['grid_height'].append(canvas_height)
             result['x'].append(x)
             result['y'].append(y)
-            result['x%2'].append(x%2)
-            result['y%2'].append(y%2)
+            result['x%2'].append(x % 2)
+            result['y%2'].append(y % 2)
 
             # nearby pixels
             result['cell(x-1,y)'].append(grid.safe_access(x-1, y))
@@ -83,6 +85,10 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
                 result['cell(y,-x)'].append(grid.safe_access(y, neg_x))
                 result['cell(-y,x)'].append(grid.safe_access(neg_y, x))
                 result['cell(-y,-x)'].append(grid.safe_access(neg_y, neg_x))
+
+            x_mod = ((x-bound[0]) % bound_w)+bound[0]
+            y_mod = ((y-bound[2]) % bound_h)+bound[2]
+            result['cell(x mod w,y mod h)'].append(grid.safe_access(x_mod, y_mod))
 
             # feat_eng
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
