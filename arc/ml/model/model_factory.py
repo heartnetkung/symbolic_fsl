@@ -72,6 +72,10 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     assoc_models = make_association(X, y, params)
     tree_models = [MatchColumn(FeatEng(model), X2)
                    for model in make_tree(feat_eng(X2), y, params)]
+
+    logger.info('ppdt_models: %s', ppdt_models)
+    logger.info('assoc_models: %s', assoc_models)
+    logger.info('tree_models: %s', tree_models)
     return ppdt_models+assoc_models+tree_models
 
 
@@ -177,4 +181,4 @@ def feat_eng(df: pd.DataFrame)->pd.DataFrame:
     result = {}
     for col1, col2 in combinations(df.columns, 2):
         result[f'({col1} == {col2})'] = np.where(df[col1] == df[col2], 1, 0)
-    return pd.concat([df, pd.DataFrame(result)], axis=1, ignore_index=True)
+    return pd.concat([df, pd.DataFrame(result)], axis=1)
