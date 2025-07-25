@@ -17,7 +17,6 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
 
     def perform(self, state: ArcState, task: CropTask)->Optional[ArcState]:
         assert state.out_shapes != None
-
         new_out_shapes = []
         for canvas, x_grid in zip(get_canvases(state, task), state.x):
             df = _make_df([canvas], [x_grid])
@@ -73,7 +72,12 @@ def _make_df(grids: list[Grid], x_grids: list[Grid])->Optional[pd.DataFrame]:
                'cell(x+1,y)': [], 'cell(x,y+1)': [],
                'x_cell(x,y)': [], 'x_cell(x-1,y)': [], 'x_cell(x,y-1)': [],
                'x_cell(x+1,y)': [], 'x_cell(x,y+1)': [],
-               'x': [], 'y': []}
+               'line_n(x,y)': [], 'line_s(x,y)': [],
+               'line_e(x,y)': [], 'line_w(x,y)': [],
+               'line_n2(x,y)': [], 'line_s2(x,y)': [],
+               'line_e2(x,y)': [], 'line_w2(x,y)': [],
+               'x': [], 'y': []
+               }
 
     for grid, x_grid, grid_data_row in zip(grids, x_grids, grid_data_table):
         for x in range(grid.width):
@@ -88,6 +92,27 @@ def _make_df(grids: list[Grid], x_grids: list[Grid])->Optional[pd.DataFrame]:
                 result['x_cell(x,y-1)'].append(x_grid.safe_access(x, y-1))
                 result['x_cell(x+1,y)'].append(x_grid.safe_access(x+1, y))
                 result['x_cell(x,y+1)'].append(x_grid.safe_access(x, y+1))
+                result['line_s(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y),
+                    grid.safe_access(x, y+1), grid.safe_access(x, y+2)]))
+                result['line_e(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y),
+                    grid.safe_access(x+1, y), grid.safe_access(x+2, y)]))
+                result['line_n(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y),
+                    grid.safe_access(x, y-1), grid.safe_access(x, y-2)]))
+                result['line_w(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y),
+                    grid.safe_access(x-1, y), grid.safe_access(x-2, y)]))
+                result['line_s2(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y+1), grid.safe_access(x, y+2)]))
+                result['line_e2(x,y)'].append(merge_pixels([
+                    grid.safe_access(x+1, y), grid.safe_access(x+2, y)]))
+                result['line_n2(x,y)'].append(merge_pixels([
+                    grid.safe_access(x, y-1), grid.safe_access(x, y-2)]))
+                result['line_w2(x,y)'].append(merge_pixels([
+                    grid.safe_access(x-1, y), grid.safe_access(x-2, y)]))
+
                 result['x'].append(x)
                 result['y'].append(y)
                 for k, v in grid_data_row.items():

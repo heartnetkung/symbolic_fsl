@@ -7,7 +7,8 @@ class CropManager(Manager[ArcTrainingState]):
     def __init__(self)->None:
         self.is_size_correct_cache: Optional[bool] = None
         self.is_bg_correct_cache: Optional[bool] = None
-        self.is_initially_croppable_cache: Optional[bool] = None
+        self.has_initially_croppable_return = False
+        self.dedup = Deduplicator()
 
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
@@ -16,12 +17,15 @@ class CropManager(Manager[ArcTrainingState]):
 
         if not self.is_size_correct(state):
             return []
-
+        if not self.is_bg_correct(state):
+            return []
         if self.is_initially_croppable(state):
             return [(CropTask(False), state)]
 
         canvases = [draw_canvas(grid.width, grid.height, shapes, bg)
                     for grid, shapes, bg in zip(state.x, state.out_shapes, state.y_bg)]
+        if self.dedup.has_seen_before(repr(canvases)):
+            return []
         if not _is_crop(canvases, state.y):
             return []
         return [(CropTask(True), state)]
@@ -39,9 +43,10 @@ class CropManager(Manager[ArcTrainingState]):
         return self.is_size_correct_cache
 
     def is_initially_croppable(self, state: ArcTrainingState)->bool:
-        if self.is_initially_croppable_cache is None:
-            self.is_initially_croppable_cache = _is_crop(state.x, state.y)
-        return self.is_initially_croppable_cache
+        if self.has_initially_croppable_return:
+            return False
+        self.has_initially_croppable_return = True
+        return _is_crop(state.x, state.y)
 
 
 def _check_size(x_grids: list[Grid], y_grids: list[Grid])->bool:
