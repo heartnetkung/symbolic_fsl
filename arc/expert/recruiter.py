@@ -26,6 +26,7 @@ class ArcRecruiter(BasicRecruiter):
                 MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
                 FillInTheBlankExpert(params), SplitShapeExpert()],
-            TrainingDrawLineTask: [DrawLineExpert(params)]
+            TrainingDrawLineTask: [DrawLineExpert(params)],
+            CropTask: [CropExpert(params)]
         }
         super().__init__(expert_directory)  # type:ignore

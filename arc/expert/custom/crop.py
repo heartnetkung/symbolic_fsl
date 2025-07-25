@@ -5,6 +5,7 @@ from ...manager.task import *
 import pandas as pd
 from ..util import *
 from copy import deepcopy
+import itertools
 
 
 class Crop(ModelBasedArcAction[CropTask, CropTask]):
@@ -18,8 +19,8 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
         assert state.out_shapes != None
 
         new_out_shapes = []
-        for canvas in self._get_canvases(state, task):
-            df = _make_df([canvas])
+        for canvas, x_grid in zip(get_canvases(state, task), state.x):
+            df = _make_df([canvas], [x_grid])
             if df is None:
                 return None
 
@@ -30,10 +31,12 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
             correct_df = df[corners]
             assert isinstance(correct_df, pd.DataFrame)
             new_grid = _crop(canvas, correct_df, self.include_corner)
-            if new_grid is None:
-                return None
-
             new_out_shapes.append([Unknown(0, 0, new_grid)])
+
+        if isinstance(state, ArcTrainingState):
+            return state.update(out_shapes=new_out_shapes,
+                                # needed because y is reparsed
+                                y_shapes=new_out_shapes)
         return state.update(out_shapes=new_out_shapes)
 
     def train_models(self, state: ArcTrainingState,
@@ -42,32 +45,37 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
         assert state.out_shapes is not None
         assert isinstance(self.corner_finder, StepMemoryModel)
 
-        canvases = self._get_canvases(state, task)
-        df = _make_df(canvases)
+        canvases = get_canvases(state, task)
+        df = _make_df(canvases, state.x)
         if df is None:
             return []
 
-        models = regressor_factory(df, self.corner_finder.result, self.params, 'crop')
-        return [Crop(model, self.params) for model in models]
-
-    def _get_canvases(self, state: ArcState, task: CropTask)->list[Grid]:
-        if task.crop_from_out_shapes:
-            assert state.out_shapes is not None
-            return [draw_canvas(grid.width, grid.height, shapes)
-                    for grid, shapes in zip(state.x, state.out_shapes)]
-        return state.x
+        models = classifier_factory(df, self.corner_finder.result, self.params, 'crop')
+        return [Crop(model, self.params, self.include_corner) for model in models]
 
 
-def _make_df(grids: list[Grid])->Optional[pd.DataFrame]:
+def get_canvases(state: ArcState, task: CropTask)->list[Grid]:
+    if task.crop_from_out_shapes:
+        assert state.out_shapes is not None
+        assert state.x_bg is not None
+        return [draw_canvas(grid.width, grid.height, shapes, bg)
+                for grid, shapes, bg in zip(state.x, state.out_shapes, state.x_bg)]
+    return state.x
+
+
+def _make_df(grids: list[Grid], x_grids: list[Grid])->Optional[pd.DataFrame]:
     if len(grids) == 0:
         return None
 
     grid_data_table = generate_df(grids).to_dict('records')
     result = {col: [] for col in grid_data_table[0]}
     result |= {'cell(x,y)': [], 'cell(x-1,y)': [], 'cell(x,y-1)': [],
-               'cell(x+1,y)': [], 'cell(x,y+1)': [], 'x': [], 'y': []}
+               'cell(x+1,y)': [], 'cell(x,y+1)': [],
+               'x_cell(x,y)': [], 'x_cell(x-1,y)': [], 'x_cell(x,y-1)': [],
+               'x_cell(x+1,y)': [], 'x_cell(x,y+1)': [],
+               'x': [], 'y': []}
 
-    for grid, grid_data_row in zip(grids, grid_data_table):
+    for grid, x_grid, grid_data_row in zip(grids, x_grids, grid_data_table):
         for x in range(grid.width):
             for y in range(grid.height):
                 result['cell(x,y)'].append(grid.safe_access(x, y))
@@ -75,6 +83,11 @@ def _make_df(grids: list[Grid])->Optional[pd.DataFrame]:
                 result['cell(x,y-1)'].append(grid.safe_access(x, y-1))
                 result['cell(x+1,y)'].append(grid.safe_access(x+1, y))
                 result['cell(x,y+1)'].append(grid.safe_access(x, y+1))
+                result['x_cell(x,y)'].append(x_grid.safe_access(x, y))
+                result['x_cell(x-1,y)'].append(x_grid.safe_access(x-1, y))
+                result['x_cell(x,y-1)'].append(x_grid.safe_access(x, y-1))
+                result['x_cell(x+1,y)'].append(x_grid.safe_access(x+1, y))
+                result['x_cell(x,y+1)'].append(x_grid.safe_access(x, y+1))
                 result['x'].append(x)
                 result['y'].append(y)
                 for k, v in grid_data_row.items():
@@ -82,20 +95,14 @@ def _make_df(grids: list[Grid])->Optional[pd.DataFrame]:
     return pd.DataFrame(result)
 
 
-def _crop(canvas: Grid, correct_df: pd.DataFrame, include_corner: bool)->Optional[Grid]:
+def _crop(canvas: Grid, correct_df: pd.DataFrame, include_corner: bool)->Grid:
     x_values, y_values = correct_df['x'], correct_df['y']
     shapes: list[Shape] = [FilledRectangle(x, y, 1, 1, 1)
                            for x, y in zip(x_values, y_values)]
 
+    x, y = bound_x(shapes), bound_y(shapes)
+    w, h = bound_width(shapes), bound_height(shapes)
     if include_corner:
-        x, y = bound_x(shapes), bound_y(shapes)
-        w, h = bound_width(shapes), bound_height(shapes)
         return canvas.crop(x, y, w, h)
-
-    first_shape = shapes[0]
-    second_shapes = [shape for shape in shapes[1:]
-                     if (shape.x != first_shape.x) and (shape.y != first_shape.y)]
-    if len(second_shapes) != 1:
-        return None
-    bound = find_inner_bound(first_shape, second_shapes[0])
-    return canvas.crop(bound.x, bound.y, bound.width, bound.height)
+    else:
+        return canvas.crop(x+1, y+1, w-2, h-2)

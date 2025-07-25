@@ -6,6 +6,7 @@ from .task import CropTask
 class CropManager(Manager[ArcTrainingState]):
     def __init__(self)->None:
         self.is_size_correct_cache: Optional[bool] = None
+        self.is_bg_correct_cache: Optional[bool] = None
         self.is_initially_croppable_cache: Optional[bool] = None
 
     def decide(self, state: ArcTrainingState)->list[
@@ -24,6 +25,13 @@ class CropManager(Manager[ArcTrainingState]):
         if not _is_crop(canvases, state.y):
             return []
         return [(CropTask(True), state)]
+
+    def is_bg_correct(self, state: ArcTrainingState)->bool:
+        if self.is_bg_correct_cache is None:
+            assert state.x_bg is not None
+            assert state.y_bg is not None
+            self.is_bg_correct_cache = (state.x_bg == state.y_bg)
+        return self.is_bg_correct_cache
 
     def is_size_correct(self, state: ArcTrainingState)->bool:
         if self.is_size_correct_cache is None:

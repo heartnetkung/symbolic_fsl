@@ -28,6 +28,7 @@ class GridColumns(ColumnMaker):
         result['grid_height'] = []
         result['grid_top_color'] = []
         result['grid_second_top_color'] = []
+        result['grid_least_top_color'] = []
         result['grid_partition_cols'] = []
         result['grid_partition_rows'] = []
 
@@ -36,6 +37,7 @@ class GridColumns(ColumnMaker):
             result['grid_height'].append(grid.height)
             result['grid_top_color'].append(grid.get_top_color())
             result['grid_second_top_color'].append(grid.get_second_top_color())
+            result['grid_least_top_color'].append(grid.get_least_color())
 
             rows, cols, _, _ = grid.separators
             result['grid_partition_cols'].append(len(cols))
