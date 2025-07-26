@@ -118,4 +118,4 @@ class BoundScanModel(VisualModel):
         return f'BoundScanModel(inner_model={self.inner_model.code})'
 
     def _raw_predict(self, grids: list[Grid], X: pd.DataFrame)->np.ndarray:
-        return self.inner_model.predict(X)
+        return self.inner_model.predict(X).astype(int)

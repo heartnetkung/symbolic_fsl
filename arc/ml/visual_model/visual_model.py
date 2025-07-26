@@ -4,6 +4,7 @@ from functools import cached_property
 import numpy as np
 import pandas as pd
 from ...graphic import Grid
+from ..model.ml_model import MLModel
 
 
 class VisualRepresentation(ABC):
@@ -92,3 +93,16 @@ class DummyRepresentation(VisualRepresentation):
 
     def decode_label(self, grids: list[Grid], label: np.ndarray)->np.ndarray:
         return label
+
+
+class DummyVisualModel(VisualModel):
+    def __init__(self, inner_models: list[MLModel])->None:
+        self.inner_models = inner_models
+        super().__init__(DummyRepresentation())
+
+    def _to_code(self) -> str:
+        return f'DummyVisualModel(inner_models={self.inner_models})'
+
+    def _raw_predict(self, grids: list[Grid], X: pd.DataFrame)->np.ndarray:
+        result = [model.predict(X) for model in self.inner_models]
+        return np.column_stack(result)
