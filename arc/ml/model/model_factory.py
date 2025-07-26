@@ -66,6 +66,8 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if X2.empty:
         return []
 
+    # TODO drop duplicates
+
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
     ppdt_models = make_models(TrainingData(X2, y, params), type)
