@@ -8,8 +8,8 @@ def test_include_corder():
         result = np.where(df['cell(x,y)'] == 8, 1, 0)
         second_cond = np.logical_or(df['cell(x,y-1)'] == 5, df['cell(x,y+1)'] == 5)
         return np.where(second_cond, result, 0)
-    action = Crop(FunctionModel(func), params, True)
 
+    action = Crop(BoundScanModel(FunctionModel(func),BoundScan(True)), params)
     state = ArcTrainingState(
         [x1], [y1], None,
         [0], [0], False, 0,
@@ -26,7 +26,7 @@ def test_exclude_corder():
 
     def func(df):
         return np.where(df['cell(x,y)'] == 4, 1, 0)
-    action = Crop(FunctionModel(func), params, False)
+    action = Crop(BoundScanModel(FunctionModel(func),BoundScan(False)), params)
 
     state = ArcTrainingState(
         [x2], [y2], None,
