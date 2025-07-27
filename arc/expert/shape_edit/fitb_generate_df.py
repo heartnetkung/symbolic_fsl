@@ -5,7 +5,7 @@ from ...graphic import *
 from ...ml import *
 from .fitb_feat_eng import *
 
-COLS = {
+COLS = [
     # misc
     'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
     # nearby pixels
@@ -22,7 +22,7 @@ COLS = {
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)'
-}
+]
 
 
 def generate_pixel_df(grids: list[Grid], shapes: list[Shape],

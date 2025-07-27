@@ -5,7 +5,7 @@ from ...graphic import *
 from ...ml import *
 from .hamming_feat_eng import *
 
-COLS = {
+COLS = [
     # misc
     'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
     # nearby pixels
@@ -15,7 +15,7 @@ COLS = {
     'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)', 'cell(y,x)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'mirror(x,y)', 'tile(x,y)'
-}
+]
 
 
 def generate_pixel_df(grids: list[Grid], shapes: list[Shape])->pd.DataFrame:
