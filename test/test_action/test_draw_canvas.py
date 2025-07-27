@@ -72,7 +72,7 @@ def test_expert():
                [0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0]])]
 
     state = create_test_state(y_shapes, y_shapes)
-    state = state.update(has_layer=True, y=y)
+    state = state.update(has_layer=True, y=y, x=y)
     manager = ArcManager(params)
     task_states = manager.decide(state)
     task, state = task_states[0]

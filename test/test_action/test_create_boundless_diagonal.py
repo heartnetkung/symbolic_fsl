@@ -18,7 +18,7 @@ def test_basic():
             lambda x: np.where(x['shape0.top_color'].to_numpy() < 3, 1, 0)),
         params=params)
 
-    state = create_test_state(x_shapes, y_shapes)
+    state = create_test_state(x_shapes, y_shapes, 10, 10)
     assert state.y[0] == Grid([
         [1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],

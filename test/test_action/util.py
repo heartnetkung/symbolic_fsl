@@ -7,7 +7,6 @@ from ...arc.manager import *
 import numpy as np
 import pandas as pd
 
-DEFAULT_GRID_SIZE = 10
 BG = 0
 
 
@@ -26,17 +25,24 @@ class AttentionExpertProgram(Program[ArcTrainingState]):
 
 
 def create_test_state(x_shapes: list[list[Shape]],
-                      y_shapes: list[list[Shape]])->ArcTrainingState:
-    x, y, bg = _to_canvas(x_shapes), _to_canvas(y_shapes), [BG]*len(x_shapes)
+                      y_shapes: list[list[Shape]],
+                      grid_width: int = -1, grid_height: int = -1)->ArcTrainingState:
+    x = _to_canvas(x_shapes, grid_width, grid_height)
+    y = _to_canvas(y_shapes, grid_width, grid_height)
+    bg = [BG]*len(x_shapes)
     return ArcTrainingState(
         x, y, None, bg, bg, False, 5, x_shapes, y_shapes, x_shapes,
         True, True, True, True)
 
 
-def _to_canvas(all_shapes: list[list[Shape]])->list[Grid]:
+def _to_canvas(all_shapes: list[list[Shape]], width: int, height: int)->list[Grid]:
     result = []
     for shapes in all_shapes:
-        canvas = make_grid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE, BG)
+        if (width == -1) or (height == -1):
+            x, y = bound_x(shapes), bound_y(shapes)
+            width = bound_width(shapes)+x
+            height = bound_height(shapes)+y
+        canvas = make_grid(width, height, BG)
         for shape in shapes:
             shape.draw(canvas)
         result.append(canvas)
