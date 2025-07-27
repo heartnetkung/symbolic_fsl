@@ -152,19 +152,6 @@ def _match_column(X: pd.DataFrame, expected_columns: list[str])->pd.DataFrame:
     return X[expected_columns].copy()  # type:ignore
 
 
-def _drop_redundants(df: pd.DataFrame)->pd.DataFrame:
-    to_drop = set()
-    for col in df.columns:
-        if len(set(df[col])) == 1:
-            to_drop.add(col)
-
-    leftover_cols = [col for col in df.columns if col not in to_drop]
-    for col1, col2 in combinations(leftover_cols, 2):
-        if np.array_equal(df[col1], df[col2]):
-            to_drop.add(col2)
-    return df.drop(list(to_drop), axis=1)
-
-
 def _drop_constants(df: pd.DataFrame)->pd.DataFrame:
     to_drop = set()
     for col in df.columns:
