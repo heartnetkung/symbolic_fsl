@@ -7,13 +7,12 @@ from .hamming_feat_eng import *
 
 COLS = {
     # misc
-    'grid_width', 'grid_height', 'x', 'y',
+    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
     # nearby pixels
     'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)', 'cell(x,y+1)',
     'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)', 'cell(x,y)',
     # transformed pixels
-    'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)',
-    'cell(y,x)', 'cell(y,-x)', 'cell(-y,x)', 'cell(-y,-x)',
+    'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)', 'cell(y,x)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'mirror(x,y)', 'tile(x,y)'
 }
@@ -30,6 +29,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
     properties = shape.to_input_var() | _get_extra_property(shape)
     grid, canvas_width, canvas_height = shape._grid, canvas.width, canvas.height
     tile = cal_tile(grid)
+    h_symmetry = find_h_symmetry(grid)
+    v_symmetry = find_v_symmetry(grid)
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -45,6 +46,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             result['grid_height'].append(canvas_height)
             result['x'].append(x)
             result['y'].append(y)
+            result['x%2'].append(x % 2)
+            result['y%2'].append(y % 2)
 
             # nearby pixels
             result['cell(x-1,y)'].append(grid.safe_access(x-1, y))
@@ -58,15 +61,19 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             result['cell(x,y)'].append(grid.safe_access(x, y))
 
             # transformed pixels
-            neg_x, neg_y = grid.width-x-1, grid.height-y-1
-            result['cell(-x,y)'].append(grid.safe_access(neg_x, y))
-            result['cell(x,-y)'].append(grid.safe_access(x, neg_y))
-            result['cell(-x,-y)'].append(grid.safe_access(neg_x, neg_y))
+            neg_x, neg_y = x, y
+            if h_symmetry is not None:
+                height, offset_y = h_symmetry
+                neg_y = height + (2*offset_y) - y - 1
+            if v_symmetry is not None:
+                width, offset_x = v_symmetry
+                neg_x = width + (2*offset_x) - x - 1
+
+            result['cell(-x,y)'].append(max(-1, grid.safe_access(neg_x, y)))
+            result['cell(x,-y)'].append(max(-1, grid.safe_access(x, neg_y)))
+            result['cell(-x,-y)'].append(max(-1, grid.safe_access(neg_x, neg_y)))
             if grid.width == grid.height:  # transpose requires square matrix
                 result['cell(y,x)'].append(grid.safe_access(y, x))
-                result['cell(y,-x)'].append(grid.safe_access(y, neg_x))
-                result['cell(-y,x)'].append(grid.safe_access(neg_y, x))
-                result['cell(-y,-x)'].append(grid.safe_access(neg_y, neg_x))
 
             # feat_eng
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
