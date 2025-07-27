@@ -67,6 +67,7 @@ class MergeNearby(ModelFreeArcAction[MergeNearbyTask]):
 class NearbyGraph:
     def __init__(self, shapes: list[Shape])->None:
         self.graph = nx.Graph()
+        # TODO enforce same color?
         edges = [(a, b) for a, b in combinations(shapes, 2) if _is_nearby(a, b)]
         self.graph.add_edges_from(edges)
 
