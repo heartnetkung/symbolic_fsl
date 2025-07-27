@@ -107,19 +107,19 @@ class Grid:
     def get_top_color(self)->int:
         color_ranks = self.color_count.most_common(1)
         if len(color_ranks) == 0:
-            return -1
+            return NULL_COLOR
         return color_ranks[0][0]
 
     def get_second_top_color(self)->int:
         color_ranks = self.color_count.most_common(2)
         if len(color_ranks) < 2:
-            return -1
+            return NULL_COLOR
         return color_ranks[1][0]
 
     def get_least_color(self)->int:
         color_ranks = self.color_count.most_common()
         if len(color_ranks) == 0:
-            return -1
+            return NULL_COLOR
         return color_ranks[-1][0]
 
     def print_grid(self)->None:

@@ -81,6 +81,8 @@ def visualize(index: int, choice: DatasetChoice, train_only: bool)->None:
 
     pair_num = 0
     for x_grid, y_grid in all_data:
+        # x_grid.print_grid2()
+        # y_grid.print_grid2()
         draw_grid(pair_num, x_grid, y_grid, color_map, 'Input', 'Output')
         pair_num += 1
     print()
