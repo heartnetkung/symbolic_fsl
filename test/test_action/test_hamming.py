@@ -3,7 +3,6 @@ from .util import *
 
 def test_top_side():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [3, 6, 5, 6, 3, 2, 3, 6, 5, 6, 3, 2, 3, 6, 5, 6, 3, 2, 3, 6, 5],
@@ -54,6 +53,26 @@ def test_top_side():
         ))]]
 
     action = Hamming(0, ColumnModel('tile(x,y)'), params)
+    state = create_test_state(x_shapes, y_shapes)
+    program = AttentionExpertProgram(action, params)
+    result = program.run(state)
+    assert result.out_shapes == y_shapes
+
+
+def test_84():
+    params = GlobalParams()
+    x_shapes = [[FilledRectangle(0, 0, 9, 3, 8)]]
+    y_shapes = [[Unknown(0, 0, Grid([
+        [8, 8, 8, 8, 8, 8, 8, 8, 8],
+        [8, -1, 8, -1, 8, -1, 8, -1, 8],
+        [8, 8, 8, 8, 8, 8, 8, 8, 8]
+    ]))]]
+
+    def func(df):
+        cond = np.logical_and(df['y'] == 1, df['x%2'] == 1)
+        return np.where(cond, -1, 8)
+
+    action = Hamming(0, FunctionModel(func), params)
     state = create_test_state(x_shapes, y_shapes)
     program = AttentionExpertProgram(action, params)
     result = program.run(state)
