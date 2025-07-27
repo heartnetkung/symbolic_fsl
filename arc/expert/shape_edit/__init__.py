@@ -1,2 +1,2 @@
 from .fitb_expert import ExpansionMode, FillInTheBlank, FillInTheBlankExpert
-from .hamming_expert import Hamming
+from .hamming_expert import Hamming, HammingExpert

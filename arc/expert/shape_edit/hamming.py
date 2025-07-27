@@ -39,7 +39,7 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
     def train_models(self, state: ArcTrainingState,
                      task: TrainingAttentionTask)->list[InferenceAction]:
-        assert isinstance(self.pixel_model, MemorizedModel)
+        assert isinstance(self.pixel_model, StepMemoryModel)
 
         x_shapes = get_x_col(state, task.atn, self.feat_index)
         grids = get_grids(state, task.atn)
