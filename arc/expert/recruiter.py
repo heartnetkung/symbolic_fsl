@@ -23,7 +23,7 @@ class ArcRecruiter(BasicRecruiter):
             ReparseSplitTask: [ReparseSplitExpert(params)],
             ReparseStackTask: [ReparseStackExpert(params)],
             TrainingAttentionTask: [
-                MoveExpert(params), IntersectExpert(), ColorizeExpert(params),
+                MoveExpert(params), ApplyLogicExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
                 FillInTheBlankExpert(params), SplitShapeExpert(), HammingExpert(params)],
             TrainingDrawLineTask: [DrawLineExpert(params)],

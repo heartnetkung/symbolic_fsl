@@ -1,4 +1,4 @@
-from .intersect import Intersect
+from .apply_logic import ApplyLogic
 from ...base import *
 from ...graphic import *
 from ...ml import *
@@ -8,7 +8,7 @@ from ..util import *
 from ...attention import list_shape_representations
 
 
-class IntersectExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
+class ApplyLogicExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
     def solve_problem(self, state: ArcTrainingState,
                       task: TrainingAttentionTask)->list[Action]:
         if state.has_layer:
@@ -23,10 +23,11 @@ class IntersectExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
                               get_x_col(state, task.atn, index2))
 
             for color in _find_common_colors(related_shapes):
-                candidate = Intersect([index1, index2], color)
-                produced_shapes = candidate.intersect(state, task.atn)
-                if _check_result(produced_shapes, y_shapes):
-                    result.append(candidate)
+                for type in LogicType:
+                    candidate = ApplyLogic([index1, index2], color, type)
+                    produced_shapes = candidate.apply(state, task.atn)
+                    if _check_result(produced_shapes, y_shapes):
+                        result.append(candidate)
         return result
 
 

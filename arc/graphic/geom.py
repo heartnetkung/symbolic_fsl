@@ -4,12 +4,18 @@ from .util import *
 import numpy as np
 from .grid_methods import *
 from ..constant import NULL_COLOR
+from enum import Enum
 
 
-def intersect(shape1: Shape, shape2: Shape, color: int)->Unknown:
+class LogicType(Enum):
+    and_ = 0
+    xor = 1
+    # or does not exist because it's the "and" of the inverse
+
+
+def apply_logic(shape1: Shape, shape2: Shape, color: int, type: LogicType)->Unknown:
     '''
-    Intersect all shapes using boolean logic with the given color being True,
-    false otherwise.
+    Apply logic operation to all shapes with the given color being true, false otherwise.
 
     Return Unknown with the size of the given grid.
     '''
@@ -17,10 +23,16 @@ def intersect(shape1: Shape, shape2: Shape, color: int)->Unknown:
     height = max(shape1.height, shape2.height)
     canvas1 = _normalize_draw(shape1, width, height)
     canvas2 = _normalize_draw(shape2, width, height)
-    result = np.where(
-        np.logical_and(np.array(canvas1.data) == color,
-                       np.array(canvas2.data) == color),
-        color, NULL_COLOR)
+    bool1 = np.array(canvas1.data) == color
+    bool2 = np.array(canvas2.data) == color
+    if type == LogicType.and_:
+        bool_out = np.logical_and(bool1, bool2)
+    elif type == LogicType.xor:
+        bool_out = np.logical_xor(bool1, bool2)
+    else:
+        raise Exception('unsupported')
+
+    result = np.where(bool_out, color, NULL_COLOR)
     return Unknown(0, 0, Grid(result.tolist()))
 
 
