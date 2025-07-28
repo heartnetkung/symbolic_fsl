@@ -14,6 +14,7 @@ NULL_COLOR = -1
 NULL_DF = pd.DataFrame([])
 BOOLS = [False, True]
 MAX_SHAPES_PER_GRID = 30
+MAX_REPARSE_EDGE = 300
 
 
 class ParseMode(Enum):

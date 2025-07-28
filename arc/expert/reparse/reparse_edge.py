@@ -31,7 +31,7 @@ class ReparseEdge(TrainingOnlyAction[ArcTrainingState, ReparseEdgeTask]):
             graph = task.colorless_supershape
         else:
             graph = task.supershape
-        if graph.number_of_edges() == 0:
+        if graph.number_of_edges() not in range(1, MAX_REPARSE_EDGE):
             return None
 
         new_y_shapes = self._reparse(graph, state.y_shapes, state.y)

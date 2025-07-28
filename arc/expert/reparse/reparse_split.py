@@ -38,7 +38,7 @@ class ReparseSplit(TrainingOnlyAction[ArcTrainingState, ReparseSplitTask]):
             has_layer = True
         else:
             graph = task.subshape
-        if graph.number_of_edges() == 0:
+        if graph.number_of_edges() not in range(1, MAX_REPARSE_EDGE):
             return None
 
         new_shapes = self._reparse(graph, state.y_shapes)
