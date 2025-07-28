@@ -14,6 +14,7 @@ from .decision_tree_factory import make_tree
 
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
+MAX_LINPROG_REG_SAMPLE = 100  # linprog reg is not really scalable and mostly timeout
 
 
 class LabelType(Enum):
@@ -73,7 +74,7 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     max_result = params.ppdt_max_regressor_choices
     result: list[MLModel] = []
 
-    if type == LabelType.regression and len(y) > 1:
+    if type == LabelType.regression and (len(y) in range(2, MAX_LINPROG_REG_SAMPLE)):
         for raw_result in solve_reg(X, y, params, max_result=max_result):
             new_model = PolynomialRegressor(X, raw_result.poly_coef, params)
             if DECIMAL_FILTER.search(new_model.code) is None:
