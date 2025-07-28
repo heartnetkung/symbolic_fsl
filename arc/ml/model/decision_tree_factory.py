@@ -8,6 +8,7 @@ from typing import Callable, Any
 
 UNDEFINED_VALUE = -2
 DT_MIN_LEN = 20  # DT is only for powerful prediction or it will overfit
+MAX_DEPTH = 3
 
 
 class DTClassifier(MLModel):
@@ -24,12 +25,13 @@ class DTClassifier(MLModel):
         return _tree2code(self.model, self.columns)
 
 
-def make_tree(X: pd.DataFrame, y: np.ndarray, params: GlobalParams)->list[MLModel]:
+def make_tree(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
+              max_depth=MAX_DEPTH)->list[MLModel]:
     len_y = len(y)
     result = []
 
     if len_y > DT_MIN_LEN:
-        model = DecisionTreeClassifier(max_depth=3, random_state=params.seed)
+        model = DecisionTreeClassifier(max_depth=max_depth, random_state=params.seed)
         model.fit(X, y)
         if np.isclose(1, accuracy_score(model.predict(X), y)):
             result.append(DTClassifier(model, list(X.columns)))

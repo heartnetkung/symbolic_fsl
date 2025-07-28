@@ -10,6 +10,7 @@ from enum import Enum
 from itertools import product
 from typing import Optional
 from .comparison_factory import make_comparison_models
+from .decision_tree_factory import make_tree
 
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
@@ -112,7 +113,8 @@ def _make_all_classifiers(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         correct_pred = np.isclose(y_remain, regressor.predict(X_remain))
         classifiers1 = make_classifiers(X_remain, correct_pred, params)
         classifiers2 = make_comparison_models(X_remain, correct_pred, params)
-        result.append(classifiers1+classifiers2)
+        classifiers3 = make_tree(X_remain, correct_pred, params, 2)
+        result.append(classifiers1+classifiers2+classifiers3)
 
         wrong_pred = np.logical_not(correct_pred)
         X_remain = X_remain[wrong_pred].reset_index(drop=True)

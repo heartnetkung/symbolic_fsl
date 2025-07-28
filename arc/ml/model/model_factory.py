@@ -70,6 +70,7 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
+    # TODO should we remove top level tree models? since we already included it in ppdt
     ppdt_models = make_models(TrainingData(X2, y, params), type)
     assoc_models = make_association(X, y, params)
     tree_models = [MatchColumn(FeatEng(model), X2)
