@@ -2,7 +2,8 @@ from ...graphic import *
 from ...constant import *
 import math
 from typing import Optional
-from scipy.stats import mode
+from collections import Counter
+from ..util import *
 
 SIGNAL_NOISE_RATIO = 0.85
 
@@ -23,22 +24,15 @@ def cal_tile(grid: Grid)->Optional[Grid]:
 
 
 def adjacent(grid: Grid, x: int, y: int)->int:
-    return _majority_vote([
+    return vote_pixels([
         grid.safe_access(x-1, y), grid.safe_access(x, y-1),
         grid.safe_access(x+1, y), grid.safe_access(x, y+1)])
 
 
 def diagonal(grid: Grid, x: int, y: int)->int:
-    return _majority_vote([
+    return vote_pixels([
         grid.safe_access(x-1, y-1), grid.safe_access(x+1, y-1),
         grid.safe_access(x-1, y+1), grid.safe_access(x+1, y+1)])
-
-
-def mirror(grid: Grid, x: int, y: int)->int:
-    neg_x, neg_y = grid.width-x-1, grid.height-y-1
-    return _majority_vote([
-        grid.safe_access(neg_x, y), grid.safe_access(x, neg_y),
-        grid.safe_access(neg_x, neg_y)])
 
 
 def get_tile(tile: Grid, x: int, y: int)->int:
@@ -50,37 +44,26 @@ def get_tile(tile: Grid, x: int, y: int)->int:
 
 
 def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
-    tile_data = {}
+    tile_data = [[Counter()for _ in range(tile_width)] for _ in range(tile_height)]
     for i in range(grid.height):
         for j in range(grid.width):
             cell = grid.data[i][j]
             if cell != NULL_COLOR:
-                coord = Coordinate(j % tile_width, i % tile_height)
-                tile_data[coord] = tile_data.get(coord, [])+[cell]
+                tile_data[i % tile_height][j % tile_width].update([cell])
 
+    result = make_grid(tile_width, tile_height)
     signal, total = 0, 0
-    tile_grid = make_grid(tile_width, tile_height)
-    for coord, colors in tile_data.items():
-        total += len(colors)
-        mode_result = mode(colors, keepdims=False)
-        signal += mode_result.count
-        tile_grid.safe_assign_c(coord, mode_result.mode)
+    for i in range(tile_height):
+        for j in range(tile_width):
+            counter = tile_data[i][j]
+            mode = counter.most_common(1)
+            if len(mode) == 0:
+                return None
+
+            total += counter.total()
+            signal += mode[0][1]
+            result.data[i][j] = mode[0][0]
 
     if signal/total < SIGNAL_NOISE_RATIO:
         return None
-    return tile_grid
-
-
-def _majority_vote(pixels: list[int])->int:
-    counts = {}
-    for pixel in pixels:
-        if valid_color(pixel):
-            counts[pixel] = counts.get(pixel, 0)+1
-    if len(counts) == 0:
-        return NULL_COLOR
-    if len(counts) == 1:
-        return next(iter(counts.keys()))
-    sorted_pairs = sorted(list(counts.items()), key=lambda x: -x[1])
-    if sorted_pairs[0][1] == sorted_pairs[1][1]:
-        return NULL_COLOR
-    return sorted_pairs[0][0]
+    return result

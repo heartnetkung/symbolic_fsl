@@ -86,7 +86,7 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 def make_models(data: TrainingData, type: LabelType)->list[MLModel]:
     result, y = [], data.y
     # linprog cannot handle hash value
-    X = data.X.drop(data.X.filter(regex='shape_value').columns, axis=1)
+    X = data.X.drop(data.X.filter(regex='shape_value').columns, axis=1)  # type:ignore
     for ppdt in make_ppdts(X, y, data.params, type):
         if np.allclose(ppdt.predict(X), y):
             result.append(MatchColumn(ppdt, X))

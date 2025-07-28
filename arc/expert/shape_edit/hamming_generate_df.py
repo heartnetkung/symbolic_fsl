@@ -4,6 +4,7 @@ from ...base import *
 from ...graphic import *
 from ...ml import *
 from .hamming_feat_eng import *
+from ..util import *
 
 COLS = [
     # misc
@@ -78,7 +79,9 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             # feat_eng
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
             result['diagonal(x,y)'].append(diagonal(grid, x, y))
-            result['mirror(x,y)'].append(mirror(grid, x, y))
+            result['mirror(x,y)'].append(vote_pixels([
+                result['cell(-x,y)'][-1], result['cell(x,-y)'][-1],
+                result['cell(-x,-y)'][-1]]))
             if tile is not None:
                 result['tile(x,y)'].append(get_tile(tile, x, y))
 
