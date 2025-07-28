@@ -6,6 +6,7 @@ from collections import Counter
 from ..util import *
 
 SIGNAL_NOISE_RATIO = 0.85
+REPEAT_RATIO = 1.49
 
 # =======================
 # public functions
@@ -65,5 +66,7 @@ def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
             result.data[i][j] = mode[0][0]
 
     if signal/total < SIGNAL_NOISE_RATIO:
+        return None
+    if signal/(tile_width*tile_height) < REPEAT_RATIO:
         return None
     return result
