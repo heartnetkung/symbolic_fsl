@@ -24,7 +24,7 @@ def test_basic():
     params = GlobalParams()
     parsed_state = get_parsed_state()
 
-    action = Intersect(feat_indexes=[0, 1], color=1)
+    action = ApplyLogic(feat_indexes=[0, 1], color=1,type=LogicType.and_)
     program = AttentionExpertProgram(action, params)
     result = program.run(parsed_state)
     assert result.out_shapes is not None
