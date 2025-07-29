@@ -56,6 +56,18 @@ def subtract(shape1: Shape, shape2: Shape)->Unknown:
     return Unknown(shape1.x, shape1.y, grid)
 
 
+def is_overlap(larger: Shape, smaller: Shape)->bool:
+    larger_grid, smaller_grid = larger._grid, smaller._grid
+    offset_x, offset_y = larger.x-smaller.x, larger.y-smaller.y
+    for y in range(smaller.height):
+        for x in range(smaller.width):
+            larger_cell = larger_grid.safe_access(x-offset_x, y-offset_y)
+            smaller_cell = smaller_grid.safe_access(x, y)
+            if valid_color(larger_cell) and valid_color(smaller_cell):
+                return True
+    return False
+
+
 def _from_full_grid(grid: np.ndarray, hint: Optional[Type] = None)->Unknown:
     x, y, altered_grid = trim(grid)
     if altered_grid.height == 0 or altered_grid.width == 0:
