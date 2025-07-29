@@ -20,6 +20,11 @@ class CropTask(ModelFreeTask):
 
 
 @dataclass(frozen=True)
+class PhysicsTask(ModelFreeTask):
+    pass
+
+
+@dataclass(frozen=True)
 class CleanUpTask(ModelFreeTask):
     pass
 

@@ -6,6 +6,7 @@ from typing import Optional
 
 
 class Direction(Enum):
+    # the numbers are intentional
     north = 0
     north_east = 1
     east = 2

@@ -59,6 +59,15 @@ class Shape(RuntimeObject):
     def shape_value(self)->int:
         return MISSING_VALUE
 
+    def get_single_color(self)->int:
+        top_color = self._grid.get_top_color()
+        least_color = self._grid.get_least_color()
+        if (top_color == NULL_COLOR) or (least_color == NULL_COLOR):
+            return NULL_COLOR
+        if top_color != least_color:
+            return NULL_COLOR
+        return top_color
+
     def draw(self, canvas: Grid, include_xy=True)->None:
         '''Draw this object on canvas'''
         grid_height, grid_width = canvas.height, canvas.width
@@ -114,6 +123,9 @@ class FilledRectangle(Shape):
         del result['color']
         return result
 
+    def get_single_color(self)->int:
+        return self.color
+
     @property
     def shape_type(self)->int:
         return ShapeType.filled_rectangle.value
@@ -161,6 +173,9 @@ class HollowRectangle(Shape):
         result = super().to_input_var()
         del result['color']
         return result
+
+    def get_single_color(self)->int:
+        return self.color
 
     @property
     def shape_type(self)->int:
@@ -230,6 +245,9 @@ class Diagonal(Shape):
         if (not self.north_west) and (i+j+1 == self.width):
             return self.color
         return NULL_COLOR
+
+    def get_single_color(self)->int:
+        return self.color
 
     @property
     def shape_type(self)->int:
