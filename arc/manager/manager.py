@@ -21,9 +21,11 @@ class ArcManager(Manager[ArcTrainingState]):
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
 
-        # parse and reparse
+        # parse, reparse, and operations that can run once
         if state.x_shapes is None:
             return [(ParseGridTask(), state)]
+        if state.run_physics is False:
+            return [(PhysicsTask(), state.update(run_physics=True))]
         if state.edge_reparse is False:
             return [(create_reparse_edge(state), state.update(edge_reparse=True))]
         if state.merge_nearby_reparse is False:

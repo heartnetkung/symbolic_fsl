@@ -31,8 +31,7 @@ def create_test_state(x_shapes: list[list[Shape]],
     y = _to_canvas(y_shapes, grid_width, grid_height)
     bg = [BG]*len(x_shapes)
     return ArcTrainingState(
-        x, y, None, bg, bg, False, 5, x_shapes, y_shapes, x_shapes,
-        True, True, True, True)
+        x, y, None, bg, bg, False, 5, x_shapes, y_shapes, x_shapes).check_all()
 
 
 def _to_canvas(all_shapes: list[list[Shape]], width: int, height: int)->list[Grid]:
@@ -64,7 +63,4 @@ def run_actions(
         current_state = action.perform_train(current_state, ModelFreeTask())
         if current_state is None:
             return None
-    return current_state.update(edge_reparse=True,
-                                merge_nearby_reparse=True,
-                                stack_reparse=True,
-                                split_reparse=True)
+    return current_state.check_all()
