@@ -1,6 +1,6 @@
-from ..base import *
-from ..graphic import *
-from .task import CropTask
+from ...base import *
+from ...graphic import *
+from ..task import CropTask
 
 
 class CropManager(Manager[ArcTrainingState]):

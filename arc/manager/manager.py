@@ -5,7 +5,7 @@ from .task import *
 import logging
 from ..attention import *
 from .reparse.reparse_creator import *
-from .crop_manager import CropManager
+from .submanager.crop_manager import CropManager
 
 
 class ArcManager(Manager[ArcTrainingState]):
