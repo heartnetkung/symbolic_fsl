@@ -7,8 +7,6 @@ from ...manager.draw_line import *
 from ...manager.task import TrainingDrawLineTask, DrawLineTask
 import numpy as np
 from .draw_line_df import *
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.metrics import accuracy_score
 
 
 class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
