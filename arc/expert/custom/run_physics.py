@@ -52,8 +52,7 @@ class RunPhysics(ModelFreeArcAction[PhysicsTask]):
             new_out_shapes.append(still_shapes+updated_shapes)
 
         if not isinstance(state, ArcTrainingState):
-            return state.update(out_shapes=new_out_shapes,
-                                reparse_count=self.params.max_reparse)
+            return state.update(out_shapes=new_out_shapes)
 
         assert state.y_shapes is not None
         new_y_shapes = []

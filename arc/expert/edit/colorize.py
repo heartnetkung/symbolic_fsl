@@ -33,17 +33,3 @@ class Colorize(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         df = default_make_df(state, task.atn, self.feat_index)
         models = regressor_factory(df, self.color_model.result, self.params, 'colorize')
         return [Colorize(model, self.params, self.feat_index) for model in models]
-
-
-def colorize(shape: Shape, color: int)->Shape:
-    if isinstance(shape, FilledRectangle):
-        return FilledRectangle(shape.x, shape.y, shape.width, shape.height, color)
-    elif isinstance(shape, HollowRectangle):
-        return HollowRectangle(shape.x, shape.y, shape.width, shape.height,
-                               color, shape.stroke)
-    elif isinstance(shape, Diagonal):
-        return Diagonal(shape.x, shape.y, shape.width, color, shape.north_west)
-    elif isinstance(shape, Unknown):
-        return Unknown(shape.x, shape.y, shape.grid.colorize(color))
-    else:
-        raise Exception('unknown shape implementation')
