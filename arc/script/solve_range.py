@@ -1,7 +1,7 @@
 from .solve_one import *
 import traceback
 
-SKIP = {0, 4, 8, 57, 58, 59}
+SKIP = set()
 
 
 class Report:
