@@ -1,4 +1,4 @@
-from ..constant import *
+from ...constant import *
 
 previous_v1_params = {}
 
