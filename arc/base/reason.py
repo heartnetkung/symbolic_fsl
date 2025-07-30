@@ -92,9 +92,12 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
     result = ResultCollection(max_result)
     model_cache = ModelCache()
     end_time = time.time()+max_time_s
+    last_path_no = 0
 
     for path_no, path in enumerate(plan.shortest_simple_paths()):
         logger.info('\n========= path_no: %d', path_no)
+        last_path_no = path_no
+
         if path_no > max_path:
             logger.info('max_path limit \n%s', result)
             return ReasoningResult(result.to_list(), path_no, 'max_path limit')
@@ -106,7 +109,7 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
         _fill_traces(init_state, path, 0, plan, [], result, model_cache)
 
     logger.info('options exhausted \n%s', result)
-    return ReasoningResult(result.to_list(), max_path, 'options exhausted')
+    return ReasoningResult(result.to_list(), last_path_no, 'options exhausted')
 
 
 def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
@@ -122,6 +125,8 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
 
     node, next_node, is_end = path[index], path[index+1], index == (len(path)-2)
     task_actions = cache.get_models(node, next_node, plan)
+    next_iteration_data = {}
+
     for modeled_task, runtime_action in task_actions:
         try:
             runtime_task = modeled_task.to_runtimes(state)
@@ -133,8 +138,15 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
                 continue
 
             new_prefix = prefix + [(runtime_task, runtime_action)]
-            _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
+            saved_prefix = next_iteration_data.get(new_state, None)
+            if saved_prefix is None:
+                next_iteration_data[new_state] = new_prefix
+            elif Trace.cal_cost(saved_prefix) > Trace.cal_cost(new_prefix):
+                next_iteration_data[new_state] = new_prefix
         except IgnoredException:
             pass
         except Exception:
             logger.info('runtime action error', exc_info=True)
+
+    for new_state, new_prefix in next_iteration_data.items():
+        _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
