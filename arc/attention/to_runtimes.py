@@ -17,13 +17,12 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
     possible_sample_index, possible_x_index = index_blob
     df = create_df(x_train, output_train_shapes,
                    possible_sample_index, possible_x_index)
-    has_syntactic = atn.syntactic_model is not None
     label = create_label(atn.sample_index, atn.x_index,
-                         possible_sample_index, possible_x_index, has_syntactic)
+                         possible_sample_index, possible_x_index)
     models = train_model(df, label, params)
     n_cols = len(atn.x_index[0])
-    return [AttentionModel(model, n_cols, atn.x_cluster_info, atn.extra_shapes,
-                           atn.syntactic_model) for model in models]
+    return [AttentionModel(model, n_cols, atn.x_cluster_info, atn.extra_shapes)
+            for model in models]
 
 
 def to_runtimes(
@@ -39,10 +38,8 @@ def to_runtimes(
     df = create_df(x_test, output_test_shapes, sample_index, x_index)
     correct_index = model.model.predict_bool(df)
 
-    x_index2 = _add_syntactic(model.syntactic_model,
-                              sample_index, x_index, output_test_shapes)
     result_sample_index, result_x_index = [], []
-    for correct, sample_index, index in zip(correct_index, sample_index, x_index2):
+    for correct, sample_index, index in zip(correct_index, sample_index, x_index):
         if correct:
             result_sample_index.append(sample_index)
             result_x_index.append(index)
@@ -53,16 +50,5 @@ def to_runtimes(
     # the number of columns need to be the same
     if model.n_columns != len(result_x_index[0]):
         return None
-    return InferenceAttention(result_sample_index, result_x_index, model.extra_shapes,
-                              model.model, model.syntactic_model)
-
-
-def _add_syntactic(
-        model: Optional[MLModel], sample_index: list[int],
-        x_index: list[list[int]], all_shapes: list[list[Shape]])->list[list[int]]:
-    if model is None:
-        return x_index
-    prediction = predict_syntactic_shapes(model, sample_index, x_index, all_shapes)
-    if prediction is None:
-        return x_index
-    return [index+[extra] for index, extra in zip(x_index, prediction)]
+    return InferenceAttention(
+        result_sample_index, result_x_index, model.extra_shapes, model.model)

@@ -33,8 +33,6 @@ class TrainingAttention:
     x_cluster_info: list[int]
     # extra shapes to attend to regardless of row
     extra_shapes: list[Shape]
-    # model for predicting extra shapes
-    syntactic_model: Optional[MLModel] = field(compare=False, repr=False, default=None)
 
     def __post_init__(self):
         # check n
@@ -47,11 +45,8 @@ class TrainingAttention:
         for shape_index in self.x_index:
             assert len(shape_index) == n_cols
 
-        # check syntactic_model
-        if self.syntactic_model is None:
-            assert sum(self.x_cluster_info) == n_cols
-        else:
-            assert sum(self.x_cluster_info) + 1 == n_cols
+        # check cluster_info
+        assert sum(self.x_cluster_info) == n_cols
 
     def update(self, **kwargs)->Attention:
         return replace(self, **kwargs)
@@ -68,7 +63,6 @@ class InferenceAttention:
     x_index: list[list[int]]
     extra_shapes: list[Shape]
     model: MLModel
-    syntactic_model: Optional[MLModel]
 
     def __post_init__(self):
         # check n
@@ -98,7 +92,6 @@ class AttentionModel:
     n_columns: int
     x_cluster_info: list[int]
     extra_shapes: list[Shape]
-    syntactic_model: Optional[MLModel] = None
 
 
 def create_empty_attention(

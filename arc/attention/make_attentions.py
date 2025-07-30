@@ -74,7 +74,7 @@ def _make_attentions(
         output_train_shapes: list[list[Shape]], y_train_shapes: list[list[Shape]],
         x_train: list[Grid], rel_df: pd.DataFrame,
         y_clusters: list[pd.DataFrame])->list[TrainingAttention]:
-    result = []
+    results = []
     common_y_shapes = find_common_y_shapes(y_train_shapes)
 
     for y_cluster in y_clusters:
@@ -86,18 +86,21 @@ def _make_attentions(
                 assert isinstance(current_df, pd.DataFrame)
                 if current_df.empty:
                     continue
-                result += _make_inner_attentions(
-                    current_df, common_y_shapes, output_train_shapes)
 
-    if len(result) == 0:
+                new_result = _make_inner_attentions(
+                    current_df, common_y_shapes, output_train_shapes)
+                if new_result is not None:
+                    results.append(new_result)
+
+    if len(results) == 0:
         empty_attention = create_empty_attention(y_train_shapes)
         if empty_attention is not None:
             return [empty_attention]
-    return list(dict.fromkeys(result))
+    return list(dict.fromkeys(results))
 
 
 def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
-                           all_shapes: list[list[Shape]])->list[TrainingAttention]:
+                           all_shapes: list[list[Shape]])->Optional[TrainingAttention]:
     grouped_series = df.sort_values(['sample_id', 'y_index', 'x_label']).groupby(
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
     index = grouped_series.index.to_frame()
@@ -109,13 +112,11 @@ def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
     x_index = grouped_series.to_list()
     x_cluster_info = [int(round(count/len(y_index))) for count in cluster_counts]
     if sum(x_cluster_info) > MAX_ATTENDING_SHAPE:
-        return []
+        return None
 
     x_index2 = _align_x_index(all_shapes, x_index, sample_index, x_cluster_info)
-    syntactic_info = _apply_syntactic(sample_index, x_index2, all_shapes)
-    return [TrainingAttention(
-        sample_index, x_index3, y_index, rel_info, x_cluster_info, common_y_shapes,
-        model) for model, x_index3 in syntactic_info]
+    return TrainingAttention(
+        sample_index, x_index2, y_index, rel_info, x_cluster_info, common_y_shapes)
 
 
 def _align_x_index(all_shapes: list[list[Shape]], x_index: list[list[int]],
@@ -124,24 +125,6 @@ def _align_x_index(all_shapes: list[list[Shape]], x_index: list[list[int]],
     for sample_id, index in zip(sample_index, x_index):
         shapes = all_shapes[sample_id]
         result.append(do_align(arity, shapes, index))
-    return result
-
-
-def _apply_syntactic(
-        sample_index: list[int], x_index: list[list[int]],
-        all_shapes: list[list[Shape]])->list[tuple[Optional[MLModel], list[list[int]]]]:
-    models = make_syntactic_models(sample_index, x_index, all_shapes)
-    if len(models) == 0:
-        return [(None, x_index)]
-
-    result = []
-    for model in models:
-        prediction = predict_syntactic_shapes(model, sample_index, x_index, all_shapes)
-        if prediction is None:
-            continue
-
-        x_index2 = [index+[extra] for index, extra in zip(x_index, prediction)]
-        result.append((model, x_index2))
     return result
 
 
