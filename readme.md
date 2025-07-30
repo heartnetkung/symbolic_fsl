@@ -10,6 +10,8 @@ python3 -m arc.script.solve_one 30 train_v1 debug >temp
 pytest -k pattern -log-level=INFO
 # visualize problem 30
 python3 -m arc.script.visualize 30
+# solve previously solved problem for sanity checking
+python3 -m arc.script.solve_previous
 ```
 
 ## Architecture
