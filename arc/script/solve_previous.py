@@ -1,6 +1,6 @@
 from .solve_one import *
 from .solve_range import Report
-from .previous_params import previous_v1_params
+from .params.previous_params import previous_v1_params
 import traceback
 
 
