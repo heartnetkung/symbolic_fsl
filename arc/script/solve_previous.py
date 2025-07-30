@@ -1,0 +1,35 @@
+from .solve_one import *
+from .solve_range import Report
+from .previous_params import previous_v1_params
+import traceback
+
+
+def solve_previous(index: int = -1)->None:
+    report = Report()
+    if index == -1:
+        running_params = previous_v1_params
+    else:
+        try:
+            running_params = {index: previous_v1_params[index]}
+        except KeyError:
+            raise Exception('incorrect index')
+
+    for index, params in running_params.items():
+        print(f'solving #{index}')
+        try:
+            result = solve_one(index, DatasetChoice.train_v1, logging.ERROR, params)
+            report.append(
+                index, result.elapsed_time_s, result.correct == True,
+                len(result.predictions), result.reasoning_result.path_count,
+                result.planning_result.message, result.reasoning_result.message)
+        except:
+            print(traceback.format_exc())
+    report.print()
+    print('\a', file=sys.stderr)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) not in (1, 2):
+        terminate(('incorrect usage! solve_previous.py [index]'))
+    index = -1 if len(sys.argv) == 1 else int(sys.argv[1])
+    solve_previous(index)

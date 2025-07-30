@@ -29,7 +29,7 @@ class Report:
         print("max time: {:.1f}".format(df["duration"].max()))
 
 
-def solve_range(start: int, end: int, choice: DatasetChoice):
+def solve_range(start: int, end: int, choice: DatasetChoice)->None:
     report = Report()
     for i in range(start, end):
         if i in SKIP:

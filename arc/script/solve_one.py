@@ -27,8 +27,10 @@ def init(log_level: int)->GlobalParams:
     return GlobalParams()
 
 
-def solve_one(index: int, choice: DatasetChoice, log_level: int)->ArcResult:
-    params = init(log_level)
+def solve_one(index: int, choice: DatasetChoice, log_level: int,
+              params: Optional[GlobalParams] = None)->ArcResult:
+    if params is None:
+        params = init(log_level)
     dataset = read_datasets(choice)[index]
     start = time.time()
 
