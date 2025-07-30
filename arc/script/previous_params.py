@@ -84,7 +84,7 @@ previous_v1_params[31] = GlobalParams(
 
 previous_v1_params[32] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1)
 
 previous_v1_params[35] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
@@ -191,8 +191,8 @@ previous_v1_params[86] = GlobalParams(
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
 previous_v1_params[87] = GlobalParams(
-    parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_x_modes=(ParseMode.color_proximity_diag,),
+    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
 previous_v1_params[90] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
