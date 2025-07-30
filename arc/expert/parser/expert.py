@@ -2,7 +2,6 @@ from ...base import *
 from ...graphic import *
 from ...manager.task import *
 from .independent_parse import ParseMode, IndependentParse
-from .persistent_parse import PersistentParseMode, PersistentParse
 from itertools import product
 from ...algorithm.find_background import find_backgrounds
 
@@ -30,14 +29,9 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
             if y_mode == ParseMode.partition:
                 if not _have_partitions(state.y):
                     continue
+
             result.append(IndependentParse(
                 x_mode, y_mode, x_model, y_model, unknown_bg))
-
-        # persistent parse
-        for x_mode, y_mode, (x_model, y_model) in product(
-                PersistentParseMode, PersistentParseMode, backgrounds):
-            result.append(PersistentParse(x_mode, y_mode, x_model, y_model))
-
         return result
 
 
