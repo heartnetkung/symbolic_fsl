@@ -6,6 +6,7 @@ import logging
 from .planning_graph import PlanningGraph
 from itertools import product
 from ..constant import IgnoredException
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -56,8 +57,9 @@ class ResultCollection:
 
     def __repr__(self)->str:
         result = ['ResultCollection{']
-        for pred, (trace, count) in self.min_cost_traces.items():
-            result.append(f'\nprediction: {pred}')
+        for key, (trace, count) in self.min_cost_traces.items():
+            formatted_grids = re.sub(r'(\[+)', r'\n\1', repr(trace.prediction.out))
+            result.append(f'\nprediction: {formatted_grids}')
             result.append(f'count: {count}')
             result.append(f'trace: {trace}')
         return '\n'.join(result+['}'])
