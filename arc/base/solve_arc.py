@@ -27,15 +27,18 @@ class ArcResult:
     planning_result: PlanningResult
     reasoning_result: ReasoningResult
     correct: Optional[bool] = None  # if y_test is in dataset check if it's correct
+    correct_trace: Optional[Trace] = None
 
     def __repr__(self)->str:
         time, correct = self.elapsed_time_s, self.correct
         result = [f'\nArcResult(elapsed_time_s={time:.1f}, correct={correct})']
-
         for i, grids in enumerate(self.predictions):
             result.append(f'=========== prediction #{i+1} ===========')
             for grid in grids:
                 result.append('\n'.join([repr(row) for row in grid.data]))
+
+        if self.correct:
+            result.append(f'\ncorrect_trace: {self.correct_trace}')
         return '\n'.join(result)
 
     @property
@@ -68,15 +71,17 @@ def solve_arc(
     reasoning_result = reason(planning_result.plan, dataset.to_inference_state(),
                               n_result, max_reason_path, time_left)
     elapsed_time = time.time()-start_time
+    correct, correct_trace = None, None
 
-    if dataset.y_test is None:
-        correct = None
-    else:
+    if dataset.y_test is not None:
         correct = False
         for trace in reasoning_result.traces:
-            correct |= trace.prediction.out == dataset.y_test
+            if trace.prediction.out == dataset.y_test:
+                correct = True
+                correct_trace = trace
+
     return ArcResult(_id, X_test_count, elapsed_time, planning_result,
-                     reasoning_result, correct)
+                     reasoning_result, correct, correct_trace)
 
 
 def merge_predictions(results: list[ArcResult])->dict[str, list]:

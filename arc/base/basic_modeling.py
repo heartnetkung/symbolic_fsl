@@ -114,10 +114,13 @@ class TrainingOnlyAction(Action[TS, T]):
     '''An action that only performs during training.'''
 
     def to_runtimes(self, before: TS, after: TS, task: T)->list[InferenceAction]:
-        return [DoNothing()]
+        return [DoNothing(repr(self))]
 
 
 class DoNothing(InferenceAction[IS, IT]):
+    def __init__(self, extra_info: str)->None:
+        self.extra_info = extra_info
+
     def perform_infer(self, state: IS, task: IT)->Optional[IS]:
         return state
 
