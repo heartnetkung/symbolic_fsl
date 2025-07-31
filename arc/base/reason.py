@@ -102,16 +102,16 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
 
         if path_no > max_path:
             logger.info('max_path limit \n%s', result)
-            return ReasoningResult(result.to_list(), path_no, 'max_path limit')
+            return ReasoningResult(result.to_list(), path_no+1, 'max_path limit')
 
         if time.time() > end_time:
             logger.info('time limit \n%s', result)
-            return ReasoningResult(result.to_list(), path_no, 'time limit')
+            return ReasoningResult(result.to_list(), path_no+1, 'time limit')
 
         _fill_traces(init_state, path, 0, plan, [], result, model_cache)
 
     logger.info('options exhausted \n%s', result)
-    return ReasoningResult(result.to_list(), last_path_no, 'options exhausted')
+    return ReasoningResult(result.to_list(), last_path_no+1, 'options exhausted')
 
 
 def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
