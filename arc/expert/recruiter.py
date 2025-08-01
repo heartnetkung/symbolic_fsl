@@ -5,11 +5,10 @@ from .create import *
 from .parser import *
 from .edit import *
 from .post_loop import *
-from .reparse import *
 from .etc import *
 from .shape_edit import *
 from .custom import *
-# no import star except manager.task, reparser.experts, and subfolders
+# no import star except manager.task and subfolders
 
 
 class ArcRecruiter(BasicRecruiter):
