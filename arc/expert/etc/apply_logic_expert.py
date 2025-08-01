@@ -39,7 +39,7 @@ def _find_common_colors(shapes: list[Shape])->set[int]:
         result &= shape._grid.list_colors()
         if len(result) == 0:
             break
-    return result-{NULL_COLOR}
+    return result
 
 
 def _check_result(a_shapes: list[Shape], b_shapes: list[Shape])->bool:

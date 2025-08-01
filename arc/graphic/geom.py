@@ -6,6 +6,8 @@ from .grid_methods import *
 from ..constant import NULL_COLOR
 from enum import Enum
 
+DUMMY_VALID_COLOR = 9
+
 
 class LogicType(Enum):
     and_ = 0
@@ -32,7 +34,10 @@ def apply_logic(shape1: Shape, shape2: Shape, color: int, type: LogicType)->Unkn
     else:
         raise Exception('unsupported')
 
-    result = np.where(bool_out, color, NULL_COLOR)
+    # since NULL_COLOR in our algorithm denotes False value,
+    # the true input value must be replaced to a dummy
+    out_color = color if color is not NULL_COLOR else DUMMY_VALID_COLOR
+    result = np.where(bool_out, out_color, NULL_COLOR)
     return Unknown(0, 0, Grid(result.tolist()))
 
 
