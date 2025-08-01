@@ -108,19 +108,20 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
             logger.info('time limit \n%s', result)
             return ReasoningResult(result.to_list(), path_no+1, 'time limit')
 
-        _fill_traces(init_state, path, 0, plan, [], result, model_cache)
+        _fill_traces(init_state, path, 0, plan, end_time, [], result, model_cache)
 
     logger.info('options exhausted \n%s', result)
     return ReasoningResult(result.to_list(), last_path_no+1, 'options exhausted')
 
 
 def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
-                 plan: PlanningGraph,
+                 plan: PlanningGraph, end_time: float,
                  prefix: list[tuple[InferenceTask, InferenceAction]],
                  result: ResultCollection, cache: ModelCache)->None:
     if index == len(path)-1:
         result.append(Trace(prefix, state))
-        logger.info('path reached')
+        return
+    if time.time() > end_time:
         return
     if Trace.cal_cost(prefix) > result.acceptable_cost:
         return
@@ -151,4 +152,5 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
             logger.info('runtime action error', exc_info=True)
 
     for new_state, new_prefix in next_iteration_data.items():
-        _fill_traces(new_state, path, index+1, plan, new_prefix, result, cache)
+        _fill_traces(new_state, path, index+1, plan,
+                     end_time, new_prefix, result, cache)
