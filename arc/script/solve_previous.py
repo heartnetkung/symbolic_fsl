@@ -6,6 +6,8 @@ from .params.previous_params3 import previous_v1_params3
 from .params.previous_params4 import previous_v1_params4
 import traceback
 
+SKIP = {31}
+
 
 def solve_previous(index: int = -1)->None:
     report = Report()
@@ -22,6 +24,10 @@ def solve_previous(index: int = -1)->None:
 
     for index, params in running_params.items():
         print(f'solving #{index}')
+        if index in SKIP:
+            print('skip')
+            continue
+
         try:
             result = solve_one(index, DatasetChoice.train_v1, logging.ERROR, params)
             report.append(
