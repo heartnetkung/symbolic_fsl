@@ -6,7 +6,7 @@ from .params.previous_params3 import previous_v1_params3
 from .params.previous_params4 import previous_v1_params4
 import traceback
 
-SKIP = {31}
+SKIP = {31, 297}
 
 
 def solve_previous(index: int = -1)->None:
