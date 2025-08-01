@@ -9,6 +9,8 @@ import traceback
 
 def solve_previous(index: int = -1)->None:
     report = Report()
+    init_pandas()
+
     if index == -1:
         running_params = (previous_v1_params | previous_v1_params2 |
                           previous_v1_params3 | previous_v1_params4)

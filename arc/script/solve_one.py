@@ -19,11 +19,7 @@ def init(log_level: int)->GlobalParams:
     logging.getLogger('arc.base.reason').setLevel(log_level)
     logging.getLogger('arc.base.solve_arc').setLevel(log_level)
     logging.getLogger('arc.ml.model.model_factory').setLevel(log_level)
-
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.width', None)
-    pd.set_option('display.max_colwidth', None)
+    init_pandas()
     return GlobalParams()
 
 

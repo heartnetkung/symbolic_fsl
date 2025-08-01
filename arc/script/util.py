@@ -55,3 +55,9 @@ def lookup_v2_problem_no(v1_problem_no: int)->int:
         return int(result.iloc[0, 0])
     except:
         return -1
+
+def init_pandas()->None:
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', None)
