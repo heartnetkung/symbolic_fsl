@@ -13,12 +13,11 @@ def solve_previous(index: int = -1)->None:
     report = Report()
     init_pandas()
 
-    if index == -1:
-        running_params = (previous_v1_params | previous_v1_params2 |
-                          previous_v1_params3 | previous_v1_params4)
-    else:
+    running_params = (previous_v1_params | previous_v1_params2 |
+                      previous_v1_params3 | previous_v1_params4)
+    if index != -1:
         try:
-            running_params = {index: previous_v1_params[index]}
+            running_params = {index: running_params[index]}
         except KeyError:
             raise Exception('incorrect index')
 
