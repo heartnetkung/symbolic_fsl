@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 C_MAX = 10  # ref III.1.2.c
 C0_MAX = 30
-EPSILON = 0.01
 
 
 @dataclass
@@ -52,8 +51,8 @@ class VariableCount:
 
 def make_variables(counts: VariableCount, is_cls: bool, lambda_: int = 0)->Variables:
     # configure
-    # TODO should the cost be zero?
-    c0_cost = 0 if is_cls else EPSILON
+    # should the cost be zero? No because 224.
+    c0_cost = 0 if is_cls else 1
     c_integrality = 1 if is_cls else 0
     c_max = 1 if is_cls else C_MAX
 
