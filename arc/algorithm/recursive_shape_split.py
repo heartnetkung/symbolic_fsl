@@ -5,6 +5,15 @@ from copy import deepcopy
 MAX_COLORLESS_SHAPE_MASS = 100
 
 
+class LoopStopper:
+    def __init__(self)->None:
+        self.count = 0
+
+    def should_stop(self)->bool:
+        self.count += 1
+        return self.count >= 100000
+
+
 def recursive_shape_split(
         shape: Shape, subshapes: list[Shape],
         colorless: bool = False, transform: bool = False)->Optional[list[Shape]]:
@@ -13,6 +22,7 @@ def recursive_shape_split(
     all pixels belong to one and only one subshape.
     '''
     subshape_grids = [comp._grid.trim(True) for comp in subshapes]
+    stopper = LoopStopper()
 
     if transform:
         subshape_grids_temp = []
@@ -33,11 +43,15 @@ def recursive_shape_split(
 
     subshape_grids, subshape_grids_original = _clean_subshapes(
         subshape_grids, subshape_grids_original)
-    return _recursive_shape_split(_trim(shape), subshape_grids, subshape_grids_original)
+    return _recursive_shape_split(
+        _trim(shape), subshape_grids, stopper, subshape_grids_original)
 
 
-def _recursive_shape_split(shape: Shape, subshapes: list[Grid],
+def _recursive_shape_split(shape: Shape, subshapes: list[Grid], stopper: LoopStopper,
                            subshapes_original: list[Grid])->Optional[list[Shape]]:
+    if stopper.should_stop():
+        return None
+
     first_pixel = _find_first_pixel(shape)
     if first_pixel is None:
         return []  # success
@@ -53,7 +67,7 @@ def _recursive_shape_split(shape: Shape, subshapes: list[Grid],
 
         new_container = _trim(subtracted_shape)
         new_result = _recursive_shape_split(
-            new_container, subshapes, subshapes_original)
+            new_container, subshapes, stopper, subshapes_original)
         if new_result is None:
             continue  # depth-first fails
 
