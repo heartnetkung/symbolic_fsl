@@ -13,12 +13,16 @@ MASS_THRESHOLD = 0.4
 
 class IndependentParse(ModelFreeArcAction[ParseGridTask]):
     def __init__(self, x_mode: ParseMode, y_mode: ParseMode, x_bg_model: MLModel,
-                 y_bg_model: MLModel, unknown_background: bool)->None:
+                 y_bg_model: MLModel, unknown_background: bool,
+                 x_partition_color: Optional[int] = None,
+                 y_partition_color: Optional[int] = None)->None:
         self.x_mode = x_mode
         self.y_mode = y_mode
         self.x_bg_model = x_bg_model
         self.y_bg_model = y_bg_model
         self.unknown_background = unknown_background
+        self.x_partition_color = x_partition_color
+        self.y_partition_color = y_partition_color
         super().__init__()
 
     def perform(self, state: ArcState, task: ParseGridTask)->Optional[ArcState]:
@@ -26,7 +30,7 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         x_bg = self.x_bg_model.predict_int(df)
         y_bg = self.y_bg_model.predict_int(df)
 
-        x_shapes = self._perform(state.x, self.x_mode, x_bg)
+        x_shapes = self._perform(state.x, self.x_mode, x_bg, self.x_partition_color)
         if x_shapes is None:
             return None
         x_shapes = filter_overwhelming_shapes(x_shapes)
@@ -34,7 +38,7 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
             return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                                 x_bg=x_bg, y_bg=y_bg)
 
-        y_shapes = self._perform(state.y, self.y_mode, y_bg)
+        y_shapes = self._perform(state.y, self.y_mode, y_bg, self.y_partition_color)
         if y_shapes is None:
             return None
         y_shapes = filter_overwhelming_shapes(y_shapes)
@@ -42,7 +46,8 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
                             x_bg=x_bg, y_bg=y_bg, y_shapes=y_shapes)
 
     def _perform(self, grids: list[Grid], mode: ParseMode,
-                 backgrounds: list[int])->Optional[list[list[Shape]]]:
+                 backgrounds: list[int],
+                 partition_color: Optional[int])->Optional[list[list[Shape]]]:
         grids2 = [grid.replace_color(bg, NULL_COLOR)
                   for grid, bg in zip(grids, backgrounds)]
         unknown_grids = grids if self.unknown_background else grids2
@@ -50,7 +55,8 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         if mode == ParseMode.crop:
             return [[Unknown(0, 0, grid)] for grid in unknown_grids]
         if mode == ParseMode.partition:
-            return _make_partition_shapes(unknown_grids, backgrounds)
+            assert partition_color is not None
+            return _make_partition_shapes(unknown_grids, backgrounds, partition_color)
         if mode == ParseMode.proximity_diag:
             return [list_sparse_objects(grid, True)for grid in grids2]
         if mode == ParseMode.proximity_normal:
@@ -62,17 +68,17 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         raise Exception('unsupported parse mode')
 
 
-def _make_partition_shapes(grids: list[Grid],
-                           backgrounds: list[int])->Optional[list[list[Shape]]]:
-    consistent_color = _find_consistent_color(grids)
+def _make_partition_shapes(
+        grids: list[Grid], backgrounds: list[int],
+        partition_color: int)->Optional[list[list[Shape]]]:
     result = []
     for grid, bg in zip(grids, backgrounds):
-        rows, cols, row_colors, col_colors = find_separators(grid, consistent_color)
+        rows, cols, row_colors, col_colors = find_separators(grid, partition_color)
         if len(row_colors)+len(col_colors) == 0:
             return None
 
         partitions = partition(grid, rows, cols, row_colors, col_colors)
-        separator = _resolve_separator_color(consistent_color, row_colors+col_colors)
+        separator = _resolve_separator_color(partition_color, row_colors+col_colors)
         if separator in (NULL_COLOR, bg):
             return None
 
@@ -84,21 +90,6 @@ def _make_partition_shapes(grids: list[Grid],
 
         result.append(partitions+grid_shapes)
     return result
-
-
-def _find_consistent_color(grids: list[Grid])-> int:
-    color_stats: dict[int, set[int]] = {}
-    len_grids = len(grids)
-
-    for sample_id, grid in enumerate(grids):
-        rows, cols, row_colors, col_colors = find_separators(grid, NULL_COLOR)
-        for color in row_colors+col_colors:
-            color_stats[color] = color_stats.get(color, set()) | {sample_id}
-
-    for color, sample_ids in color_stats.items():
-        if len(sample_ids) == len_grids:
-            return color
-    return NULL_COLOR
 
 
 def _resolve_separator_color(consistent_color: int, local_colors: list[int])->int:
