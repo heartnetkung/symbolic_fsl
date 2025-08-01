@@ -3,7 +3,7 @@ from ...graphic import *
 from ...manager.task import *
 from .independent_parse import ParseMode, IndependentParse
 from itertools import product
-from ...algorithm.find_background import find_backgrounds
+from ...algorithm.find_background import find_backgrounds, make_background_df
 from collections import Counter
 
 
@@ -14,24 +14,31 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
     def solve_problem(self, state: ArcTrainingState, task: ParseGridTask)->list[Action]:
         result = []
         backgrounds = find_backgrounds(state)
-        x_partition_color = _get_partition_color(state.x)
-        y_partition_color = _get_partition_color(state.y)
+        x_partition_colors = _cache_partition_color(state.x)
+        y_partition_colors = _cache_partition_color(state.y)
+        df = make_background_df(state)
 
         # independent parse
         for x_mode, y_mode, (x_model, y_model), unknown_bg in product(
                 self.params.parser_x_modes, self.params.parser_y_modes,
                 backgrounds, BOOLS):
+            x_partition_color, y_partition_color = NULL_COLOR, NULL_COLOR
+
             if unknown_bg:  # proximity + unknown_bg == crop
                 if x_mode in (ParseMode.proximity_diag, ParseMode.proximity_normal):
                     continue
                 if y_mode in (ParseMode.proximity_diag, ParseMode.proximity_normal):
                     continue
             if x_mode == ParseMode.partition:
-                if x_partition_color is None:
+                if x_partition_colors is None:
                     continue
+                x_bg = x_model.predict_int(df)
+                x_partition_color = _get_partition_color(x_partition_colors, x_bg)
             if y_mode == ParseMode.partition:
-                if y_partition_color is None:
+                if y_partition_colors is None:
                     continue
+                y_bg = y_model.predict_int(df)
+                y_partition_color = _get_partition_color(y_partition_colors, y_bg)
 
             result.append(IndependentParse(
                 x_mode, y_mode, x_model, y_model, unknown_bg,
@@ -39,24 +46,26 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
         return result
 
 
-def _have_partitions(grids: list[Grid])->bool:
-    len_grids = len(grids)
-    for sample_id, grid in enumerate(grids):
-        rows, cols, row_colors, col_colors = find_separators(grid)
-        if len(row_colors) == 0 and len(col_colors) == 0:
-            return False
-    return True
-
-
-def _get_partition_color(grids: list[Grid])->Optional[int]:
+def _cache_partition_color(grids: list[Grid])->Optional[set[int]]:
     counter = Counter()
     for sample_id, grid in enumerate(grids):
         rows, cols, row_colors, col_colors = find_separators(grid)
-        total_colors = set(row_colors+col_colors)
+        total_colors = set(row_colors+col_colors) - {0}
         if len(total_colors) == 0:
             return None
 
         counter.update(total_colors)
 
-    color, count = counter.most_common(1)[0]
-    return color if count == len(grids) else NULL_COLOR
+    len_grids = len(grids)
+    return {color for color, count in counter.most_common() if count == len_grids}
+
+
+def _get_partition_color(possible_colors: set[int], backgrounds: list[int])->int:
+    to_subtract = set(backgrounds)
+    if len(to_subtract) != 1:  # only subtract if the background is constant
+        to_subtract = set()
+
+    result = possible_colors - to_subtract
+    if len(result) != 1:
+        return NULL_COLOR
+    return result.pop()
