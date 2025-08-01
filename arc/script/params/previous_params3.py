@@ -1,83 +1,83 @@
 from ...constant import *
 
-previous_v1_params = {}
+previous_v1_params3 = {}
 
-previous_v1_params[209] = GlobalParams(
+previous_v1_params3[209] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[219] = GlobalParams(
+previous_v1_params3[219] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[224] = GlobalParams(
+previous_v1_params3[224] = GlobalParams(
     parser_x_modes=(ParseMode.color_proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[230] = GlobalParams(
+previous_v1_params3[230] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[235] = GlobalParams(
+previous_v1_params3[235] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[240] = GlobalParams(
+previous_v1_params3[240] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[248] = GlobalParams(
+previous_v1_params3[248] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[250] = GlobalParams(
+previous_v1_params3[250] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[251] = GlobalParams(
+previous_v1_params3[251] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[257] = GlobalParams(
+previous_v1_params3[257] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[260] = GlobalParams(
+previous_v1_params3[260] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[261] = GlobalParams(
+previous_v1_params3[261] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[266] = GlobalParams(
+previous_v1_params3[266] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[270] = GlobalParams(
+previous_v1_params3[270] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
 
-previous_v1_params[271] = GlobalParams(
+previous_v1_params3[271] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.proximity_normal,), max_reparse=0)
 
-previous_v1_params[275] = GlobalParams(
+previous_v1_params3[275] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[276] = GlobalParams(
+previous_v1_params3[276] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[289] = GlobalParams(
+previous_v1_params3[289] = GlobalParams(
     parser_x_modes=(ParseMode.color_proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[290] = GlobalParams(
+previous_v1_params3[290] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[294] = GlobalParams(
+previous_v1_params3[294] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)

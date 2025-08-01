@@ -1,87 +1,87 @@
 from ...constant import *
 
-previous_v1_params = {}
+previous_v1_params4 = {}
 
-previous_v1_params[301] = GlobalParams(
+previous_v1_params4[301] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[304] = GlobalParams(
+previous_v1_params4[304] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[308] = GlobalParams(
+previous_v1_params4[308] = GlobalParams(
     parser_x_modes=(ParseMode.color_proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[310] = GlobalParams(
+previous_v1_params4[310] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[316] = GlobalParams(
+previous_v1_params4[316] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[317] = GlobalParams(
+previous_v1_params4[317] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[321] = GlobalParams(
+previous_v1_params4[321] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[325] = GlobalParams(
+previous_v1_params4[325] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[336] = GlobalParams(
+previous_v1_params4[336] = GlobalParams(
     parser_x_modes=(ParseMode.color_proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[338] = GlobalParams(
+previous_v1_params4[338] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[351] = GlobalParams(
+previous_v1_params4[351] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[352] = GlobalParams(
+previous_v1_params4[352] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
 
-previous_v1_params[353] = GlobalParams(
+previous_v1_params4[353] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.proximity_normal,), max_reparse=0)
 
-previous_v1_params[355] = GlobalParams(
+previous_v1_params4[355] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[357] = GlobalParams(
+previous_v1_params4[357] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[361] = GlobalParams(
+previous_v1_params4[361] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1)
 
-previous_v1_params[371] = GlobalParams(
+previous_v1_params4[371] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=1)
 
-previous_v1_params[374] = GlobalParams(
+previous_v1_params4[374] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[379] = GlobalParams(
+previous_v1_params4[379] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
-previous_v1_params[384] = GlobalParams(
+previous_v1_params4[384] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
-previous_v1_params[385] = GlobalParams(
+previous_v1_params4[385] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
