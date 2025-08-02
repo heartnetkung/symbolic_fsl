@@ -26,10 +26,8 @@ class ApplyLogic(ModelFreeArcAction[AttentionTask]):
 
         for id1, indexes in zip(atn.sample_index, atn.x_index):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
-            new_shape = all_shapes[id1][id2s[0]]
-            for id2 in id2s[1:]:
-                new_shape = apply_logic(
-                    new_shape, all_shapes[id1][id2], self.color, self.type)
+            relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
+            new_shape = apply_logic(relevant_shapes, self.color, self.type)
             all_shapes[id1].append(new_shape)
 
             for id2 in id2s:
@@ -46,9 +44,7 @@ class ApplyLogic(ModelFreeArcAction[AttentionTask]):
         result, all_shapes = [], state.out_shapes
         for id1, indexes in zip(atn.sample_index, atn.x_index):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
-            new_shape = all_shapes[id1][id2s[0]]
-            for id2 in id2s[1:]:
-                new_shape = apply_logic(
-                    new_shape, all_shapes[id1][id2], self.color, self.type)
+            relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
+            new_shape = apply_logic(relevant_shapes, self.color, self.type)
             result.append(new_shape)
         return result

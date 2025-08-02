@@ -49,9 +49,7 @@ class ApplyPartitionlessLogic(ModelFreeArcAction[PartitionlessLogicTask]):
 
         result = []
         for shapes in all_splitted_shapes:
-            new_shape = shapes[0]
-            for shape in shapes[1:]:
-                new_shape = apply_logic(new_shape, shape, self.color, self.type)
+            new_shape = apply_logic(shapes, self.color, self.type)
             result.append([new_shape])
         return result
 
