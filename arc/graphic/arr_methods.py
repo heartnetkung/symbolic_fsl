@@ -11,7 +11,6 @@ def draw_canvas(width: int, height: int, shapes: list[Shape],
     canvas = make_grid(width, height, background)
     for shape in shapes:
         shape.draw(canvas, include_xy)
-        print('canvas', canvas, shape)
     return canvas
 
 

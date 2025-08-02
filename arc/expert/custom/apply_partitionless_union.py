@@ -5,7 +5,7 @@ from copy import deepcopy
 from ..util import *
 from ...manager.task import PartitionlessLogicTask
 from enum import Enum
-from .apply_partitionless_logic import is_single_fullsize_shape
+from .apply_partitionless_logic import is_single_fullsize_shape, split_shapes_equally
 from itertools import permutations
 
 
@@ -47,28 +47,3 @@ class ApplyPartitionlessUnion(ModelFreeArcAction[PartitionlessLogicTask]):
                                    reordered_shapes, include_xy=False)
             result.append([Unknown(0, 0, new_grid)])
         return result
-
-
-def split_shapes_equally(all_shapes: list[list[Shape]], row_count: int,
-                         col_count: int)->Optional[list[list[Shape]]]:
-    results = []
-    for shapes in all_shapes:
-        if len(shapes) != 1:
-            return None
-
-        shape = shapes[0]
-        if shape.height % row_count != 0:
-            return None
-        if shape.width % col_count != 0:
-            return None
-
-        height = round(shape.height/row_count)
-        width = round(shape.width/col_count)
-        new_result, grid = [], shape._grid
-
-        for i in range(row_count):
-            for j in range(col_count):
-                x, y = width*j, height*i
-                new_result.append(Unknown(x, y, grid.crop(x, y, width, height)))
-        results.append(new_result)
-    return results

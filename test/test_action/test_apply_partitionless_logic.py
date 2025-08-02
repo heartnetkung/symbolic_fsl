@@ -25,7 +25,7 @@ def test_basic():
 
     action = ApplyPartitionlessLogic(
         param=PartitionlessLogicParam.normal, color=-1,
-        type=LogicType.and_, is_horizontal=True, params=params)
+        type=LogicType.and_, row_count=2, col_count=1, params=params)
 
     state = create_test_state(x_shapes, y_shapes).update(partitionless_logic=False)
     program = AttentionExpertProgram(action, params)

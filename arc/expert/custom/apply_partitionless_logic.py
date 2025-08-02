@@ -17,12 +17,14 @@ class ApplyPartitionlessLogic(ModelFreeArcAction[PartitionlessLogicTask]):
                  params: GlobalParams,
                  color: int = NULL_COLOR,
                  type: LogicType = LogicType.and_,
-                 is_horizontal: bool = False)->None:
+                 row_count: int = -1,
+                 col_count: int = -1)->None:
         self.param = param
         self.params = params
         self.color = color
         self.type = type
-        self.is_horizontal = is_horizontal
+        self.row_count = row_count
+        self.col_count = col_count
         super().__init__()
 
     def perform(self, state: ArcState,
@@ -42,7 +44,7 @@ class ApplyPartitionlessLogic(ModelFreeArcAction[PartitionlessLogicTask]):
             return None
 
         all_splitted_shapes = split_shapes_equally(
-            state.out_shapes, self.is_horizontal)
+            state.out_shapes, self.row_count, self.col_count)
         if all_splitted_shapes is None:
             return None
 
@@ -65,36 +67,26 @@ def is_single_fullsize_shape(all_shapes: list[list[Shape]], grids: list[Grid])->
     return True
 
 
-def split_shapes_equally(all_shapes: list[list[Shape]],
-                         is_horizontal: bool)->Optional[list[list[Shape]]]:
-    result = []
+def split_shapes_equally(all_shapes: list[list[Shape]], row_count: int,
+                         col_count: int)->Optional[list[list[Shape]]]:
+    results = []
     for shapes in all_shapes:
         if len(shapes) != 1:
             return None
 
         shape = shapes[0]
-        if is_horizontal:
-            if shape.height <= shape.width:
-                return None
-            if shape.height % shape.width != 0:
-                return None
+        if shape.height % row_count != 0:
+            return None
+        if shape.width % col_count != 0:
+            return None
 
-            size = round(shape.height/shape.width)
-            x_values = [0]*size
-            y_values = range(0, shape.height, shape.width)
-            w_values = [shape.width]*size
-        else:
-            if shape.width <= shape.height:
-                return None
-            if shape.width % shape.height != 0:
-                return None
+        height = round(shape.height/row_count)
+        width = round(shape.width/col_count)
+        new_result, grid = [], shape._grid
 
-            size = round(shape.width/shape.height)
-            x_values = range(0, shape.width, shape.height)
-            y_values = [0]*size
-            w_values = [shape.height]*size
-
-        grid = shape._grid
-        result.append([Unknown(0, 0, grid.crop(x, y, w, w))
-                       for x, y, w in zip(x_values, y_values, w_values)])
-    return result
+        for i in range(row_count):
+            for j in range(col_count):
+                x, y = width*j, height*i
+                new_result.append(Unknown(x, y, grid.crop(x, y, width, height)))
+        results.append(new_result)
+    return results

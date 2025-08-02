@@ -7,6 +7,9 @@ from itertools import combinations
 from ..util import *
 from ...attention import list_shape_representations
 from .apply_partitionless_union import ApplyPartitionlessUnion
+from itertools import permutations
+
+PERMUTATION_LIMIT = 6
 
 
 class ApplyPartitionlessLogicExpert(Expert[ArcTrainingState, PartitionlessLogicTask]):
@@ -20,13 +23,14 @@ class ApplyPartitionlessLogicExpert(Expert[ArcTrainingState, PartitionlessLogicT
 
         result: list[Action] = [ApplyPartitionlessLogic(
             PartitionlessLogicParam.skip, self.params)]
-        is_horizontal = _is_horizontal(state.x, state.y)
-        if is_horizontal is None:
+        partition = _find_partition(state.x, state.y)
+        if partition is None:
             return result
         if not is_single_fullsize_shape(state.out_shapes, state.x):
             return result
 
-        splitted_shapes = split_shapes_equally(state.out_shapes, is_horizontal)
+        row_count, col_count = partition
+        splitted_shapes = split_shapes_equally(state.out_shapes, row_count, col_count)
         if splitted_shapes is None:
             return result
 
@@ -34,7 +38,19 @@ class ApplyPartitionlessLogicExpert(Expert[ArcTrainingState, PartitionlessLogicT
             for type in LogicType:
                 candidate = ApplyPartitionlessLogic(
                     PartitionlessLogicParam.normal, self.params,
-                    color, type, is_horizontal)
+                    color, type, row_count, col_count)
+                produced_shapes = candidate.apply(state)
+                if produced_shapes is None:
+                    continue
+                if not _check_result(produced_shapes, state.y_shapes):
+                    continue
+
+                result.append(candidate)
+
+        if row_count*col_count <= PERMUTATION_LIMIT:
+            for perm in permutations(range(row_count*col_count)):
+                candidate = ApplyPartitionlessUnion(
+                    list(perm), row_count, col_count, self.params)
                 produced_shapes = candidate.apply(state)
                 if produced_shapes is None:
                     continue
@@ -66,17 +82,25 @@ def _check_result(all_a_shapes: list[list[Shape]],
     return True
 
 
-def _is_horizontal(x_grids: list[Grid], y_grids: list[Grid])->Optional[bool]:
-    result = set()
+def _find_partition(x_grids: list[Grid],
+                    y_grids: list[Grid])->Optional[tuple[int, int]]:
+    n_rows, n_cols = set(), set()
     for x_grid, y_grid in zip(x_grids, y_grids):
-        width_equal = x_grid.width == y_grid.width
-        height_equal = x_grid.height == y_grid.height
-        if width_equal and height_equal:
+        if x_grid.width < y_grid.width:
             return None
-        if (not width_equal) and (not height_equal):
+        if x_grid.height < y_grid.height:
             return None
-        result.add(width_equal)
+        if (x_grid.width % y_grid.width) != 0:
+            return None
+        if (x_grid.height % y_grid.height) != 0:
+            return None
 
-    if len(result) != 1:
+        n_rows.add(round(x_grid.height / y_grid.height))
+        n_cols.add(round(x_grid.width / y_grid.width))
+    if (len(n_rows) != 1) or (len(n_cols) != 1):
         return None
-    return result.pop()
+
+    result = (n_rows.pop(), n_cols.pop())
+    if result == (1, 1):
+        return None
+    return result
