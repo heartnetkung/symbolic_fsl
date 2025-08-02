@@ -1,4 +1,5 @@
 from .apply_logic import ApplyLogic
+from .apply_union import ApplyUnion
 from ...base import *
 from ...graphic import *
 from ...ml import *
@@ -6,6 +7,7 @@ from ...manager.task import *
 from itertools import combinations
 from ..util import *
 from ...attention import list_shape_representations
+from itertools import permutations
 
 
 class ApplyLogicExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
@@ -26,8 +28,19 @@ class ApplyLogicExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
                 for type in LogicType:
                     candidate = ApplyLogic([index1, index2], color, type)
                     produced_shapes = candidate.apply(state, task.atn)
+                    if produced_shapes is None:
+                        continue
                     if _check_result(produced_shapes, y_shapes):
                         result.append(candidate)
+
+        if len(feat_indexes) > 1:
+            for perm in permutations(feat_indexes):
+                candidate = ApplyUnion(list(perm))
+                produced_shapes = candidate.apply(state, task.atn)
+                if produced_shapes is None:
+                    continue
+                if _check_result(produced_shapes, y_shapes):
+                    result.append(candidate)
         return result
 
 

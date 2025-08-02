@@ -22,5 +22,4 @@ def test_basic():
     state = create_test_state(x_shapes, y_shapes)
     program = AttentionExpertProgram(action, params)
     result = program.run(state)
-    print_pair(result)
     assert result.out_shapes == y_shapes
