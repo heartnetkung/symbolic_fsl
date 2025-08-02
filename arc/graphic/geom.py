@@ -15,7 +15,7 @@ class LogicType(Enum):
     nand = 2
 
 
-def apply_logic(shapes: list[Shape], color: int, type: LogicType)->Unknown:
+def apply_logic(shapes: list[Shape], color: int, type: LogicType)->Optional[Unknown]:
     '''
     Apply logic operation to all shapes with the given color being true, false otherwise.
 
@@ -24,16 +24,19 @@ def apply_logic(shapes: list[Shape], color: int, type: LogicType)->Unknown:
     assert len(shapes) > 0
 
     bool_out = np.array(shapes[0]._grid.data) == color
-    for shape in shapes[1:]:
-        bool_current = np.array(shape._grid.data) == color
-        if type == LogicType.and_:
-            bool_out = np.logical_and(bool_out, bool_current)
-        elif type == LogicType.xor:
-            bool_out = np.logical_xor(bool_out, bool_current)
-        elif type == LogicType.nand:
-            bool_out = np.logical_not(np.logical_and(bool_out, bool_current))
-        else:
-            raise Exception('unsupported')
+    try:
+        for shape in shapes[1:]:
+            bool_current = np.array(shape._grid.data) == color
+            if type == LogicType.and_:
+                bool_out = np.logical_and(bool_out, bool_current)
+            elif type == LogicType.xor:
+                bool_out = np.logical_xor(bool_out, bool_current)
+            elif type == LogicType.nand:
+                bool_out = np.logical_not(np.logical_and(bool_out, bool_current))
+            else:
+                raise Exception('unsupported')
+    except ValueError:
+        return None
 
     # since NULL_COLOR in our algorithm denotes False value,
     # the true input value must be replaced to a dummy

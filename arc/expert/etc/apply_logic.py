@@ -28,6 +28,9 @@ class ApplyLogic(ModelFreeArcAction[AttentionTask]):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
             relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
             new_shape = apply_logic(relevant_shapes, self.color, self.type)
+            if new_shape is None:
+                return None
+
             all_shapes[id1].append(new_shape)
 
             for id2 in id2s:
@@ -38,7 +41,7 @@ class ApplyLogic(ModelFreeArcAction[AttentionTask]):
                              if (i, j) not in to_remove]
         return state.update(out_shapes=deduplicate_all_shapes(all_shapes))
 
-    def apply(self, state: ArcState, atn: Attention)->list[Shape]:
+    def apply(self, state: ArcState, atn: Attention)->Optional[list[Shape]]:
         assert state.out_shapes is not None
 
         result, all_shapes = [], state.out_shapes
@@ -46,5 +49,8 @@ class ApplyLogic(ModelFreeArcAction[AttentionTask]):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
             relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
             new_shape = apply_logic(relevant_shapes, self.color, self.type)
+            if new_shape is None:
+                return None
+
             result.append(new_shape)
         return result
