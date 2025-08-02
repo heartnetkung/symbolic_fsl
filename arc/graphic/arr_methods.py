@@ -7,10 +7,11 @@ from .types import range_intersect
 
 
 def draw_canvas(width: int, height: int, shapes: list[Shape],
-                background=NULL_COLOR)->Grid:
+                background: int = NULL_COLOR, include_xy: bool = True)->Grid:
     canvas = make_grid(width, height, background)
     for shape in shapes:
-        shape.draw(canvas)
+        shape.draw(canvas, include_xy)
+        print('canvas', canvas, shape)
     return canvas
 
 

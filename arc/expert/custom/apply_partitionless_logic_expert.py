@@ -6,6 +6,7 @@ from ...manager.task import *
 from itertools import combinations
 from ..util import *
 from ...attention import list_shape_representations
+from .apply_partitionless_union import ApplyPartitionlessUnion
 
 
 class ApplyPartitionlessLogicExpert(Expert[ArcTrainingState, PartitionlessLogicTask]):

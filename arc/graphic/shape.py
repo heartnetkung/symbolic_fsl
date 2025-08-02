@@ -68,7 +68,7 @@ class Shape(RuntimeObject):
             return NULL_COLOR
         return top_color
 
-    def draw(self, canvas: Grid, include_xy=True)->None:
+    def draw(self, canvas: Grid, include_xy: bool = True)->None:
         '''Draw this object on canvas'''
         grid_height, grid_width = canvas.height, canvas.width
         for i in range(0, self.height):

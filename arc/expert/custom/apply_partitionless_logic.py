@@ -27,7 +27,6 @@ class ApplyPartitionlessLogic(ModelFreeArcAction[PartitionlessLogicTask]):
 
     def perform(self, state: ArcState,
                 task: PartitionlessLogicTask)->Optional[ArcState]:
-        assert state.out_shapes is not None
         if self.param == PartitionlessLogicParam.skip:
             return state
         new_out_shapes = self.apply(state)
