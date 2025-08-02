@@ -28,6 +28,8 @@ class ArcRecruiter(BasicRecruiter):
                 HammingExpert(params)],
             TrainingDrawLineTask: [DrawLineExpert(params)],
             CropTask: [CropExpert(params)],
-            PhysicsTask: [RunPhysicsExpert(params)]
+            PhysicsTask: [RunPhysicsExpert(params)],
+            PartitionlessLogicTask: [ApplyPartitionlessLogicExpert(params)]
+
         }
         super().__init__(expert_directory)  # type:ignore

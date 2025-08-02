@@ -27,12 +27,13 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     y_shapes: Optional[list[list[Shape]]] = None
     out_shapes: Optional[list[list[Shape]]] = None
 
-    # checklist, exclusively used by ArcManager
+    # checklist for parsing-related logic, exclusively used by ArcManager
     edge_reparse: bool = False
     merge_nearby_reparse: bool = False
     stack_reparse: bool = False
     split_reparse: bool = False
     run_physics: bool = False
+    partitionless_logic: bool = False
 
     # attention cache, exclusively used by ArcManager
     attention_cache: Optional[Attention] = field(
@@ -43,7 +44,8 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
 
     def check_all(self)->ArcTrainingState:
         return replace(self, edge_reparse=True, merge_nearby_reparse=True,
-                       stack_reparse=True, split_reparse=True, run_physics=True)
+                       stack_reparse=True, split_reparse=True, run_physics=True,
+                       partitionless_logic=True)
 
     @cached_property
     def _hash(self)->int:

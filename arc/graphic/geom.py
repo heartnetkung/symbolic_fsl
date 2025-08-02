@@ -12,7 +12,7 @@ DUMMY_VALID_COLOR = 9
 class LogicType(Enum):
     and_ = 0
     xor = 1
-    # or does not exist because it's the "and" of the inverse
+    nand = 2
 
 
 def apply_logic(shape1: Shape, shape2: Shape, color: int, type: LogicType)->Unknown:
@@ -31,6 +31,8 @@ def apply_logic(shape1: Shape, shape2: Shape, color: int, type: LogicType)->Unkn
         bool_out = np.logical_and(bool1, bool2)
     elif type == LogicType.xor:
         bool_out = np.logical_xor(bool1, bool2)
+    elif type == LogicType.nand:
+        bool_out = np.logical_not(np.logical_and(bool1, bool2))
     else:
         raise Exception('unsupported')
 

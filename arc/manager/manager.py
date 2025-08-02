@@ -26,6 +26,8 @@ class ArcManager(Manager[ArcTrainingState]):
             return [(ParseGridTask(), state)]
         if state.run_physics is False:
             return [(PhysicsTask(), state.update(run_physics=True))]
+        if state.partitionless_logic is False:
+            return [(PartitionlessLogicTask(), state.update(partitionless_logic=True))]
         if state.edge_reparse is False:
             return [(create_reparse_edge(state), state.update(edge_reparse=True))]
         if state.merge_nearby_reparse is False:
