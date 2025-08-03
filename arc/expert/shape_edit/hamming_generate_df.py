@@ -10,10 +10,10 @@ COLS = [
     # misc
     'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
     # nearby pixels
-    'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)', 'cell(x,y+1)',
-    'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)', 'cell(x,y)',
+    'cell(x,y)', 'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)',
+    'cell(x,y+1)', 'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
     # transformed pixels
-    'cell(-x,y)', 'cell(x,-y)', 'cell(-x,-y)', 'cell(y,x)',
+    'cell(- x,y)', 'cell(x,- y)', 'cell(- x,-y)', 'cell(y,x)',
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'mirror(x,y)', 'tile(x,y)'
 ]
@@ -70,9 +70,9 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
                 width, offset_x = v_symmetry
                 neg_x = width + (2*offset_x) - x - 1
 
-            result['cell(-x,y)'].append(max(-1, grid.safe_access(neg_x, y)))
-            result['cell(x,-y)'].append(max(-1, grid.safe_access(x, neg_y)))
-            result['cell(-x,-y)'].append(max(-1, grid.safe_access(neg_x, neg_y)))
+            result['cell(- x,y)'].append(max(-1, grid.safe_access(neg_x, y)))
+            result['cell(x,- y)'].append(max(-1, grid.safe_access(x, neg_y)))
+            result['cell(- x,-y)'].append(max(-1, grid.safe_access(neg_x, neg_y)))
             if grid.width == grid.height:  # transpose requires square matrix
                 result['cell(y,x)'].append(grid.safe_access(y, x))
 
@@ -80,8 +80,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list])->None:
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
             result['diagonal(x,y)'].append(diagonal(grid, x, y))
             result['mirror(x,y)'].append(vote_pixels([
-                result['cell(-x,y)'][-1], result['cell(x,-y)'][-1],
-                result['cell(-x,-y)'][-1]]))
+                result['cell(- x,y)'][-1], result['cell(x,- y)'][-1],
+                result['cell(- x,-y)'][-1]]))
             if tile is not None:
                 result['tile(x,y)'].append(get_tile(tile, x, y))
 

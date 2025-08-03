@@ -39,7 +39,7 @@ class GlobalParams:
     # the number of possible classifiers per branch
     ppdt_max_classifer_choices: int = 2
     # the number of possible regressors per branch
-    ppdt_max_regressor_choices: int = 1
+    ppdt_max_regressor_choices: int = 2
     # the number of possible regressors per EPDT
     ppdt_max_nested_regressors: int = 3
     # linear programming time limit
