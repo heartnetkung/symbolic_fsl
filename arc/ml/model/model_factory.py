@@ -76,9 +76,9 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     tree_models = [MatchColumn(FeatEng(model), X2)
                    for model in make_tree(feat_eng(X2), y, params)]
 
-    logger.info('ppdt_models: %s', ppdt_models)
-    logger.info('assoc_models: %s', assoc_models)
-    logger.info('tree_models: %s', tree_models)
+    logger.info('ppdt_models: %d %s', len(ppdt_models), ppdt_models)
+    logger.info('assoc_models: %d %s', len(assoc_models), assoc_models)
+    logger.info('tree_models: %d %s', len(tree_models), tree_models)
     return ppdt_models+assoc_models+tree_models
 
 
