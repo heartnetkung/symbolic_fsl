@@ -33,6 +33,8 @@ def solve_previous(index: int = -1)->None:
                 index, result.elapsed_time_s, result.correct == True,
                 len(result.predictions), result.reasoning_result.path_count,
                 result.planning_result.message, result.reasoning_result.message)
+        except KeyboardInterrupt:
+            raise
         except:
             print(traceback.format_exc())
     report.print()
