@@ -3,7 +3,6 @@ from .util import *
 
 def test_top_side():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [5,  -1, -1, -1, 5],
@@ -42,7 +41,6 @@ def test_top_side():
 
 def test_inside():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [-1,  5, 5, -1, 5],
@@ -81,7 +79,6 @@ def test_inside():
 
 def test_adjacent():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [-1,  5, -1],
@@ -121,7 +118,6 @@ def test_adjacent():
 
 def test_mirror():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [-1,  5, 5],
@@ -159,7 +155,6 @@ def test_mirror():
 
 def test_mirror2():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [3, -1, 8, -1, -1],
@@ -201,7 +196,6 @@ def test_mirror2():
 
 def test_star():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(2, 2, Grid([
             [-1,  5, -1],
@@ -246,7 +240,6 @@ def test_star():
 
 def test_tile():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(0, 0, Grid([
             [0,  1, 0],
@@ -318,7 +311,6 @@ def test_tile():
 
 def test_global_features():
     params = GlobalParams()
-    grid = Grid([[1, 2], [3, 4]])
     x_shapes = [
         [Unknown(0, 0, Grid([
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
