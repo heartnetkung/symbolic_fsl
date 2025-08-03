@@ -66,33 +66,84 @@ class ResultCollection:
 
 
 class ModelCache:
-    def __init__(self)->None:
-        self.cache: dict[tuple[TrainingState, TrainingState], list[
-            tuple[ModeledTask, InferenceAction]]] = {}
+    def __init__(self, plan: PlanningGraph)->None:
+        self.cache = {}
+        self.plan = plan
 
-    def get_models(self, before: TrainingState, after: TrainingState,
-                   plan: PlanningGraph)->list[tuple[ModeledTask, InferenceAction]]:
+    def get_models(self, before: TrainingState, after: TrainingState)->list[
+            tuple[ModeledTask, InferenceAction]]:
         key = (before, after)
         values = self.cache.get(key, None)
         if values is None:
-            new_values: list[tuple[ModeledTask, InferenceAction]] = []
-            for task, action in plan.get_edge_data(before, after):
-                try:
-                    modeled_tasks = task.to_models(before, after)
-                    runtime_actions = action.to_runtimes(before, after, task)
-                    for m_task, r_action in product(modeled_tasks, runtime_actions):
-                        new_values.append((m_task, r_action))
-                except Exception:
-                    logger.info('modeling error', exc_info=True)
+            new_values = self._train_models(before, after)
             self.cache[key] = new_values
             return new_values
         return values
+
+    def _train_models(self, before: TrainingState, after: TrainingState)->list[
+            tuple[ModeledTask, InferenceAction]]:
+        new_values: list[tuple[ModeledTask, InferenceAction]] = []
+        for task, action in self.plan.get_edge_data(before, after):
+            try:
+                modeled_tasks = task.to_models(before, after)
+                runtime_actions = action.to_runtimes(before, after, task)
+                for m_task, r_action in product(modeled_tasks, runtime_actions):
+                    new_values.append((m_task, r_action))
+            except Exception:
+                logger.info('modeling error', exc_info=True)
+        return new_values
+
+
+class StateCache:
+    def __init__(self, plan: PlanningGraph)->None:
+        self.model_cache = ModelCache(plan)
+        self.cache = {}
+
+    def get_states(self, train_before: TrainingState, train_after: TrainingState,
+                   infer_before: InferenceState)->dict[InferenceState, list[
+                       tuple[InferenceTask, InferenceAction]]]:
+
+        key = (train_before, train_after, infer_before)
+        values = self.cache.get(key, None)
+        if values is None:
+            new_values = self._infer_states(train_before, train_after, infer_before)
+            self.cache[key] = new_values
+            return new_values
+        return values
+
+    def _infer_states(self, train_before: TrainingState, train_after: TrainingState,
+                      infer_before: InferenceState)->dict[InferenceState, list[
+                          tuple[InferenceTask, InferenceAction]]]:
+
+        next_iteration_data = {}
+        task_actions = self.model_cache.get_models(train_before, train_after)
+        for modeled_task, runtime_action in task_actions:
+            try:
+                runtime_task = modeled_task.to_runtimes(infer_before)
+                if runtime_task is None:
+                    continue
+
+                new_state = runtime_action.perform_infer(infer_before, runtime_task)
+                if new_state is None:
+                    continue
+
+                new_prefix = [(runtime_task, runtime_action)]
+                saved_prefix = next_iteration_data.get(new_state, None)
+                if saved_prefix is None:
+                    next_iteration_data[new_state] = new_prefix
+                elif Trace.cal_cost(saved_prefix) > Trace.cal_cost(new_prefix):
+                    next_iteration_data[new_state] = new_prefix
+            except IgnoredException:
+                pass
+            except Exception:
+                logger.info('runtime action error', exc_info=True)
+        return next_iteration_data
 
 
 def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
            max_path: int, max_time_s: int)->ReasoningResult:
     result = ResultCollection(max_result)
-    model_cache = ModelCache()
+    state_cache = StateCache(plan)
     end_time = time.time()+max_time_s
     last_path_no = 0
 
@@ -108,16 +159,15 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
             logger.info('time limit \n%s', result)
             return ReasoningResult(result.to_list(), path_no+1, 'time limit')
 
-        _fill_traces(init_state, path, 0, plan, end_time, [], result, model_cache)
+        _fill_traces(init_state, path, 0, end_time, [], result, state_cache)
 
     logger.info('options exhausted \n%s', result)
     return ReasoningResult(result.to_list(), last_path_no+1, 'options exhausted')
 
 
 def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
-                 plan: PlanningGraph, end_time: float,
-                 prefix: list[tuple[InferenceTask, InferenceAction]],
-                 result: ResultCollection, cache: ModelCache)->None:
+                 end_time: float, prefix: list[tuple[InferenceTask, InferenceAction]],
+                 result: ResultCollection, cache: StateCache)->None:
     if index == len(path)-1:
         result.append(Trace(prefix, state))
         return
@@ -126,31 +176,8 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
     if Trace.cal_cost(prefix) > result.acceptable_cost:
         return
 
-    node, next_node, is_end = path[index], path[index+1], index == (len(path)-2)
-    task_actions = cache.get_models(node, next_node, plan)
-    next_iteration_data = {}
-
-    for modeled_task, runtime_action in task_actions:
-        try:
-            runtime_task = modeled_task.to_runtimes(state)
-            if runtime_task is None:
-                continue
-
-            new_state = runtime_action.perform_infer(state, runtime_task)
-            if new_state is None:
-                continue
-
-            new_prefix = prefix + [(runtime_task, runtime_action)]
-            saved_prefix = next_iteration_data.get(new_state, None)
-            if saved_prefix is None:
-                next_iteration_data[new_state] = new_prefix
-            elif Trace.cal_cost(saved_prefix) > Trace.cal_cost(new_prefix):
-                next_iteration_data[new_state] = new_prefix
-        except IgnoredException:
-            pass
-        except Exception:
-            logger.info('runtime action error', exc_info=True)
-
+    node, next_node = path[index], path[index+1]
+    next_iteration_data = cache.get_states(node, next_node, state)
     for new_state, new_prefix in next_iteration_data.items():
-        _fill_traces(new_state, path, index+1, plan,
-                     end_time, new_prefix, result, cache)
+        _fill_traces(new_state, path, index+1,
+                     end_time, prefix+new_prefix, result, cache)
