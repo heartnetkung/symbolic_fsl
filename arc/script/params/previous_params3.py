@@ -30,6 +30,10 @@ previous_v1_params3[240] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
 
+previous_v1_params3[241] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
 previous_v1_params3[248] = GlobalParams(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)

@@ -46,6 +46,10 @@ previous_v1_params4[346] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
+previous_v1_params4[350] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
 previous_v1_params4[351] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
@@ -94,6 +98,14 @@ previous_v1_params4[385] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
+previous_v1_params4[393] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
 previous_v1_params4[394] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
+previous_v1_params4[399] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)

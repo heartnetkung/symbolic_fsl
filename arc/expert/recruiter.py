@@ -25,7 +25,7 @@ class ArcRecruiter(BasicRecruiter):
                 MoveExpert(params), ApplyLogicExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
                 FillInTheBlankExpert(params), SplitShapeExpert(),
-                HammingExpert(params)],
+                HammingExpert(params), FITPExpert(params)],
             TrainingDrawLineTask: [DrawLineExpert(params)],
             CropTask: [CropExpert(params)],
             PhysicsTask: [RunPhysicsExpert(params)],
