@@ -43,7 +43,7 @@ def _postprocess(results: Iterable[LinprogResult], threshold: int)->list[Linprog
 
 def _solve(X: pd.DataFrame, y: np.ndarray, mask: np.ndarray,
            counts: VariableCount, params: GlobalParams)->OptimizeResult:
-    variables = make_variables(counts, True)
+    variables = make_variables(counts, True, list(X.columns))
     return milp(np.array(variables.cost)*mask,
                 integrality=np.array(variables.integrality),
                 bounds=variables.bounds,

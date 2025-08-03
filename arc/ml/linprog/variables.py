@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import Bounds
 from dataclasses import dataclass
+from ...constant import COST_PATTERN
 
 C_MAX = 10  # ref III.1.2.c
 C0_MAX = 30
@@ -49,20 +50,24 @@ class VariableCount:
         return repr(self.__dict__)
 
 
-def make_variables(counts: VariableCount, is_cls: bool, lambda_: int = 0)->Variables:
+def make_variables(counts: VariableCount, is_cls: bool,
+                   col_names: list[str], lambda_: int = 0)->Variables:
     # configure
     # should the cost be zero? No because 224.
     c0_cost = 0 if is_cls else 1
     c_integrality = 1 if is_cls else 0
     c_max = 1 if is_cls else C_MAX
 
-    #TODO relax integrality constraints?
+    c1_cost = [2+_cal_penalty(col_name) for col_name in col_names]*2
+    # TODO relax integrality constraints?
 
     # make variables
     lb = [0]*counts.total
     ub = [C0_MAX]*counts.c0 + [c_max]*(counts.c1+counts.c2) + [1]*(counts.b+counts.t)
     integrality = [c_integrality]*counts.c_total + [1]*(counts.b+counts.t)
-    cost = ([c0_cost]*counts.c0 + [2]*counts.c1+[3]*counts.c2 +
+    cost = ([c0_cost]*counts.c0 +
+            c1_cost +
+            [3]*counts.c2 +
             [lambda_]*(counts.b+counts.t))
 
     # make columns
@@ -75,3 +80,7 @@ def make_variables(counts: VariableCount, is_cls: bool, lambda_: int = 0)->Varia
     columns += [f't{i}' for i in range(counts.t)]
 
     return Variables(cost, integrality, Bounds(lb, ub), columns)  # type:ignore
+
+
+def _cal_penalty(col_name: str)->int:
+    return len(COST_PATTERN.split(col_name))-1

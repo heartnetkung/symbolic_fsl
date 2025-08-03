@@ -79,7 +79,7 @@ def make_reg_columns(X: pd.DataFrame, params: GlobalParams,
 def _solve(X: pd.DataFrame, y: np.ndarray, lambda_: int, mask: np.ndarray,
            counts: VariableCount, params: GlobalParams,
            deg2_cols: list[tuple[str, str]])->OptimizeResult:
-    variables = make_variables(counts, False, lambda_)
+    variables = make_variables(counts, False, list(X.columns), lambda_)
     constraints = [make_min_match_constraints(counts),
                    *make_dataset_constraints(counts, X, y, deg2_cols),
                    *make_mistake_notone_constraints(counts)]

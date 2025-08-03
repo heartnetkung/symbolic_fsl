@@ -4,9 +4,9 @@ import logging
 import re
 from ..graphic import Deduplicator
 from .arc_state import ArcTrainingState, ArcInferenceState, ArcState
+from ..constant import COST_PATTERN
 
 logger = logging.getLogger(__name__)
-COST_PATTERN = re.compile(r'\*|\+|\- |<|>|==|<=|>=|!=')
 
 
 def default_cost(obj: Any)->int:

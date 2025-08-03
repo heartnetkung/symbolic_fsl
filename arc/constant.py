@@ -15,6 +15,7 @@ NULL_DF = pd.DataFrame([])
 BOOLS = [False, True]
 MAX_SHAPES_PER_GRID = 30
 MAX_REPARSE_EDGE = 300
+COST_PATTERN = re.compile(r'\*|\+|\- |<|>|==|<=|>=|!=')
 
 
 class ParseMode(Enum):
@@ -39,7 +40,7 @@ class GlobalParams:
     # the number of possible classifiers per branch
     ppdt_max_classifer_choices: int = 2
     # the number of possible regressors per branch
-    ppdt_max_regressor_choices: int = 2
+    ppdt_max_regressor_choices: int = 1
     # the number of possible regressors per EPDT
     ppdt_max_nested_regressors: int = 3
     # linear programming time limit
@@ -48,8 +49,8 @@ class GlobalParams:
     # max_reparse: int = 0
     max_reparse: int = 2
     # list of parse modes to try
-    # parser_x_modes: Iterable[ParseMode] = (ParseMode.proximity_diag,)
-    # parser_y_modes: Iterable[ParseMode] = (ParseMode.proximity_diag,)
+    # parser_x_modes: Iterable[ParseMode] = (ParseMode.crop,)
+    # parser_y_modes: Iterable[ParseMode] = (ParseMode.crop,)
     parser_x_modes: Iterable[ParseMode] = ParseMode
     parser_y_modes: Iterable[ParseMode] = ParseMode
 

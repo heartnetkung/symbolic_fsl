@@ -54,7 +54,7 @@ def _make_all_regressors(
         correct_pred = np.isclose(y, regressor.predict(X))
         if np.all(correct_pred):
             result.append(prefix+[regressor])
-            continue
+            break
         if not np.any(correct_pred):
             continue
 
