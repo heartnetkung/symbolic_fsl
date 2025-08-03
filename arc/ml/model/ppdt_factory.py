@@ -15,6 +15,7 @@ from .decision_tree_factory import make_tree
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
 MAX_LINPROG_REG_SAMPLE = 100  # linprog reg is not really scalable and mostly timeout
+MAX_CLASSIFIERS = 10
 
 
 class LabelType(Enum):
@@ -117,7 +118,8 @@ def _make_all_classifiers(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         classifiers1 = make_classifiers(X_remain, correct_pred, params)
         classifiers2 = make_comparison_models(X_remain, correct_pred, params)
         classifiers3 = make_tree(X_remain, correct_pred, params, 2)
-        result.append(classifiers1+classifiers2+classifiers3)
+        all_classifiers = classifiers1+classifiers2+classifiers3
+        result.append(all_classifiers[:MAX_CLASSIFIERS])
 
         wrong_pred = np.logical_not(correct_pred)
         X_remain = X_remain[wrong_pred].reset_index(drop=True)
