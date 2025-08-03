@@ -98,6 +98,7 @@ def _select_trivial_values(X: pd.DataFrame, y: np.ndarray,
         new_count = np.sum(X[col] == y)
         if new_count > match_count:
             single_column_model = ColumnModel(col)
+            match_count = new_count
 
     if single_column_model is not None:
         result.append(single_column_model)
