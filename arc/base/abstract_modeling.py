@@ -171,9 +171,13 @@ class Trace:
 
     def __repr__(self)->str:
         result = [f'Trace(cost={self.cost}):']
-        for i, (task, action) in enumerate(self.task_actions):
-            result.append(f'{i}')
-            result.append(f'  {task} {action}')
+        index = 0
+        for task, action in self.task_actions:
+            new_str = f'  {task} {action}'
+            if new_str.find('skip') == -1:
+                result.append(f'{index}')
+                result.append(new_str)
+                index += 1
         return '\n'.join(result)
 
     @staticmethod
