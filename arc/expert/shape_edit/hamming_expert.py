@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from ..util import *
 
-MIN_SIZE = 3
+MIN_SIZE = 2
 SIMILARITY_THRESHOLD = 0.8
 
 
