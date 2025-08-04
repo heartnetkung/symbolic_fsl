@@ -45,6 +45,7 @@ class VariableCount:
         self.c0p = int(round(self.c0/2))
         self.c1p = int(round(self.c1/2))
         self.c2p = int(round(self.c2/2))
+        self.deg2_cols = deg2_cols
 
     def __repr__(self)->str:
         return repr(self.__dict__)
@@ -57,18 +58,15 @@ def make_variables(counts: VariableCount, is_cls: bool,
     c0_cost = 0 if is_cls else 1
     c_integrality = 1 if is_cls else 0
     c_max = 1 if is_cls else C_MAX
-
     c1_cost = [2+_cal_penalty(col_name) for col_name in col_names]*2
+    c2_cost = [3+_cal_penalty(col1+col2) for col1, col2 in counts.deg2_cols]*2
     # TODO relax integrality constraints?
 
     # make variables
     lb = [0]*counts.total
     ub = [C0_MAX]*counts.c0 + [c_max]*(counts.c1+counts.c2) + [1]*(counts.b+counts.t)
     integrality = [c_integrality]*counts.c_total + [1]*(counts.b+counts.t)
-    cost = ([c0_cost]*counts.c0 +
-            c1_cost +
-            [3]*counts.c2 +
-            [lambda_]*(counts.b+counts.t))
+    cost = ([c0_cost]*counts.c0 + c1_cost + c2_cost + [lambda_]*(counts.b+counts.t))
 
     # make columns
     columns = ['c0p', 'c0m']
