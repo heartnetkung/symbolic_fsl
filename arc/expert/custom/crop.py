@@ -20,7 +20,8 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
         bounds = self.bound_model.predict(state.x, df)
 
         for canvas, bound in zip(get_canvases(state, task), bounds):
-            new_grid = canvas.crop(bound[0], bound[1], bound[2], bound[3])
+            new_grid = canvas.crop(int(bound[0]), int(
+                bound[1]), int(bound[2]), int(bound[3]))
             new_out_shapes.append([Unknown(0, 0, new_grid)])
 
         if isinstance(state, ArcTrainingState):
