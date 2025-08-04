@@ -148,7 +148,7 @@ def test_70():
 
     def func(df):
         return np.where(df['shape.least_color'] == df['cell(x,y)'],
-                        df['cell(-x,y)'], df['cell(x,y)'])
+                        df['cell(- x,y)'], df['cell(x,y)'])
 
     action = Hamming(0, FunctionModel(func), params)
     state = create_test_state(x_shapes, y_shapes)
