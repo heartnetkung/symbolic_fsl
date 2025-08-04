@@ -30,6 +30,11 @@ class PhysicsTask(ModelFreeTask):
 
 
 @dataclass(frozen=True)
+class FreeDrawTask(ModelFreeTask):
+    pass
+
+
+@dataclass(frozen=True)
 class CleanUpTask(ModelFreeTask):
     pass
 
