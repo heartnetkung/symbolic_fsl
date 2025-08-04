@@ -87,6 +87,9 @@ def make_models(data: TrainingData, type: LabelType)->list[MLModel]:
     result, y = [], data.y
     # linprog cannot handle hash value
     X = data.X.drop(data.X.filter(regex='shape_value').columns, axis=1)  # type:ignore
+    if X.empty:
+        return []
+
     for ppdt in make_ppdts(X, y, data.params, type):
         if np.allclose(ppdt.predict(X), y):
             result.append(MatchColumn(ppdt, X))
