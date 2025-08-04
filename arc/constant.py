@@ -15,7 +15,7 @@ NULL_DF = pd.DataFrame([])
 BOOLS = [False, True]
 MAX_SHAPES_PER_GRID = 30
 MAX_REPARSE_EDGE = 300
-COST_PATTERN = re.compile(r'\*|\+|\- |<|>|==|<=|>=|!=')
+COST_PATTERN = re.compile(r'\*|\+|\- | < | > |==|<=|>=|!=')
 
 
 class ParseMode(Enum):
