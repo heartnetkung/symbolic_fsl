@@ -2,6 +2,10 @@ from ...constant import *
 
 previous_v1_params2 = {}
 
+previous_v1_params2[105] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
 previous_v1_params2[108] = GlobalParams(
     parser_x_modes=(ParseMode.partition,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
