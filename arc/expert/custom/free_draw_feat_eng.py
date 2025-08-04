@@ -19,19 +19,34 @@ def find_quadrant(x: int, y: int, w: int, h: int)->int:
 
 
 def cal_tile(grid: Grid)->Optional[Grid]:
+    candidates = []
     for i in range(1, grid.height+1):
         for j in range(1, grid.width+1):
             if i == grid.height and j == grid.width:
                 continue
             if i*j < 3:
                 continue
-            result = _check_tile(grid, j, i)
-            if result is not None:
-                return result
-    return None
+            new_result = _check_tile(grid, j, i)
+            if new_result is not None:
+                candidates.append(new_result)
+
+    for j in range(1, grid.width):
+        new_result = _check_tile(grid, j, grid.height)
+        if new_result is not None:
+            candidates.append(new_result)
+
+    for i in range(1, grid.height+1):
+        new_result = _check_tile(grid, grid.width, i)
+        if new_result is not None:
+            candidates.append(new_result)
+
+    if len(candidates) == 0:
+        return None
+    return max(candidates, key=lambda x:x[1])[0]
 
 
-def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
+def _check_tile(grid: Grid, tile_width: int,
+                tile_height: int)->Optional[tuple[Grid, float]]:
     tile_data = [[Counter()for _ in range(tile_width)] for _ in range(tile_height)]
     for i in range(grid.height):
         for j in range(grid.width):
@@ -52,8 +67,9 @@ def _check_tile(grid: Grid, tile_width: int, tile_height: int)->Optional[Grid]:
             signal += mode[0][1]
             result.data[i][j] = mode[0][0]
 
-    if signal/total < SIGNAL_NOISE_RATIO:
+    snr = signal/total
+    if snr < SIGNAL_NOISE_RATIO:
         return None
     if signal/(tile_width*tile_height) < REPEAT_RATIO:
         return None
-    return result
+    return result, snr
