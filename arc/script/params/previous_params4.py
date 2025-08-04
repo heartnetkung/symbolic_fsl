@@ -22,6 +22,10 @@ previous_v1_params4[310] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
 
+previous_v1_params4[314] = GlobalParams(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+
 previous_v1_params4[316] = GlobalParams(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), max_reparse=0)
