@@ -34,6 +34,7 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     split_reparse: bool = False
     run_physics: bool = False
     partitionless_logic: bool = False
+    free_draw: bool = False
 
     # attention cache, exclusively used by ArcManager
     attention_cache: Optional[Attention] = field(
@@ -45,7 +46,7 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     def check_all(self)->ArcTrainingState:
         return replace(self, edge_reparse=True, merge_nearby_reparse=True,
                        stack_reparse=True, split_reparse=True, run_physics=True,
-                       partitionless_logic=True)
+                       partitionless_logic=True, free_draw=True)
 
     @cached_property
     def _hash(self)->int:

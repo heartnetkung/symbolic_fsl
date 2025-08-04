@@ -29,7 +29,8 @@ class ArcRecruiter(BasicRecruiter):
             TrainingDrawLineTask: [DrawLineExpert(params)],
             CropTask: [CropExpert(params)],
             PhysicsTask: [RunPhysicsExpert(params)],
-            PartitionlessLogicTask: [ApplyPartitionlessLogicExpert(params)]
+            PartitionlessLogicTask: [ApplyPartitionlessLogicExpert(params)],
+            FreeDrawTask: [FreeDrawExpert(params)]
 
         }
         super().__init__(expert_directory)  # type:ignore

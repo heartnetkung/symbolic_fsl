@@ -4,3 +4,4 @@ from .run_physics_expert import RunPhysics, RunPhysicsParam, RunPhysicsExpert
 from .apply_partitionless_logic_expert import (
     ApplyPartitionlessLogic, PartitionlessLogicParam, ApplyPartitionlessLogicExpert,
     ApplyPartitionlessUnion)
+from .free_draw_expert import FreeDraw, FreeDrawParam, FreeDrawExpert
