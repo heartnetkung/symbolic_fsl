@@ -16,7 +16,7 @@ COLS = [
     # basic feat eng
     f'cell(+x%w,y%h)', 'cell(+x/w,y/h)', 'tile(x,y)', 'adjacent(x,y)', 'diagonal(x,y)',
     # advanced feat eng
-    'quadrant_ccw_rotate(+x,y)', 'quadrant_cw_rotate(+x,y)'
+    'quadrant_ccw_rotate(+x,y)', 'quadrant_cw_rotate(+x,y)', 'unscaled_cell(+x,y)'
 ]
 
 
@@ -33,7 +33,7 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
     grid, canvas_width, canvas_height = shape._grid, canvas.width, canvas.height
     np_grid = np.array(grid.data)
     rotations = [Grid(np.rot90(np_grid, i).tolist()) for i in range(4)]
-    tile = cal_tile(grid)
+    tile, unscaled = cal_tile(grid), unscale(grid)
 
     for y in range(h):
         for x in range(w):
@@ -78,6 +78,9 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
                 rotations[quadrant].safe_access(x % gw, y % gh))
             result['quadrant_cw_rotate(+x,y)'].append(
                 rotations[(-quadrant) % 4].safe_access(x % gw, y % gh))
+            if unscaled is not None:
+                result['unscaled_cell(+x,y)'].append(unscaled.safe_access(
+                    x%unscaled.width, y%unscaled.height))
 
 
 def _gen_shape_properties(properties: dict[str, int], df_data: dict[str, list])->None:

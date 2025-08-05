@@ -7,6 +7,7 @@ def _run(x_shape: Shape, y_shape: Shape, action: FreeDraw, params: GlobalParams)
     state = create_test_state(x_shapes, y_shapes)
     program = AttentionExpertProgram(action, params)
     result = program.run(state)
+    print_pair(result)
     assert result.out_shapes == y_shapes
 
 
@@ -83,6 +84,23 @@ def test_342():
     _run(x, y, action, params)
 
 
+def test_194():
+    def func(df):
+        result = []
+        for i, row in df.iterrows():
+            if row['cell(x,y)'] == 5:
+                result.append(row['unscaled_cell(+x,y)'])
+            else:
+                result.append(0)
+        return result
+    params, param = GlobalParams(), FreeDrawParam.normal
+    action = FreeDraw(param, ConstantModel(9), ConstantModel(9),
+                      FunctionModel(func), params)
+    x = Unknown(0, 0, x194)
+    y = Unknown(0, 0, y194)
+    _run(x, y, action, params)
+
+
 x0 = Grid([
     [0, 7, 7],
     [7, 7, 7],
@@ -155,4 +173,27 @@ y303 = Grid([
     [0, 0, 0, 1, 1, 7, 0, 0, 0],
     [0, 0, 0, 7, 4, 1, 0, 0, 0],
     [0, 0, 0, 5, 1, 7, 0, 0, 0]
+])
+
+x194 = Grid([
+    [5, 5, 5, 5, 5, 5, 5, 5, 5],
+    [5, 5, 5, 5, 5, 5, 5, 5, 5],
+    [5, 5, 5, 5, 5, 5, 5, 5, 5],
+    [0, 0, 0, 5, 5, 5, 0, 0, 0],
+    [0, 0, 0, 5, 5, 5, 0, 0, 0],
+    [0, 0, 0, 5, 5, 5, 0, 0, 0],
+    [5, 5, 5, 0, 0, 0, 5, 5, 5],
+    [5, 5, 5, 0, 0, 0, 5, 5, 5],
+    [5, 5, 5, 0, 0, 0, 5, 5, 5]
+])
+y194 = Grid([
+    [5, 5, 5, 5, 5, 5, 5, 5, 5],
+    [0, 5, 0, 0, 5, 0, 0, 5, 0],
+    [5, 0, 5, 5, 0, 5, 5, 0, 5],
+    [0, 0, 0, 5, 5, 5, 0, 0, 0],
+    [0, 0, 0, 0, 5, 0, 0, 0, 0],
+    [0, 0, 0, 5, 0, 5, 0, 0, 0],
+    [5, 5, 5, 0, 0, 0, 5, 5, 5],
+    [0, 5, 0, 0, 0, 0, 0, 5, 0],
+    [5, 0, 5, 0, 0, 0, 5, 0, 5]
 ])
