@@ -20,7 +20,7 @@ def find_quadrant(x: int, y: int, w: int, h: int)->int:
     return 3
 
 
-def cal_tile(grid: Grid)->Optional[Grid]:
+def cal_tile(grid: Grid, check_null: bool)->Optional[Grid]:
     candidates = []
     for i in range(1, grid.height+1):
         for j in range(1, grid.width+1):
@@ -28,17 +28,18 @@ def cal_tile(grid: Grid)->Optional[Grid]:
                 continue
             if i*j < 3:
                 continue
-            new_result = _check_tile(grid, j, i)
+            new_result = _check_tile(grid, j, i, check_null)
             if new_result is not None:
                 candidates.append(new_result)
+                break
 
     for j in range(1, grid.width):
-        new_result = _check_tile(grid, j, grid.height)
+        new_result = _check_tile(grid, j, grid.height, check_null)
         if new_result is not None:
             candidates.append(new_result)
 
-    for i in range(1, grid.height+1):
-        new_result = _check_tile(grid, grid.width, i)
+    for i in range(1, grid.height):
+        new_result = _check_tile(grid, grid.width, i, check_null)
         if new_result is not None:
             candidates.append(new_result)
 
@@ -80,14 +81,15 @@ def diagonal(grid: Grid, x: int, y: int)->int:
 
 # ============== private methods ======================
 
-def _check_tile(grid: Grid, tile_width: int,
-                tile_height: int)->Optional[tuple[Grid, float]]:
+def _check_tile(grid: Grid, tile_width: int, tile_height: int,
+                check_null: bool)->Optional[tuple[Grid, float]]:
     tile_data = [[Counter()for _ in range(tile_width)] for _ in range(tile_height)]
     for i in range(grid.height):
         for j in range(grid.width):
             cell = grid.data[i][j]
-            if cell != NULL_COLOR:
-                tile_data[i % tile_height][j % tile_width].update([cell])
+            if (cell == NULL_COLOR) and check_null:
+                continue
+            tile_data[i % tile_height][j % tile_width].update([cell])
 
     result = make_grid(tile_width, tile_height)
     signal, total = 0, 0
@@ -101,6 +103,9 @@ def _check_tile(grid: Grid, tile_width: int,
             total += counter.total()
             signal += mode[0][1]
             result.data[i][j] = mode[0][0]
+
+    if total == 0:
+        return None
 
     snr = signal/total
     if snr < SIGNAL_NOISE_RATIO:

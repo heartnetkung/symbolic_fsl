@@ -14,7 +14,8 @@ COLS = [
     'cell(x,y)', 'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)',
     'cell(x,y+1)', 'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
     # basic feat eng
-    f'cell(+x%w,y%h)', 'cell(+x/w,y/h)', 'tile(x,y)', 'adjacent(x,y)', 'diagonal(x,y)',
+    f'cell(+x%w,y%h)', 'cell(+x/w,y/h)', 'tile(x,y)', 'tile2(x,y)', 'adjacent(x,y)',
+    'diagonal(x,y)',
     # advanced feat eng
     'quadrant_ccw_rotate(+x,y)', 'quadrant_cw_rotate(+x,y)', 'unscaled_cell(+x,y)'
 ]
@@ -33,7 +34,7 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
     grid, canvas_width, canvas_height = shape._grid, canvas.width, canvas.height
     np_grid = np.array(grid.data)
     rotations = [Grid(np.rot90(np_grid, i).tolist()) for i in range(4)]
-    tile, unscaled = cal_tile(grid), unscale(grid)
+    tile, tile2, unscaled = cal_tile(grid, True), cal_tile(grid, False), unscale(grid)
 
     for y in range(h):
         for x in range(w):
@@ -72,6 +73,9 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
             if tile is not None:
                 result['tile(x,y)'].append(tile.safe_access(
                     x % tile.width, y % tile.height))
+            if tile2 is not None:
+                result['tile2(x,y)'].append(tile2.safe_access(
+                    x % tile2.width, y % tile2.height))
 
             # advanced feat eng
             result['quadrant_ccw_rotate(+x,y)'].append(
@@ -80,7 +84,7 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
                 rotations[(-quadrant) % 4].safe_access(x % gw, y % gh))
             if unscaled is not None:
                 result['unscaled_cell(+x,y)'].append(unscaled.safe_access(
-                    x%unscaled.width, y%unscaled.height))
+                    x % unscaled.width, y % unscaled.height))
 
 
 def _gen_shape_properties(properties: dict[str, int], df_data: dict[str, list])->None:

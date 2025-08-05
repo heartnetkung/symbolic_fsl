@@ -85,7 +85,7 @@ def generate_size_df(
         result['shape_width'].append(shapes[0].width)
         result['shape_height'].append(shapes[0].height)
 
-        tile = cal_tile(shapes[0]._grid)
+        tile = cal_tile(shapes[0]._grid, True)
         if tile is not None:
             result['tile_width'].append(tile.width)
             result['tile_height'].append(tile.height)
