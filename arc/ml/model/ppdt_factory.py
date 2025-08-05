@@ -111,13 +111,14 @@ def _make_all_classifiers(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
                           regressors: list[MLModel])->list[list[MLModel]]:
     assert len(regressors) > 0
     result, X_remain, y_remain = [], X, y
+    depth = params.ppdt_decision_tree_depth
 
     for regressor in regressors[:-1]:
         assert isinstance(X_remain, pd.DataFrame)
         correct_pred = np.isclose(y_remain, regressor.predict(X_remain))
         classifiers1 = make_classifiers(X_remain, correct_pred, params)
         classifiers2 = make_comparison_models(X_remain, correct_pred, params)
-        classifiers3 = make_tree(X_remain, correct_pred, params, 2)
+        classifiers3 = make_tree(X_remain, correct_pred, params, depth)
         all_classifiers = classifiers1+classifiers2+classifiers3
         result.append(all_classifiers[:MAX_CLASSIFIERS])
 

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from __future__ import annotations
 from functools import cached_property
 from numpy.random import RandomState, SeedSequence, MT19937
 import numpy as np
@@ -6,7 +6,7 @@ import pandas as pd
 import re
 from enum import Enum
 from typing import Any, Iterable
-from dataclasses import fields, asdict, replace
+from dataclasses import dataclass, fields, asdict, replace
 
 ANY_PATTERN = re.compile('.*')
 MISSING_VALUE = -5
@@ -41,8 +41,10 @@ class GlobalParams:
     ppdt_max_classifer_choices: int = 2
     # the number of possible regressors per branch
     ppdt_max_regressor_choices: int = 1
-    # the number of possible regressors per EPDT
+    # the number of possible regressors per PPDT
     ppdt_max_nested_regressors: int = 3
+    # the depth of decision tree used in PPDT
+    ppdt_decision_tree_depth: int = 2
     # linear programming time limit
     linprog_time_limit: int = 10
     # maximum reparse operations per solution
@@ -68,6 +70,9 @@ class GlobalParams:
 
     def __repr__(self)->str:
         return 'GlobalParams()'
+
+    def update(self, **kwargs)->GlobalParams:
+        return replace(self, **kwargs)
 
 
 class FuzzyBool(Enum):

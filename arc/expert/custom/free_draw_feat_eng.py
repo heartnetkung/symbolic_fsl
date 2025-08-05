@@ -2,6 +2,7 @@ from ...graphic import *
 from ...constant import *
 from typing import Optional
 from collections import Counter
+from ..util import *
 
 SIGNAL_NOISE_RATIO = 0.85
 REPEAT_RATIO = 1.49
@@ -42,7 +43,19 @@ def cal_tile(grid: Grid)->Optional[Grid]:
 
     if len(candidates) == 0:
         return None
-    return max(candidates, key=lambda x:x[1])[0]
+    return max(candidates, key=lambda x: x[1])[0]
+
+
+def adjacent(grid: Grid, x: int, y: int)->int:
+    return vote_pixels([
+        grid.safe_access(x-1, y), grid.safe_access(x, y-1),
+        grid.safe_access(x+1, y), grid.safe_access(x, y+1)])
+
+
+def diagonal(grid: Grid, x: int, y: int)->int:
+    return vote_pixels([
+        grid.safe_access(x-1, y-1), grid.safe_access(x+1, y-1),
+        grid.safe_access(x-1, y+1), grid.safe_access(x+1, y+1)])
 
 
 def _check_tile(grid: Grid, tile_width: int,
