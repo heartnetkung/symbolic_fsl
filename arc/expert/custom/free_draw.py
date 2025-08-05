@@ -22,7 +22,8 @@ class FreeDraw(ModelBasedArcAction[FreeDrawTask, FreeDrawTask]):
         self.width_model = width_model
         self.height_model = height_model
         self.pixel_model = pixel_model
-        self.params = params.update(ppdt_decision_tree_depth=3)
+        self.params = params.update(ppdt_decision_tree_depth=3,
+                                    ppdt_max_nested_regressors=5)
 
     def perform(self, state: ArcState, task: FreeDrawTask)->Optional[ArcState]:
         assert state.out_shapes is not None
