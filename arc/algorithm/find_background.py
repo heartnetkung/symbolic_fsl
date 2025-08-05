@@ -27,7 +27,7 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
     X_global_top_color = _find_global_top_color(state.x)
     y_global_top_color = _find_global_top_color(state.y)
 
-    result = []
+    result = [(ConstantModel(NULL_COLOR), ConstantModel(NULL_COLOR))]
     if COMMON_BG in x_common_colors:
         result.append((ConstantModel(COMMON_BG), ConstantModel(COMMON_BG)))
 
@@ -60,7 +60,7 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
     if x_mode == y_mode:
         if x_mode in x_common_colors and x_mode != COMMON_BG:
             result.append((ConstantModel(x_mode), ConstantModel(x_mode)))
-    if len(result) > 0:
+    if len(result) > 1:
         return result
     return [(ConstantModel(COMMON_BG), ConstantModel(COMMON_BG))]  # type:ignore
 

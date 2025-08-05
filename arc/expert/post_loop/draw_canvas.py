@@ -32,7 +32,14 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
 
         for width, height, background, shapes in zip(
                 widths, heights, state.y_bg, out_shapes):
-            canvases.append(draw_canvas(width, height, shapes, background))
+            if (width == 0) or (height == 0):
+                return None
+
+            new_canvas = draw_canvas(width, height, shapes, background)
+            if _has_invalid_color(new_canvas):
+                return None
+
+            canvases.append(new_canvas)
         return state.update(out=canvases)
 
     def train_models(self, state: ArcTrainingState,
@@ -58,6 +65,14 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
     df['bound_width(shapes)'] = [bound_width(shapes) for shapes in all_shapes]
     df['bound_height(shapes)'] = [bound_height(shapes) for shapes in all_shapes]
     return df
+
+
+def _has_invalid_color(grid: Grid)->bool:
+    for i in range(grid.height):
+        for j in range(grid.width):
+            if not valid_color(grid.data[i][j]):
+                return True
+    return False
 
 
 def _create_sort_df(grids: list[Grid],
