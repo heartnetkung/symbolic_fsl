@@ -7,7 +7,7 @@ from .params.previous_params4 import previous_v1_params4
 import traceback
 import time
 
-SKIP = {15, 31, 155, 297, 298, 352}
+SKIP = {15, 31, 126, 131, 155, 297, 298, 352, 353}
 
 
 def solve_previous(index: int = -1)->None:
