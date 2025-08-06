@@ -9,7 +9,7 @@ from .free_draw_feat_eng import *
 
 COLS = [
     # misc
-    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
+    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2','x%3','y%3',
     # nearby pixels
     'cell(x,y)', 'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)',
     'cell(x,y+1)', 'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
@@ -53,6 +53,8 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
             result['y'].append(y)
             result['x%2'].append(x % 2)
             result['y%2'].append(y % 2)
+            result['x%3'].append(x % 3)
+            result['y%3'].append(y % 3)
 
             # nearby pixels
             result['cell(x-1,y)'].append(grid.safe_access(x-1, y))
