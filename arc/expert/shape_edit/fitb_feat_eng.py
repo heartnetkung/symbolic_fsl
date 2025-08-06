@@ -5,6 +5,7 @@ import math
 from typing import Optional
 from collections import Counter
 from ..util import *
+from copy import deepcopy
 
 # =======================
 # public functions
@@ -141,6 +142,36 @@ def get_tile(tile: Grid, x: int, y: int, bound: tuple[int, int, int, int])->int:
     return tile.data[(y+offset_y) % tile.height][(x+offset_x) % tile.width]
 
 
+def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
+    grid2 = _inverse_color(grid)
+    shapes = list_objects(grid2)
+
+    properties = []
+    x_ranks = to_rank([shape.x for shape in shapes], False)
+    y_ranks = to_rank([shape.y for shape in shapes], False)
+    for shape, x_rank, y_rank in zip(shapes, x_ranks, y_ranks):
+        new_property = {
+            'subshape.x': shape.x,
+            'subshape.y': shape.y,
+            'subshape.mass': shape.mass,
+            'subshape.type': shape.shape_type,
+            '+to_rank(subshape.x)%3': x_rank % 3,
+            '+to_rank(subshape.x)%2': x_rank % 2,
+            '+to_rank(subshape.y)%3': x_rank % 3,
+            '+to_rank(subshape.y)%2': x_rank % 2}
+        properties.append(new_property)
+
+    result = {}
+    for shape, prop in zip(shapes, properties):
+        x, y, shape_array = shape.x, shape.y, shape._grid.data
+        for i in range(shape.height):
+            for j in range(shape.width):
+                cell = shape_array[i][j]
+                if cell != NULL_COLOR:
+                    result[Coordinate(j+x, i+y)] = prop
+    return result
+
+
 # =======================
 # private functions
 # =======================
@@ -190,3 +221,15 @@ def _copy_reverse(row: list[int])->list[int]:
     result = row.copy()
     result.reverse()
     return result
+
+
+def _inverse_color(grid: Grid)->Grid:
+    data = deepcopy(grid.data)
+    for i in range(grid.height):
+        for j in range(grid.width):
+            cell = data[i][j]
+            if cell == NULL_COLOR:
+                data[i][j] = 0
+            else:
+                data[i][j] = NULL_COLOR
+    return Grid(data)

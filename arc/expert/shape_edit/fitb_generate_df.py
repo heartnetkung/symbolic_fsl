@@ -21,7 +21,11 @@ COLS = [
     'plus(x,y)', 'cross(x,y)',
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
-    'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)'
+    'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)',
+    # subshape feat eng
+    'subshape.x', 'subshape.y', 'subshape.mass', 'subshape.type',
+    '+to_rank(subshape.x)%3', '+to_rank(subshape.x)%2',
+    '+to_rank(subshape.y)%3', '+to_rank(subshape.y)%2'
 ]
 
 
@@ -46,6 +50,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
     col_blank_count_rank = cal_col_blank_count_rank(grid)
     plus_color, cross_color = cal_plus(grid), cal_cross(grid)
     tile, tile2 = cal_tile(grid, bound, True), cal_tile(grid, bound, False)
+    subshape_map = inverse_parse(shape._grid)
     bound_w, bound_h = bound[1]-bound[0], bound[3]-bound[2]
 
     for y in range(grid.height):
@@ -117,6 +122,10 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             result['is_outside(x,y)'].append(1 if coord in outside_pixels else 0)
             result['row_blank_count_rank(x,y)'].append(row_blank_count_rank[y])
             result['col_blank_count_rank(x,y)'].append(col_blank_count_rank[x])
+
+            # subshape feat eng
+            for k, v in subshape_map[coord].items():
+                result[k].append(v)
 
 
 def _gen_shape_properties(properties: dict[str, int], df_data: dict[str, list])->None:

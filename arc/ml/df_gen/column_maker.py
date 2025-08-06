@@ -83,8 +83,8 @@ class ShapeStatsColumns(ColumnMaker):
             result['inner_bound_height(shapes)'].append(inner_bound.height)
 
 
-def to_rank(values: list[int])->list[int]:
+def to_rank(values: list[int], reverse: bool = True)->list[int]:
     lookup = {}
-    for i, val in enumerate(sorted(set(values), reverse=True)):
+    for i, val in enumerate(sorted(set(values), reverse=reverse)):
         lookup[val] = i
     return [lookup[val] for val in values]
