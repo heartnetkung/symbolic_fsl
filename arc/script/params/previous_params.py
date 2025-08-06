@@ -32,7 +32,7 @@ previous_v1_params[11] = proto.update(
 
 previous_v1_params[13] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
+    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1) # merge
 
 previous_v1_params[14] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
@@ -60,7 +60,7 @@ previous_v1_params[22] = proto.update(
 
 previous_v1_params[23] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
+    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1) # stack
 
 previous_v1_params[25] = proto.update(
     parser_x_modes=(ParseMode.partition,),
@@ -88,7 +88,7 @@ previous_v1_params[31] = proto.update(
 
 previous_v1_params[32] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1)
+    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1) # merge
 
 previous_v1_params[35] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
@@ -160,7 +160,7 @@ previous_v1_params[71] = proto.update(
 
 previous_v1_params[72] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
+    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1) #edge normal
 
 previous_v1_params[73] = proto.update(
     parser_x_modes=(ParseMode.crop,),
