@@ -18,7 +18,7 @@ COLS = [
     # feat_eng
     'adjacent(x,y)', 'diagonal(x,y)', 'is_plus_path(x,y)', 'is_cross_path(x,y)',
     'mirror(x,y)', 'double_mirror(x,y)', 'tile(x,y)', 'tile2(x,y)',
-    'plus(x,y)', 'cross(x,y)',
+    'plus(x,y)', 'cross(x,y)', 'y_mid', 'x_mid',
     # global_feat_eng
     'is_leftside(x,y)', 'is_rightside(x,y)', 'is_topside(x,y)', 'is_bottomside(x,y)',
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)',
@@ -100,6 +100,8 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             result['diagonal(x,y)'].append(diagonal(grid, x, y))
             result['mirror(x,y)'].append(mirror(grid, x, y))
             result['double_mirror(x,y)'].append(double_mirror(grid, x, y))
+            result['y_mid'].append(y-math.ceil(grid.height/2))
+            result['x_mid'].append(x-math.ceil(grid.width/2))
             if grid.width == grid.height:
                 success = is_cross_path(grid, x, y)
                 result['is_cross_path(x,y)'].append(success)
