@@ -6,11 +6,11 @@ from .params.previous_params3 import previous_v1_params3
 from .params.previous_params4 import previous_v1_params4
 import traceback
 
-SKIP = {31, 155, 258, 297, 298, 352}
+SKIP = {31, 155, 297, 298, 352}
 
 
 def solve_previous(index: int = -1)->None:
-    report = Report()
+    report, skip_count = Report(), 0
     init_pandas()
 
     running_params = (previous_v1_params | previous_v1_params2 |
@@ -24,6 +24,7 @@ def solve_previous(index: int = -1)->None:
     for index, params in running_params.items():
         print(f'solving #{index}')
         if index in SKIP:
+            skip_count += 1
             print('skip')
             continue
 
@@ -38,6 +39,7 @@ def solve_previous(index: int = -1)->None:
         except:
             print(traceback.format_exc())
     report.print()
+    print(f"skip: {skip_count}")
     print('\a', file=sys.stderr)
 
 
