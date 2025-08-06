@@ -37,7 +37,8 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         h_models = regressor_factory(df, heights, self.params, 'fdraw.h')
         p_model = StepMemoryModel(pixels)
         result += [
-            FreeDraw(FreeDrawParam.normal, w_model, h_model, p_model, self.params)
+            FreeDraw(FreeDrawParam.normal, w_model,
+                     h_model, p_model, self.params, False)
             for w_model, h_model in model_selection(w_models, h_models)]
         return result
 

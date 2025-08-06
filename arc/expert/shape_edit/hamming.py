@@ -10,10 +10,11 @@ from .hamming_generate_df import *
 
 class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def __init__(self, feat_index: int, pixel_model: MLModel,
-                 params: GlobalParams)->None:
+                 params: GlobalParams, gen_df: bool = True)->None:
         self.feat_index = feat_index
         self.pixel_model = pixel_model
         self.params = params
+        self.gen_df = gen_df
         super().__init__()
 
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
@@ -26,7 +27,12 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         for grid, id1, shape_ids in zip(grids, atn.sample_index, atn.x_index):
             id2 = shape_ids[self.feat_index]
             shape = new_out_shapes[id1][id2]
-            pixel_df = generate_pixel_df([grid], [shape])
+
+            if self.gen_df:
+                pixel_df = generate_pixel_df([grid], [shape])
+            else:
+                pixel_df = _gen_dummy_df(shape._grid)
+
             pixel_color = self.pixel_model.predict_int(pixel_df)
             shape_grid = Grid(deepcopy(shape._grid.data))
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
@@ -47,3 +53,13 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         models = regressor_factory(
             df, self.pixel_model.result, self.params, 'hamming')
         return [Hamming(self.feat_index, model, self.params) for model in models]
+
+
+def _gen_dummy_df(grid: Grid)->pd.DataFrame:
+    data = {'x': [], 'y': []}
+    for y in range(grid.height):
+        for x in range(grid.width):
+            if grid.data[y][x] != NULL_COLOR:
+                data['x'].append(x)
+                data['y'].append(y)
+    return pd.DataFrame(data)

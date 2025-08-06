@@ -41,7 +41,7 @@ class FillInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
             result.append(FillInTheBlank(
                 mode, i, MemorizedModel(widths), MemorizedModel(heights),
-                StepMemoryModel(pixels), self.params))
+                StepMemoryModel(pixels), self.params, False))
         return result
 
 

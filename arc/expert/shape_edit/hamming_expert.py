@@ -30,7 +30,7 @@ class HammingExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             if pixels is None:
                 continue
 
-            result.append(Hamming(i, StepMemoryModel(pixels), self.params))
+            result.append(Hamming(i, StepMemoryModel(pixels), self.params, False))
         return result
 
 
@@ -57,7 +57,7 @@ def _extract_pixels(x_shapes: list[Shape], y_shapes: list[Shape])->Optional[np.n
                         return None
                     continue
 
-                result.append(max(-1,y_cell))
+                result.append(max(-1, y_cell))
     return np.array(result)
 
 

@@ -56,13 +56,14 @@ class ExpansionMode(Enum):
 class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def __init__(self, expansion: ExpansionMode, feat_index: int,
                  width_model: MLModel, height_model: MLModel, pixel_model: MLModel,
-                 params: GlobalParams)->None:
+                 params: GlobalParams, gen_df: bool = True)->None:
         self.expansion = expansion
         self.feat_index = feat_index
         self.width_model = width_model
         self.height_model = height_model
         self.pixel_model = pixel_model
         self.params = params
+        self.gen_df = gen_df
         super().__init__()
 
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
@@ -86,7 +87,12 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
             bound = self.expansion.get_bound(shape, width, height)
             assert bound is not None
-            pixel_df = generate_pixel_df([grid], [new_shape], [bound])
+
+            if self.gen_df:
+                pixel_df = generate_pixel_df([grid], [new_shape], [bound])
+            else:
+                pixel_df = _gen_dummy_df(new_shape._grid)
+
             pixel_color = self.pixel_model.predict_int(pixel_df)
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
                 new_shape.grid.safe_assign(x, y, color)
@@ -126,3 +132,13 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             self.expansion, self.feat_index, w_model, h_model, p_model, self.params)
             for w_model, h_model, p_model in model_selection(
                 w_models, h_models, p_models)]
+
+
+def _gen_dummy_df(grid: Grid)->pd.DataFrame:
+    data = {'x': [], 'y': []}
+    for y in range(grid.height):
+        for x in range(grid.width):
+            if grid.data[y][x] == NULL_COLOR:
+                data['x'].append(x)
+                data['y'].append(y)
+    return pd.DataFrame(data)
