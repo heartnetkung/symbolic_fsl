@@ -5,6 +5,7 @@ from .params.previous_params2 import previous_v1_params2
 from .params.previous_params3 import previous_v1_params3
 from .params.previous_params4 import previous_v1_params4
 import traceback
+import time
 
 SKIP = {31, 155, 297, 298, 352}
 
@@ -12,6 +13,7 @@ SKIP = {31, 155, 297, 298, 352}
 def solve_previous(index: int = -1)->None:
     report, skip_count = Report(), 0
     init_pandas()
+    start = time.time()
 
     running_params = (previous_v1_params | previous_v1_params2 |
                       previous_v1_params3 | previous_v1_params4)
@@ -40,6 +42,7 @@ def solve_previous(index: int = -1)->None:
             print(traceback.format_exc())
     report.print()
     print(f"skip: {skip_count}")
+    print('\nelapsed time:', time.time()-start)
     print('\a', file=sys.stderr)
 
 
