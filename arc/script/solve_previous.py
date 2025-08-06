@@ -42,7 +42,7 @@ def solve_previous(index: int = -1)->None:
             print(traceback.format_exc())
     report.print()
     print(f"skip: {skip_count}")
-    print('\nelapsed time:', time.time()-start)
+    print('elapsed time:', time.time()-start)
     print('\a', file=sys.stderr)
 
 
