@@ -16,6 +16,7 @@ COLS = [
     # basic feat eng
     f'cell(+x%w,y%h)', 'cell(+x/w,y/h)', 'tile(x,y)', 'tile2(x,y)', 'adjacent(x,y)',
     'diagonal(x,y)', 'y_mid', 'x_mid',
+    'left_cell(y)', 'right_cell(y)', 'top_cell(x)', 'bottom_cell(x)',
     # advanced feat eng
     'quadrant_ccw_rotate(+x,y)', 'quadrant_cw_rotate(+x,y)', 'unscaled_cell(+x,y)'
 ]
@@ -72,6 +73,10 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
             result['adjacent(x,y)'].append(adjacent(grid, x, y))
             result['y_mid'].append(y - math.ceil(h/2))
             result['x_mid'].append(x - math.ceil(w/2))
+            result['left_cell(y)'].append(grid.safe_access(0, y))
+            result['right_cell(y)'].append(grid.safe_access(w-1, y))
+            result['top_cell(x)'].append(grid.safe_access(x, 0))
+            result['bottom_cell(x)'].append(grid.safe_access(x, h-1))
             if tile is not None:
                 result['tile(x,y)'].append(tile.safe_access(
                     x % tile.width, y % tile.height))
