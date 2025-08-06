@@ -1,16 +1,6 @@
 from .util import *
 
 
-def _run(x_shape: Shape, y_shape: Shape, action: FreeDraw, params: GlobalParams)->None:
-    x_shapes = [[x_shape]]
-    y_shapes = [[y_shape]]
-    state = create_test_state(x_shapes, y_shapes)
-    program = AttentionExpertProgram(action, params)
-    result = program.run(state)
-    print_pair(result)
-    assert result.out_shapes == y_shapes
-
-
 def test_0():
     def func(df):
         return np.where(df['cell(+x/w,y/h)'] != 0, df[f'cell(+x%w,y%h)'], 0)
@@ -19,7 +9,7 @@ def test_0():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x0)
     y = Unknown(0, 0, y0)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 def test_105():
@@ -30,7 +20,7 @@ def test_105():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x105)
     y = Unknown(0, 0, y105)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 def test_265():
@@ -53,7 +43,7 @@ def test_265():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x265)
     y = Unknown(0, 0, y265)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 def test_303():
@@ -70,7 +60,7 @@ def test_303():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x303)
     y = Unknown(0, 0, y303)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 def test_342():
@@ -81,7 +71,7 @@ def test_342():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x342)
     y = Unknown(0, 0, y342)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 def test_194():
@@ -98,7 +88,7 @@ def test_194():
                       FunctionModel(func), params)
     x = Unknown(0, 0, x194)
     y = Unknown(0, 0, y194)
-    _run(x, y, action, params)
+    run_single(x, y, action, params)
 
 
 x0 = Grid([

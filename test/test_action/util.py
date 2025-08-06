@@ -64,3 +64,14 @@ def run_actions(
         if current_state is None:
             return None
     return current_state.check_all()
+
+
+def run_single(x_shape: Shape, y_shape: Shape, action: InferenceAction,
+               params: GlobalParams)->None:
+    x_shapes = [[x_shape]]
+    y_shapes = [[y_shape]]
+    state = create_test_state(x_shapes, y_shapes)
+    program = AttentionExpertProgram(action, params)
+    result = program.run(state)
+    print_pair(result)
+    assert result.out_shapes == y_shapes
