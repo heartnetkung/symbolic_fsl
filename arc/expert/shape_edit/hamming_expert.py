@@ -30,7 +30,7 @@ class HammingExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             if pixels is None:
                 continue
 
-            result.append(Hamming(i, StepMemoryModel(pixels), self.params, False))
+            result.append(Hamming(i, StepMemoryModel(pixels), self.params))
         return result
 
 

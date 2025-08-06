@@ -17,14 +17,13 @@ class FreeDrawParam(Enum):
 class FreeDraw(ModelBasedArcAction[FreeDrawTask, FreeDrawTask]):
     def __init__(self, param: FreeDrawParam, width_model: MLModel,
                  height_model: MLModel, pixel_model: MLModel,
-                 params: GlobalParams, gen_df: bool = True)->None:
+                 params: GlobalParams)->None:
         self.param = param
         self.width_model = width_model
         self.height_model = height_model
         self.pixel_model = pixel_model
         self.params = params.update(ppdt_decision_tree_depth=3,
                                     ppdt_max_nested_regressors=5)
-        self.gen_df = gen_df
 
     def perform(self, state: ArcState, task: FreeDrawTask)->Optional[ArcState]:
         assert state.out_shapes is not None
@@ -43,11 +42,7 @@ class FreeDraw(ModelBasedArcAction[FreeDrawTask, FreeDrawTask]):
             shape = shapes[0]
             out_canvas = make_grid(w, h)
 
-            if self.gen_df:
-                pixel_df = generate_pixel_df([grid], [[shape]], [w], [h])
-            else:
-                pixel_df = _gen_dummy_df(w, h)
-
+            pixel_df = generate_pixel_df([grid], [[shape]], [w], [h])
             pixel_color = self.pixel_model.predict_int(pixel_df)
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
                 out_canvas.safe_assign(x, y, color)
@@ -97,12 +92,3 @@ def generate_size_df(
             result['tile_height'].append(tile.height)
 
     return pd.DataFrame(ensure_size(result))
-
-
-def _gen_dummy_df(width: int, height: int)->pd.DataFrame:
-    data = {'x': [], 'y': []}
-    for y in range(height):
-        for x in range(width):
-            data['x'].append(x)
-            data['y'].append(y)
-    return pd.DataFrame(data)

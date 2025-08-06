@@ -10,11 +10,10 @@ from .hamming_generate_df import *
 
 class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def __init__(self, feat_index: int, pixel_model: MLModel,
-                 params: GlobalParams, gen_df: bool = True)->None:
+                 params: GlobalParams)->None:
         self.feat_index = feat_index
         self.pixel_model = pixel_model
         self.params = params
-        self.gen_df = gen_df
         super().__init__()
 
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
@@ -28,11 +27,7 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             id2 = shape_ids[self.feat_index]
             shape = new_out_shapes[id1][id2]
 
-            if self.gen_df:
-                pixel_df = generate_pixel_df([grid], [shape])
-            else:
-                pixel_df = _gen_dummy_df(shape._grid)
-
+            pixel_df = generate_pixel_df([grid], [shape])
             pixel_color = self.pixel_model.predict_int(pixel_df)
             shape_grid = Grid(deepcopy(shape._grid.data))
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
