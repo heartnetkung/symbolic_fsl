@@ -15,7 +15,7 @@ from .decision_tree_factory import make_tree
 
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
 MAX_LINPROG_REG_SAMPLE = 100  # linprog reg is not really scalable and mostly timeout
-MAX_CLASSIFIERS = 10
+MAX_CLASSIFIERS = 5
 
 
 class LabelType(Enum):
