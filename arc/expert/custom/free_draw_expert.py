@@ -20,14 +20,19 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         assert state.y_shapes is not None
         result: list[Action] = [FreeDraw(FreeDrawParam.skip, DUMMY_MODEL, DUMMY_MODEL,
                                          DUMMY_MODEL, self.params)]
-        if not has_exactly_one_shape(state):
+        if not _has_exactly_one_shape(state):
+            return result
+
+        # since free draw can run on any condition, it will run twice on
+        # different unknown_bg. Thus, we stop the second run to save compute.
+        if not _is_unknown_bg_false(state):
             return result
 
         df = generate_size_df(state.x, state.out_shapes)
         if df is None:
             return result
 
-        widths, heights, pixels = make_label(state.y_shapes)
+        widths, heights, pixels = _make_label(state.y_shapes)
         w_models = regressor_factory(df, widths, self.params, 'fdraw.w')
         h_models = regressor_factory(df, heights, self.params, 'fdraw.h')
         p_model = StepMemoryModel(pixels)
@@ -37,7 +42,8 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         return result
 
 
-def make_label(all_shapes: list[list[Shape]])->tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _make_label(all_shapes: list[list[Shape]])->tuple[
+        np.ndarray, np.ndarray, np.ndarray]:
     p_label = []
     for shapes in all_shapes:
         grid = shapes[0]._grid
@@ -50,10 +56,27 @@ def make_label(all_shapes: list[list[Shape]])->tuple[np.ndarray, np.ndarray, np.
             np.array(p_label))
 
 
-def has_exactly_one_shape(state: ArcTrainingState)->bool:
+def _has_exactly_one_shape(state: ArcTrainingState)->bool:
     assert state.out_shapes is not None
     assert state.y_shapes is not None
     for x_shapes, y_shapes in zip(state.out_shapes, state.y_shapes):
         if (len(x_shapes) != 1) or (len(y_shapes) != 1):
+            return False
+    return True
+
+
+def _is_unknown_bg_false(state: ArcTrainingState)->bool:
+    assert state.out_shapes is not None
+    assert state.x_bg is not None
+    assert state.y_bg is not None
+
+    if state.x_bg != state.y_bg:
+        return True
+
+    for x_shapes, bg in zip(state.out_shapes, state.x_bg):
+        x_shape = x_shapes[0]
+        if x_shape._grid.has_color(NULL_COLOR):
+            return True
+        if x_shape._grid.has_color(bg):
             return False
     return True
