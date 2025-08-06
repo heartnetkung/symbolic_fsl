@@ -1,3 +1,7 @@
 from ...constant import *
 
-proto = GlobalParams(max_reparse=0, enable_free_draw=False)
+proto = GlobalParams(enable_free_draw=False,
+                     enable_edge=False,
+                     enable_merge=False,
+                     enable_stack=False,
+                     enable_split=False)

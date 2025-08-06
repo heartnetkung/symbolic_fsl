@@ -92,7 +92,7 @@ previous_v1_params4[357] = proto.update(
 
 previous_v1_params4[361] = proto.update(
     parser_x_modes=(ParseMode.partition,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1) # stack
+    parser_y_modes=(ParseMode.proximity_diag,), enable_stack=True)
 
 previous_v1_params4[368] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),
@@ -100,7 +100,7 @@ previous_v1_params4[368] = proto.update(
 
 previous_v1_params4[371] = proto.update(
     parser_x_modes=(ParseMode.partition,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=1) # split approx
+    parser_y_modes=(ParseMode.crop,), enable_split=True)
 
 previous_v1_params4[372] = proto.update(
     parser_x_modes=(ParseMode.crop,),

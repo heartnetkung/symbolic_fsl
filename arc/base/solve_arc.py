@@ -56,9 +56,7 @@ def solve_arc(
 
     start_time, _id, X_test_count = time.time(), dataset._id, len(dataset.X_test)
     criteria = ArcSuccessCriteria()
-    init_state = dataset.to_training_state()
-    if not params.enable_free_draw:
-        init_state = init_state.update(free_draw=True)
+    init_state = _config_init_state(dataset.to_training_state(), params)
 
     # plan
     planning_time = int(max_time_s*PLAN_TIME_RATIO)
@@ -94,3 +92,19 @@ def merge_predictions(results: list[ArcResult])->dict[str, list]:
                 "attempt_2":[padded_pred[1][i].data]}
             for i in range(result.X_test_count)]
     return prediction
+
+
+def _config_init_state(state: ArcTrainingState, params: GlobalParams)->ArcTrainingState:
+    config = {}
+    if not params.enable_free_draw:
+        config['free_draw'] = True
+    if not params.enable_edge:
+        config['edge_reparse'] = True
+    if not params.enable_merge:
+        config['merge_nearby_reparse'] = True
+    if not params.enable_stack:
+        config['stack_reparse'] = True
+    if not params.enable_split:
+        config['split_reparse'] = True
+
+    return state.update(**config) if len(config) > 0 else state

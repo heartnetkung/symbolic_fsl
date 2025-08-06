@@ -126,7 +126,7 @@ previous_v1_params2[179] = proto.update(
 
 previous_v1_params2[185] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1) #stack
+    parser_y_modes=(ParseMode.proximity_diag,), enable_stack=True)
 
 previous_v1_params2[186] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
