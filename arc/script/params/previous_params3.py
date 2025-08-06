@@ -1,123 +1,123 @@
-from ...constant import *
+from .prototype import *
 
 previous_v1_params3 = {}
 
-previous_v1_params3[209] = GlobalParams(
+previous_v1_params3[209] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[219] = GlobalParams(
+previous_v1_params3[219] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
-previous_v1_params3[224] = GlobalParams(
+previous_v1_params3[224] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
-previous_v1_params3[226] = GlobalParams(
+previous_v1_params3[226] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[230] = GlobalParams(
+previous_v1_params3[230] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[235] = GlobalParams(
+previous_v1_params3[235] = proto.update(
     parser_x_modes=(ParseMode.partition,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[240] = GlobalParams(
+previous_v1_params3[240] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[241] = GlobalParams(
+previous_v1_params3[241] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[248] = GlobalParams(
+previous_v1_params3[248] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[250] = GlobalParams(
+previous_v1_params3[250] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[251] = GlobalParams(
+previous_v1_params3[251] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[256] = GlobalParams(
+previous_v1_params3[256] = proto.update(
     parser_x_modes=(ParseMode.partition,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[257] = GlobalParams(
+previous_v1_params3[257] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
-previous_v1_params3[258] = GlobalParams(
+previous_v1_params3[258] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,), max_reparse=1)
 
-previous_v1_params3[260] = GlobalParams(
+previous_v1_params3[260] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[261] = GlobalParams(
+previous_v1_params3[261] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
-previous_v1_params3[265] = GlobalParams(
+previous_v1_params3[265] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,), enable_free_draw=True)
 
-previous_v1_params3[266] = GlobalParams(
+previous_v1_params3[266] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[270] = GlobalParams(
+previous_v1_params3[270] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
 
-previous_v1_params3[271] = GlobalParams(
+previous_v1_params3[271] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),
-    parser_y_modes=(ParseMode.proximity_normal,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_normal,))
 
-previous_v1_params3[275] = GlobalParams(
+previous_v1_params3[275] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[276] = GlobalParams(
+previous_v1_params3[276] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[286] = GlobalParams(
+previous_v1_params3[286] = proto.update(
     parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[289] = GlobalParams(
+previous_v1_params3[289] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
-previous_v1_params3[290] = GlobalParams(
+previous_v1_params3[290] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[293] = GlobalParams(
+previous_v1_params3[293] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))
 
-previous_v1_params3[294] = GlobalParams(
+previous_v1_params3[294] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.crop,), max_reparse=0)
+    parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params3[297] = GlobalParams(
+previous_v1_params3[297] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
 
-previous_v1_params3[298] = GlobalParams(
+previous_v1_params3[298] = proto.update(
     parser_x_modes=(ParseMode.color_proximity_diag,),
     parser_y_modes=(ParseMode.color_proximity_diag,), max_reparse=1)
 
-previous_v1_params3[299] = GlobalParams(
+previous_v1_params3[299] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
-    parser_y_modes=(ParseMode.proximity_diag,), max_reparse=0)
+    parser_y_modes=(ParseMode.proximity_diag,))

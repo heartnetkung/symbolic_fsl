@@ -47,6 +47,8 @@ class GlobalParams:
     ppdt_decision_tree_depth: int = 2
     # linear programming time limit
     linprog_time_limit: int = 10
+    # enable_free_draw
+    enable_free_draw: bool = True
     # maximum reparse operations per solution
     # max_reparse: int = 0
     max_reparse: int = 2

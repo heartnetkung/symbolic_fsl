@@ -49,17 +49,20 @@ class ArcResult:
 
 
 def solve_arc(
-        dataset: Dataset, manager: Manager, hr: Recruiter,
+        dataset: Dataset, manager: Manager, hr: Recruiter, params: GlobalParams,
         max_plan_depth: int = MAX_PLAN_DEPTH, max_plan_itr: int = MAX_PLAN_ITR,
         max_reason_path: int = MAX_REASON_PATH, n_result: int = N_RESULT,
         max_time_s: int = MAX_TIME_S)->ArcResult:
 
     start_time, _id, X_test_count = time.time(), dataset._id, len(dataset.X_test)
     criteria = ArcSuccessCriteria()
+    init_state = dataset.to_training_state()
+    if not params.enable_free_draw:
+        init_state = init_state.update(free_draw=True)
 
     # plan
     planning_time = int(max_time_s*PLAN_TIME_RATIO)
-    planning_result = plan(dataset.to_training_state(), manager, hr, criteria,
+    planning_result = plan(init_state, manager, hr, criteria,
                            max_plan_depth, max_plan_itr, planning_time)
     time_left = int(max_time_s - (time.time()-start_time))
     logger.info('successful plans: %s', planning_result.plan)

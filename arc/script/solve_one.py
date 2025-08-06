@@ -32,7 +32,7 @@ def solve_one(index: int, choice: DatasetChoice, log_level: int,
 
     manager = ArcManager(params)
     hr = ArcRecruiter(params)
-    result = solve_arc(dataset, manager, hr)
+    result = solve_arc(dataset, manager, hr, params)
 
     print(result)
 
