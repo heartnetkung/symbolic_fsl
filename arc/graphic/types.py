@@ -137,20 +137,20 @@ class Grid:
         print('])')
 
     def replace_color(self, old_color: int, new_color: int)->Grid:
-        result = deepcopy(self)
+        result = deepcopy(self.data)
         for i in range(self.height):
             for j in range(self.width):
-                if result.data[i][j] == old_color:
-                    result.data[i][j] = new_color
-        return result
+                if result[i][j] == old_color:
+                    result[i][j] = new_color
+        return Grid(result)
 
     def keep_color(self, color: int)->Grid:
-        result = deepcopy(self)
+        result = deepcopy(self.data)
         for i in range(self.height):
             for j in range(self.width):
-                if result.data[i][j] != color:
-                    result.data[i][j] = NULL_COLOR
-        return result
+                if result[i][j] != color:
+                    result[i][j] = NULL_COLOR
+        return Grid(result)
 
     def list_colors(self)->set[int]:
         result = set()
