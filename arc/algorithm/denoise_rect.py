@@ -123,10 +123,10 @@ def _get_row_info(grid: Grid)->tuple[list[int], list[int]]:
     return starts, ends
 
 
-def _find_start(row: list[int], from_start: bool)->Optional[tuple[int, int]]:
+def _find_start(row: list[int], from_start: bool)->int:
     range_ = range(len(row)) if from_start else range(len(row)-1, -1, -1)
     for i in range_:
         cell = row[i]
         if cell != NULL_COLOR:
             return i if from_start else len(row)-i-1
-    return None
+    return len(row)

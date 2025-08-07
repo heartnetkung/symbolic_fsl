@@ -33,13 +33,35 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
             return result
 
         widths, heights, pixels = _make_label(state.y_shapes)
-        w_models = regressor_factory(df, widths, self.params, 'fdraw.w')
-        h_models = regressor_factory(df, heights, self.params, 'fdraw.h')
+        blob = _create_wh_models(state.x, widths, heights, df, self.params)
+        if blob is None:
+            return result
+
         p_model = StepMemoryModel(pixels)
-        result += [
-            FreeDraw(FreeDrawParam.normal, w_model, h_model, p_model, self.params)
-            for w_model, h_model in model_selection(w_models, h_models)]
+        result.append(FreeDraw(
+            FreeDrawParam.normal, blob[0], blob[1], p_model, self.params))
         return result
+
+
+def _create_wh_models(
+        grids: list[Grid], widths: np.ndarray, heights: np.ndarray,
+        df: pd.DataFrame, params: GlobalParams)->Optional[tuple[MLModel, MLModel]]:
+    x_widths = [grid.width for grid in grids]
+    x_heights = [grid.height for grid in grids]
+    are_same = (np.array_equal(x_widths, widths) and
+                np.array_equal(x_heights, heights))
+    are_constants = len(set(widths)) == len(set(heights)) == 1
+
+    if are_constants:
+        return ConstantModel(widths[0]), ConstantModel(heights[0])
+    elif are_same:
+        return ColumnModel('grid_width'), ColumnModel('grid_height')
+
+    w_models = regressor_factory(df, widths, params, 'fdraw.w')
+    h_models = regressor_factory(df, heights, params, 'fdraw.h')
+    if (len(w_models) == 0) or (len(h_models) == 0):
+        return None
+    return w_models[0], h_models[0]
 
 
 def _make_label(all_shapes: list[list[Shape]])->tuple[

@@ -6,16 +6,17 @@ from ...ml import *
 from ..util import *
 import math
 from .free_draw_feat_eng import *
+from ...algorithm.denoise_rect import denoise_rect
 
 COLS = [
     # misc
-    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2','x%3','y%3',
+    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2', 'x%3', 'y%3',
     # nearby pixels
     'cell(x,y)', 'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)',
     'cell(x,y+1)', 'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
     # basic feat eng
     f'cell(+x%w,y%h)', 'cell(+x/w,y/h)', 'tile(x,y)', 'tile2(x,y)', 'adjacent(x,y)',
-    'diagonal(x,y)', 'y_mid', 'x_mid',
+    'diagonal(x,y)', 'y_mid', 'x_mid', 'denoise_rect(x,y)',
     'left_cell(y)', 'right_cell(y)', 'top_cell(x)', 'bottom_cell(x)',
     # advanced feat eng
     'quadrant_ccw_rotate(+x,y)', 'quadrant_cw_rotate(+x,y)', 'unscaled_cell(+x,y)'
@@ -36,6 +37,7 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
     np_grid = np.array(grid.data)
     rotations = [Grid(np.rot90(np_grid, i).tolist()) for i in range(4)]
     tile, tile2, unscaled = cal_tile(grid, True), cal_tile(grid, False), unscale(grid)
+    denoised = denoise_rect(grid, w, h)
 
     for y in range(h):
         for x in range(w):
@@ -79,6 +81,8 @@ def _gen_df(canvas: Grid, shape: Shape, w: int, h: int, result: dict[str, list])
             result['right_cell(y)'].append(grid.safe_access(w-1, y))
             result['top_cell(x)'].append(grid.safe_access(x, 0))
             result['bottom_cell(x)'].append(grid.safe_access(x, h-1))
+            if denoised is not None:
+                result['denoise_rect(x,y)'].append(denoised.safe_access(x, y))
             if tile is not None:
                 result['tile(x,y)'].append(tile.safe_access(
                     x % tile.width, y % tile.height))
