@@ -1,4 +1,4 @@
-from .fitb import ExpansionMode, FillInTheBlank
+from .fitb import ExpansionMode, FillInTheBlank, draw_shape
 from ...base import *
 from ...graphic import *
 from ...ml import *
@@ -56,11 +56,12 @@ def _get_expansions(x_shapes: list[Shape], y_shapes: list[Shape], widths: np.nda
     for mode in ExpansionMode:
         new_shapes = []
         for x_shape, y_shape, width, height in zip(x_shapes, y_shapes, widths, heights):
-            new_shape = mode.expand(x_shape, width, height)
-            if new_shape is None:
+            bound = mode.get_bound(x_shape, width, height)
+            if bound is None:
                 new_shapes = []
                 break
 
+            new_shape = draw_shape(x_shape, bound, width, height)
             is_equal = nonnull_equal(new_shape._grid, y_shape._grid)
             if not is_equal:
                 new_shapes = []
@@ -90,10 +91,11 @@ def _extract_pixels(x_shapes: list[Shape], y_shapes: list[Shape], widths: np.nda
                     heights: np.ndarray, mode: ExpansionMode)->Optional[np.ndarray]:
     result = []
     for x_shape, y_shape, width, height in zip(x_shapes, y_shapes, widths, heights):
-        expanded_shape = mode.expand(x_shape, width, height)
-        if expanded_shape is None:
+        bound = mode.get_bound(x_shape, width, height)
+        if bound is None:
             return None
 
+        expanded_shape = draw_shape(x_shape, bound, width, height)
         x_grid, y_grid = expanded_shape._grid, y_shape._grid
         for y in range(x_grid.height):
             for x in range(x_grid.width):
