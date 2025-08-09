@@ -28,19 +28,15 @@ class GeomTransformExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
 
 def extract_label(x_shapes: list[Shape], y_shapes: list[Shape])->Optional[np.ndarray]:
-    result = []
-    for x_shape, y_shape in zip(x_shapes, y_shapes):
-        found_type: Optional[TransformType] = None
-        for type in TransformType:
-            # TODO equal?
-            if transform_shape(x_shape, type) == y_shape:
-                found_type = type
-                break
-        if found_type is None:
-            return None
-        result.append(found_type.value)
+    for type in TransformType:
+        if _check_transform(x_shapes, y_shapes, type):
+            return np.array([type.value]*len(x_shapes))
+    return None
 
-    if len(set(result)) == 1:
-        if result[0] == TransformType.normal.value:
-            return None
-    return np.array(result)
+
+def _check_transform(x_shapes: list[Shape], y_shapes: list[Shape],
+                     type: TransformType)->bool:
+    for x_shape, y_shape in zip(x_shapes, y_shapes):
+        if transform_shape(x_shape, type)._grid != y_shape._grid:
+            return False
+    return True
