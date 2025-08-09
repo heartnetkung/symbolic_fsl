@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import Bounds
 from dataclasses import dataclass
-from ...constant import COST_PATTERN
+from ...constant import cal_system2_cost
 
 C_MAX = 10  # ref III.1.2.c
 C0_MAX = 30
@@ -58,8 +58,8 @@ def make_variables(counts: VariableCount, is_cls: bool,
     c0_cost = 0 if is_cls else 1
     c_integrality = 1 if is_cls else 0
     c_max = 1 if is_cls else C_MAX
-    c1_cost = [2+_cal_penalty(col_name) for col_name in col_names]*2
-    c2_cost = [3+_cal_penalty(col1+col2) for col1, col2 in counts.deg2_cols]*2
+    c1_cost = [2+cal_system2_cost(col_name) for col_name in col_names]*2
+    c2_cost = [3+cal_system2_cost(col1+col2) for col1, col2 in counts.deg2_cols]*2
     # TODO relax integrality constraints?
 
     # make variables
@@ -78,7 +78,3 @@ def make_variables(counts: VariableCount, is_cls: bool,
     columns += [f't{i}' for i in range(counts.t)]
 
     return Variables(cost, integrality, Bounds(lb, ub), columns)  # type:ignore
-
-
-def _cal_penalty(col_name: str)->int:
-    return len(COST_PATTERN.split(col_name))-1

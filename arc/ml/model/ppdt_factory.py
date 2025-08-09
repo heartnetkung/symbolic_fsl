@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from ...constant import GlobalParams
+from ...constant import GlobalParams, cal_system2_cost
 from .ml_model import MLModel, CLS_FIELD_SUFFIX, ConstantModel, ColumnModel
 from ..linprog import *
 from .base_models import *
@@ -16,6 +16,7 @@ from .decision_tree_factory import make_tree
 DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
 MAX_LINPROG_REG_SAMPLE = 100  # linprog reg is not really scalable and mostly timeout
 MAX_CLASSIFIERS = 5
+MAX_REG_COMPLEXITY = 4
 
 
 class LabelType(Enum):
@@ -38,8 +39,12 @@ def make_ppdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
 
     all_regressors = []
     _make_all_regressors(X_reg, y, params, type, [], all_regressors)
+    # print('all_regressors', all_regressors) # very useful
+
     for regressors in all_regressors:
         all_classifiers = _make_all_classifiers(X, y, params, regressors)
+        # print('all_classifiers', all_classifiers) # very useful
+
         for classifier_comb in product(*all_classifiers):
             result.append(PPDT(list(classifier_comb), regressors, params))
     return result
@@ -78,7 +83,9 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if type == LabelType.regression and (len(y) in range(2, MAX_LINPROG_REG_SAMPLE)):
         for raw_result in solve_reg(X, y, params, max_result=max_result):
             new_model = PolynomialRegressor(X, raw_result.poly_coef, params)
-            if DECIMAL_FILTER.search(new_model.code) is None:
+            no_2_digit_decimal = DECIMAL_FILTER.search(new_model.code) is None
+            not_overfit = cal_system2_cost(new_model.code) <= MAX_REG_COMPLEXITY
+            if no_2_digit_decimal and not_overfit:
                 result.append(new_model)
 
     if len(result) == 0:

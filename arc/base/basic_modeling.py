@@ -4,7 +4,7 @@ import logging
 import re
 from ..graphic import Deduplicator
 from .arc_state import ArcTrainingState, ArcInferenceState, ArcState
-from ..constant import COST_PATTERN
+from ..constant import cal_system2_cost
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ def default_cost(obj: Any)->int:
     score = 0
     for k, v in obj.__dict__.items():
         # a hack to count all complex symbols in machine learning models
-        score += len(COST_PATTERN.split(repr(v)))-1
+        score += cal_system2_cost(repr(v))
     return score
 
 
