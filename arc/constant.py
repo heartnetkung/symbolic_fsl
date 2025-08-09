@@ -102,3 +102,7 @@ def default_hash(obj: Any)->int:
 
 class IgnoredException(Exception):
     pass
+
+
+def cal_system2_cost(code: str)->int:
+    return len(COST_PATTERN.split(code))-1
