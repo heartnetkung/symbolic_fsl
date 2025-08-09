@@ -66,8 +66,6 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if X2.empty:
         return []
 
-    # TODO drop duplicates
-
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
     # TODO should we remove top level tree models? since we already included it in ppdt

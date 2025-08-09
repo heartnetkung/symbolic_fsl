@@ -57,6 +57,14 @@ def cal_col_blank_count_rank(grid: Grid)->list[int]:
     return cal_row_blank_count_rank(grid.transpose())
 
 
+def cal_row_blank_count(grid: Grid)->list[int]:
+    return [Counter(row)[NULL_COLOR] for row in grid.data]
+
+
+def cal_col_blank_count(grid: Grid)->list[int]:
+    return cal_row_blank_count(grid.transpose())
+
+
 def cal_tile(grid: Grid, bound: tuple[int, int, int, int],
              check_null: bool)->Optional[Grid]:
     min_x, max_x, min_y, max_y = bound
