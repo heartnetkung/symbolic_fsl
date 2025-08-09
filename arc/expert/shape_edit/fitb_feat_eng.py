@@ -162,6 +162,7 @@ def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
             'subshape.x': shape.x,
             'subshape.y': shape.y,
             'subshape.mass': shape.mass,
+            'subshape.mass%2': shape.mass %2,
             'subshape.type': shape.shape_type,
             '+to_rank(subshape.x)%3': x_rank % 3,
             '+to_rank(subshape.x)%2': x_rank % 2,

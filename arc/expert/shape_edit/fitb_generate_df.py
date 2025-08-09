@@ -24,7 +24,7 @@ COLS = [
     'is_outside(x,y)', 'row_blank_count_rank(x,y)', 'col_blank_count_rank(x,y)',
     'row_blank_count(x,y)', 'col_blank_count(x,y)',
     # subshape feat eng
-    'subshape.x', 'subshape.y', 'subshape.mass', 'subshape.type',
+    'subshape.x', 'subshape.y', 'subshape.mass', 'subshape.type', 'subshape.mass%2',
     '+to_rank(subshape.x)%3', '+to_rank(subshape.x)%2',
     '+to_rank(subshape.y)%3', '+to_rank(subshape.y)%2'
 ]

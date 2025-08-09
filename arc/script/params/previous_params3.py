@@ -2,6 +2,10 @@ from .prototype import *
 
 previous_v1_params3 = {}
 
+previous_v1_params3[203] = proto.update(
+    parser_x_modes=(ParseMode.proximity_normal,),
+    parser_y_modes=(ParseMode.proximity_normal,))
+
 previous_v1_params3[209] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,))
