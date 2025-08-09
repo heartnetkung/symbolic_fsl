@@ -64,15 +64,11 @@ def make_comparison_models(X: pd.DataFrame, y: np.ndarray,
         all_correct_values = set(X[col][y])
         if len(all_correct_values) == 1:
             value = all_correct_values.pop()
-            candidate = ConstantComparisonModel(col, value, True, params)
-            if np.array_equal(candidate.predict(X), y):
-                result.append(candidate)
+            result.append(ConstantComparisonModel(col, value, True, params))
 
         all_incorrect_values = set(X[col][np.logical_not(y)])
         if len(all_incorrect_values) == 1:
             value = all_incorrect_values.pop()
-            candidate = ConstantComparisonModel(col, value, False, params)
-            if np.array_equal(candidate.predict(X), y):
-                result.append(candidate)
+            result.append(ConstantComparisonModel(col, value, False, params))
 
     return result
