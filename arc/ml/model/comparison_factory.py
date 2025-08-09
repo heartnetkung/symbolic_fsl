@@ -19,8 +19,8 @@ class ComparisonModel(MLModel):
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
         if self.eq:
-            return X[self.col1] == X[self.col2]
-        return X[self.col1] != X[self.col2]
+            return np.isclose(X[self.col1], X[self.col2])
+        return np.logical_not(np.isclose(X[self.col1], X[self.col2]))
 
     def _to_code(self) -> str:
         if self.eq:
@@ -42,8 +42,8 @@ class ConstantComparisonModel(MLModel):
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
         if self.eq:
-            return X[self.col] == self.value
-        return X[self.col] != self.value
+            return np.isclose(X[self.col], self.value)
+        return np.logical_not(np.isclose(X[self.col], self.value))
 
     def _to_code(self) -> str:
         if self.eq:
@@ -64,11 +64,15 @@ def make_comparison_models(X: pd.DataFrame, y: np.ndarray,
         all_correct_values = set(X[col][y])
         if len(all_correct_values) == 1:
             value = all_correct_values.pop()
-            result.append(ConstantComparisonModel(col, value, True, params))
+            candidate = ConstantComparisonModel(col, value, True, params)
+            if np.array_equal(candidate.predict(X), y):
+                result.append(candidate)
 
         all_incorrect_values = set(X[col][np.logical_not(y)])
         if len(all_incorrect_values) == 1:
             value = all_incorrect_values.pop()
-            result.append(ConstantComparisonModel(col, value, False, params))
+            candidate = ConstantComparisonModel(col, value, False, params)
+            if np.array_equal(candidate.predict(X), y):
+                result.append(candidate)
 
     return result

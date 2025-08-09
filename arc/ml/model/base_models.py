@@ -37,9 +37,11 @@ class PolynomialClassifier(MLModel):
         return f'if {_poly_to_str(self.columns, coefs2)} < {coef0}:'
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
+        result = np.matmul(make_cls_features(X, self.params), self.coefs)
+        is_equal, is_greater = np.isclose(result, 0), result > 0
         if self.is_greater_than:
-            return np.matmul(make_cls_features(X, self.params), self.coefs) >= 0
-        return np.matmul(make_cls_features(X, self.params), self.coefs) < 0
+            return np.logical_or(is_greater, is_equal)
+        return np.logical_not(np.logical_or(is_greater, is_equal))
 
 
 class EPDT(MLModel):
