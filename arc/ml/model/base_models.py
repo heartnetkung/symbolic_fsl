@@ -44,7 +44,7 @@ class PolynomialClassifier(MLModel):
         return np.logical_not(np.logical_or(is_greater, is_equal))
 
 
-class EPDT(MLModel):
+class PPDT(MLModel):
     '''Ensemble model composing of classifiers and regressors'''
 
     def __init__(self, classifiers: list[MLModel], regressors: list[MLModel],

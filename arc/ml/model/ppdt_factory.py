@@ -41,7 +41,7 @@ def make_ppdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     for regressors in all_regressors:
         all_classifiers = _make_all_classifiers(X, y, params, regressors)
         for classifier_comb in product(*all_classifiers):
-            result.append(EPDT(list(classifier_comb), regressors, params))
+            result.append(PPDT(list(classifier_comb), regressors, params))
     return result
 
 
@@ -117,8 +117,8 @@ def _make_all_classifiers(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
         assert isinstance(X_remain, pd.DataFrame)
         correct_pred = np.isclose(y_remain, regressor.predict(X_remain))
         classifiers1 = make_classifiers(X_remain, correct_pred, params)
-        classifiers2 = make_comparison_models(X_remain, correct_pred, params)
-        classifiers3 = make_tree(X_remain, correct_pred, params, depth)
+        classifiers2 = make_tree(X_remain, correct_pred, params, depth)
+        classifiers3 = make_comparison_models(X_remain, correct_pred, params)
         all_classifiers = classifiers1+classifiers2+classifiers3
         result.append(all_classifiers[:MAX_CLASSIFIERS])
 
