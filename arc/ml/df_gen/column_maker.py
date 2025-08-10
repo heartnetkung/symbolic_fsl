@@ -99,8 +99,12 @@ def to_rank_float(values: list[int])->list[float]:
     The median value would have the rank of 0.
 
     Doing this would compare min, max, median in one field.
+    If the values contain a single unique value, their ranks are zero.
     '''
     unique_values = set(values)
+    if len(unique_values) == 1:
+        return [0]*len(values)
+
     lookup, mid_point = {}, (len(unique_values)-1)/2
     for i, val in enumerate(sorted(unique_values)):
         lookup[val] = (i/mid_point)-1

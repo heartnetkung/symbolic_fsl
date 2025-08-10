@@ -393,8 +393,8 @@ def test_global_features():
         ]))]]
 
     def redraw(df: pd.DataFrame):
-        cond1 = df['row_blank_count_rank(x,y)'] == 0
-        cond2 = df['col_blank_count_rank(x,y)'] == 0
+        cond1 = df['row_blank_count_rank(x,y)'] == 1
+        cond2 = df['col_blank_count_rank(x,y)'] == 1
         return np.where(np.logical_or(cond1, cond2), 3, -1)
     action = FillInTheBlank(
         ExpansionMode.top_left, 0,
