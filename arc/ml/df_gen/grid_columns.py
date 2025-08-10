@@ -7,7 +7,7 @@ from ...constant import MISSING_VALUE
 
 class GridColumns(ColumnMaker):
     def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
+            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         if grids is None:
             return

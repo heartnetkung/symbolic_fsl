@@ -8,7 +8,7 @@ from ...constant import *
 class ColumnMaker(ABC):
     @abstractmethod
     def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
+            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         '''
         Append data to result for DataFrame generation.
@@ -19,7 +19,7 @@ class ColumnMaker(ABC):
 
 class ShapeColumns(ColumnMaker):
     def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
+            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         if all_shapes is None:
             return
@@ -36,7 +36,7 @@ class ShapeColumns(ColumnMaker):
 
 class EditColumns(ColumnMaker):
     def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
+            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         if (all_shapes is None) or (edit_index == -1):
             return
@@ -46,12 +46,12 @@ class EditColumns(ColumnMaker):
         for shapes in all_shapes:
             masses = [shape.mass for shape in shapes]
             if edit_index < len(masses):
-                result['mass_rank'].append(to_rank(masses)[edit_index])
+                result['mass_rank'].append(to_rank_float(masses)[edit_index])
 
 
 class ShapeStatsColumns(ColumnMaker):
     def append_all(
-            self, result: dict[str, list[int]], grids: Optional[list[Grid]],
+            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         if (all_shapes is None) or (len(all_shapes[0]) < 2):
             return
@@ -84,7 +84,24 @@ class ShapeStatsColumns(ColumnMaker):
 
 
 def to_rank(values: list[int], reverse: bool = True)->list[int]:
+    '''Turn values into the ranking of its value. The most value would have rank 0.'''
     lookup = {}
     for i, val in enumerate(sorted(set(values), reverse=reverse)):
         lookup[val] = i
+    return [lookup[val] for val in values]
+
+
+def to_rank_float(values: list[int])->list[float]:
+    '''
+    Turn values into the ranking of its value capped between -1 and 1.
+    The smallest value would hank the rank of -1.
+    The largest value would hank the rank of 1.
+    The median value would have the rank of 0.
+
+    Doing this would compare min, max, median in one field.
+    '''
+    unique_values = set(values)
+    lookup, mid_point = {}, (len(unique_values)-1)/2
+    for i, val in enumerate(sorted(unique_values)):
+        lookup[val] = (i/mid_point)-1
     return [lookup[val] for val in values]

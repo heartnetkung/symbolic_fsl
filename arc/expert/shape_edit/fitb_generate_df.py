@@ -47,10 +47,7 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
     topside_pixels = cal_topside_pixels(grid)
     bottomside_pixels = cal_bottomside_pixels(grid)
     outside_pixels = cal_outside_pixels(grid)
-    row_blank_count_rank = cal_row_blank_count_rank(grid)
-    col_blank_count_rank = cal_col_blank_count_rank(grid)
-    row_blank_count = cal_row_blank_count(grid)
-    col_blank_count = cal_col_blank_count(grid)
+    col_stats_blob = cal_blank_count_stats(grid)
     plus_color, cross_color = cal_plus(grid), cal_cross(grid)
     tile, tile2 = cal_tile(grid, bound, True), cal_tile(grid, bound, False)
     subshape_map = inverse_parse(shape._grid)
@@ -125,10 +122,10 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             result['is_topside(x,y)'].append(1 if coord in topside_pixels else 0)
             result['is_bottomside(x,y)'].append(1 if coord in bottomside_pixels else 0)
             result['is_outside(x,y)'].append(1 if coord in outside_pixels else 0)
-            result['row_blank_count_rank(x,y)'].append(row_blank_count_rank[y])
-            result['col_blank_count_rank(x,y)'].append(col_blank_count_rank[x])
-            result['row_blank_count(x,y)'].append(row_blank_count[y])
-            result['col_blank_count(x,y)'].append(col_blank_count[x])
+            result['row_blank_count(x,y)'].append(col_stats_blob[0][y])
+            result['col_blank_count(x,y)'].append(col_stats_blob[1][x])
+            result['row_blank_count_rank(x,y)'].append(col_stats_blob[2][y])
+            result['col_blank_count_rank(x,y)'].append(col_stats_blob[3][x])
 
             # subshape feat eng
             for k, v in subshape_map[coord].items():

@@ -49,20 +49,11 @@ def cal_outside_pixels(grid: Grid)->set[Coordinate]:
     return result
 
 
-def cal_row_blank_count_rank(grid: Grid)->list[int]:
-    return to_rank([Counter(row)[NULL_COLOR] for row in grid.data])
-
-
-def cal_col_blank_count_rank(grid: Grid)->list[int]:
-    return cal_row_blank_count_rank(grid.transpose())
-
-
-def cal_row_blank_count(grid: Grid)->list[int]:
-    return [Counter(row)[NULL_COLOR] for row in grid.data]
-
-
-def cal_col_blank_count(grid: Grid)->list[int]:
-    return cal_row_blank_count(grid.transpose())
+def cal_blank_count_stats(grid: Grid)->tuple[
+        list[int], list[int], list[float], list[float]]:
+    row_count = [Counter(row)[NULL_COLOR] for row in grid.data]
+    col_count = [Counter(row)[NULL_COLOR] for row in grid.transpose().data]
+    return row_count, col_count, to_rank_float(row_count), to_rank_float(col_count)
 
 
 def cal_tile(grid: Grid, bound: tuple[int, int, int, int],
@@ -162,7 +153,7 @@ def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
             'subshape.x': shape.x,
             'subshape.y': shape.y,
             'subshape.mass': shape.mass,
-            'subshape.mass%2': shape.mass %2,
+            'subshape.mass%2': shape.mass % 2,
             'subshape.type': shape.shape_type,
             '+to_rank(subshape.x)%3': x_rank % 3,
             '+to_rank(subshape.x)%2': x_rank % 2,
