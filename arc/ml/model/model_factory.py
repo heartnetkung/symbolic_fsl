@@ -71,8 +71,8 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     # TODO should we remove top level tree models? since we already included it in ppdt
     ppdt_models = make_models(TrainingData(X2, y, params), type)
     assoc_models = make_association(X, y, params)
-    tree_models = [MatchColumn(FeatEng(model), X2)
-                   for model in make_tree(feat_eng(X2), y, params)]
+    tree_models = [MatchColumn(TreeFeatEng(model), X2)
+                   for model in make_tree(tree_feat_eng(X2), y, params)]
 
     logger.info('ppdt_models: %d %s', len(ppdt_models), ppdt_models)
     logger.info('assoc_models: %d %s', len(assoc_models), assoc_models)
@@ -112,12 +112,12 @@ def model_selection(*models: list[MLModel])->list[tuple[MLModel, ...]]:
 # ============================
 
 
-class FeatEng(MLModel):
+class TreeFeatEng(MLModel):
     def __init__(self, inner_model: MLModel)->None:
         self.inner_model = inner_model
 
     def predict(self, X: pd.DataFrame)->np.ndarray:
-        return self.inner_model.predict(feat_eng(X))
+        return self.inner_model.predict(tree_feat_eng(X))
 
     def _to_code(self) -> str:
         return self.inner_model.code
@@ -170,7 +170,7 @@ def _drop_repeated(df: pd.DataFrame)->pd.DataFrame:
     return df.drop(list(to_drop), axis=1)
 
 
-def feat_eng(df: pd.DataFrame)->pd.DataFrame:
+def tree_feat_eng(df: pd.DataFrame)->pd.DataFrame:
     result = {}
     for col1, col2 in combinations(df.columns, 2):
         result[f'({col1} == {col2})'] = np.where(df[col1] == df[col2], 1, 0)
