@@ -56,7 +56,7 @@ class GlobalParams:
 
     # maximum reparse operations per solution
     # max_reparse: int = 0
-    max_reparse: int = 2
+    max_reparse: int = 1
     # list of parse modes to try
     # parser_x_modes: Iterable[ParseMode] = (ParseMode.crop,)
     # parser_y_modes: Iterable[ParseMode] = (ParseMode.crop,)
