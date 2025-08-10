@@ -173,5 +173,5 @@ def _drop_repeated(df: pd.DataFrame)->pd.DataFrame:
 def tree_feat_eng(df: pd.DataFrame)->pd.DataFrame:
     result = {}
     for col1, col2 in combinations(df.columns, 2):
-        result[f'({col1} == {col2})'] = np.where(df[col1] == df[col2], 1, 0)
+        result[f'{col1}.is_equal({col2})'] = np.where(df[col1] == df[col2], 1, 0)
     return pd.concat([df, pd.DataFrame(result)], axis=1)
