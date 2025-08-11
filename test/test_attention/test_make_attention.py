@@ -73,7 +73,7 @@ def test_predict():
 
     models = to_models(attentions[0], all_x_shapes, x_train_grids, params)
     assert len(models) > 3
-    assert repr(models[0]).find('top_color') > 0
+    assert repr(models[0]).find('single_color') > 0
 
     attention2 = to_runtimes(models[0], all_x_test_shapes, x_test_grids)
     assert attention2.sample_index == [0]
