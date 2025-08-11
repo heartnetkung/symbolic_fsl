@@ -137,11 +137,11 @@ class FilledRectangle(Shape):
         return result
 
     @property
-    def is_h_symmetry(self)->int:# type:ignore
+    def is_h_symmetry(self)->int:  # type:ignore
         return 1
 
     @property
-    def is_v_symmetry(self)->int:# type:ignore
+    def is_v_symmetry(self)->int:  # type:ignore
         return 1
 
     @property
@@ -197,11 +197,11 @@ class HollowRectangle(Shape):
         return result
 
     @property
-    def is_h_symmetry(self)->int:# type:ignore
+    def is_h_symmetry(self)->int:  # type:ignore
         return 1
 
     @property
-    def is_v_symmetry(self)->int:# type:ignore
+    def is_v_symmetry(self)->int:  # type:ignore
         return 1
 
     @property
@@ -278,11 +278,11 @@ class Diagonal(Shape):
         return NULL_COLOR
 
     @property
-    def is_h_symmetry(self)->int:# type:ignore
+    def is_h_symmetry(self)->int:  # type:ignore
         return 0
 
     @property
-    def is_v_symmetry(self)->int:# type:ignore
+    def is_v_symmetry(self)->int:  # type:ignore
         return 0
 
     @property
