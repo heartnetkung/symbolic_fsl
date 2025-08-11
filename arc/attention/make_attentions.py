@@ -75,8 +75,6 @@ def _make_attentions(
         x_train: list[Grid], rel_df: pd.DataFrame,
         y_clusters: list[pd.DataFrame])->list[TrainingAttention]:
     results = []
-    common_y_shapes = find_common_y_shapes(y_train_shapes)
-
     for y_cluster in y_clusters:
         possible_x_clusters = cluster_x(rel_df, y_cluster)
         for x_cluster in possible_x_clusters:
@@ -87,8 +85,7 @@ def _make_attentions(
                 if current_df.empty:
                     continue
 
-                new_result = _make_inner_attentions(
-                    current_df, common_y_shapes, output_train_shapes)
+                new_result = _make_inner_attentions(current_df,  output_train_shapes)
                 if new_result is not None:
                     results.append(new_result)
 
@@ -99,8 +96,8 @@ def _make_attentions(
     return list(dict.fromkeys(results))
 
 
-def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
-                           all_shapes: list[list[Shape]])->Optional[TrainingAttention]:
+def _make_inner_attentions(
+        df: pd.DataFrame, all_shapes: list[list[Shape]])->Optional[TrainingAttention]:
     grouped_series = df.sort_values(['sample_id', 'y_index', 'x_label']).groupby(
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
     index = grouped_series.index.to_frame()
@@ -115,8 +112,7 @@ def _make_inner_attentions(df: pd.DataFrame, common_y_shapes: list[Shape],
         return None
 
     x_index2 = _align_x_index(all_shapes, x_index, sample_index, x_cluster_info)
-    return TrainingAttention(
-        sample_index, x_index2, y_index, rel_info, x_cluster_info, common_y_shapes)
+    return TrainingAttention(sample_index, x_index2, y_index, rel_info, x_cluster_info)
 
 
 def _align_x_index(all_shapes: list[list[Shape]], x_index: list[list[int]],

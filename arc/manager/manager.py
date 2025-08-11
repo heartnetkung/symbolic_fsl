@@ -71,9 +71,11 @@ class ArcManager(Manager[ArcTrainingState]):
         if attentions == []:
             attentions = make_attentions(state.out_shapes, state.y_shapes, state.x)
 
+        common_y_shapes = find_common_y_shapes(state.y_shapes)
         for attention in attentions:
             new_state = state.update(attention_cache=attention)
-            new_attention = TrainingAttentionTask(attention, self.params)
+            new_attention = TrainingAttentionTask(
+                attention, common_y_shapes, self.params)
             results.append((new_attention, new_state))
         return results
 

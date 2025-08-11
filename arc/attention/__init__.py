@@ -3,3 +3,4 @@ from .low_level.rel import touch_overlap
 from .make_attentions import make_attentions, is_attention_solved, remake_attentions
 from .to_runtimes import to_models, to_runtimes
 from .types import Attention, AttentionModel, TrainingAttention, InferenceAttention
+from .make_attention.find_shapes import find_common_y_shapes
