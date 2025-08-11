@@ -4,14 +4,12 @@ from typing import Any
 
 def list_properties(a: Shape)->dict[str, Any]:
     '''List commonly useful property in a shape.'''
-    result = a.to_input_var()
-    del result['shape_type']
-    del result['shape_value']
-    del result['single_color']
-    del result['is_h_symmetry']
-    del result['is_v_symmetry']
-    result['center'] = (a.x+a.width/2, a.y+a.height/2)
-    result['colors'] = list_shape_colors(a)
+    result = {
+        'x': a.x, 'y': a.y, 'width': a.width, 'height': a.height,
+        'mass': a.mass, 'top_color': a.top_color,
+        'center': (a.x+a.width/2, a.y+a.height/2),
+        'colors': list_shape_colors(a)
+    }
     result |= list_shape_representations(a)
     return result
 
