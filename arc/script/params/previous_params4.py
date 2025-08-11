@@ -58,6 +58,10 @@ previous_v1_params4[328] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), enable_free_draw=True)
 
+previous_v1_params4[329] = proto.update(
+    parser_x_modes=(ParseMode.color_proximity_diag,),
+    parser_y_modes=(ParseMode.color_proximity_diag,))
+
 previous_v1_params4[330] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), enable_free_draw=True)
