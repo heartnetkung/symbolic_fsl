@@ -44,7 +44,7 @@ class RunPhysicsExpert(Expert[ArcTrainingState, PhysicsTask]):
 def _check_single_color(all_shapes: list[list[Shape]])->bool:
     for shapes in all_shapes:
         for shape in shapes:
-            if shape.get_single_color() == NULL_COLOR:
+            if shape.single_color == NULL_COLOR:
                 return False
     return True
 
@@ -88,7 +88,7 @@ def _get_still_colors(all_x_shapes: list[list[Shape]],
 def _group_colors(shapes: list[Shape])->Optional[dict[int, set[Shape]]]:
     result = {}
     for shape in shapes:
-        color = shape.get_single_color()
+        color = shape.single_color
         if color == NULL_COLOR:
             return None
 

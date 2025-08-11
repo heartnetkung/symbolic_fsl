@@ -59,7 +59,8 @@ class Shape(RuntimeObject):
     def shape_value(self)->int:
         return MISSING_VALUE
 
-    def get_single_color(self)->int:
+    @property
+    def single_color(self)->int:
         top_color = self._grid.get_top_color()
         least_color = self._grid.get_least_color()
         if (top_color == NULL_COLOR) or (least_color == NULL_COLOR):
@@ -123,7 +124,8 @@ class FilledRectangle(Shape):
         del result['color']
         return result
 
-    def get_single_color(self)->int:
+    @property
+    def single_color(self)->int:
         return self.color
 
     @property
@@ -174,7 +176,8 @@ class HollowRectangle(Shape):
         del result['color']
         return result
 
-    def get_single_color(self)->int:
+    @property
+    def single_color(self)->int:
         return self.color
 
     @property
@@ -246,7 +249,8 @@ class Diagonal(Shape):
             return self.color
         return NULL_COLOR
 
-    def get_single_color(self)->int:
+    @property
+    def single_color(self)->int:
         return self.color
 
     @property

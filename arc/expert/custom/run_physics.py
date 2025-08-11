@@ -70,7 +70,7 @@ def _extract_shapes(shapes: list[Shape], still_colors: set[int], width: int,
                     height: int)->Optional[tuple[list[Shape], list[FilledRectangle]]]:
     still_shapes, moving_shapes = [], []
     for shape in shapes:
-        color = shape.get_single_color()
+        color = shape.single_color
         if color == NULL_COLOR:
             return None
 
