@@ -69,18 +69,6 @@ class Shape(RuntimeObject):
             return NULL_COLOR
         return top_color
 
-    @cached_property
-    def is_h_symmetry(self)->int:
-        if self._grid.flip_h() == self._grid:
-            return 1
-        return 0
-
-    @cached_property
-    def is_v_symmetry(self)->int:
-        if self._grid.flip_v() == self._grid:
-            return 1
-        return 0
-
     def draw(self, canvas: Grid, include_xy: bool = True)->None:
         '''Draw this object on canvas'''
         grid_height, grid_width = canvas.height, canvas.width
@@ -137,14 +125,6 @@ class FilledRectangle(Shape):
         return result
 
     @property
-    def is_h_symmetry(self)->int:  # type:ignore
-        return 1
-
-    @property
-    def is_v_symmetry(self)->int:  # type:ignore
-        return 1
-
-    @property
     def single_color(self)->int:
         return self.color
 
@@ -195,14 +175,6 @@ class HollowRectangle(Shape):
         result = super().to_input_var()
         del result['color']
         return result
-
-    @property
-    def is_h_symmetry(self)->int:  # type:ignore
-        return 1
-
-    @property
-    def is_v_symmetry(self)->int:  # type:ignore
-        return 1
 
     @property
     def single_color(self)->int:
@@ -276,14 +248,6 @@ class Diagonal(Shape):
         if (not self.north_west) and (i+j+1 == self.width):
             return self.color
         return NULL_COLOR
-
-    @property
-    def is_h_symmetry(self)->int:  # type:ignore
-        return 0
-
-    @property
-    def is_v_symmetry(self)->int:  # type:ignore
-        return 0
 
     @property
     def single_color(self)->int:
