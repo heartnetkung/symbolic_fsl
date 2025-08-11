@@ -26,12 +26,24 @@ class ShapeColumns(ColumnMaker):
 
         for index, shapes in enumerate(all_shapes):
             for i, shape in enumerate(shapes):
-                for k, v in shape.to_input_var().items():
+                shape_properties = shape.to_input_var() | extract_properties(shape)
+                for k, v in shape_properties.items():
                     result_key = f'shape{i}.{k}'
                     result_value = result.get(result_key, None)
                     if result_value is None:
                         result_value = result[result_key] = [MISSING_VALUE]*index
                     result_value.append(v)
+
+
+def extract_properties(shape: Shape)->dict[str, Any]:
+    result = {}
+    if shape.mass > 2:
+        result['is_symmetry(+v)'] = int(shape._grid.flip_v() == shape._grid)
+        result['is_symmetry(+h)'] = int(shape._grid.flip_h() == shape._grid)
+    else:
+        result['is_symmetry(+h)'] = -1
+        result['is_symmetry(+v)'] = -1
+    return result
 
 
 class EditColumns(ColumnMaker):
