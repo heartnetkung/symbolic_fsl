@@ -23,6 +23,8 @@ class GeomTransformExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             label = extract_label(x_shapes, y_shapes)
             if label is None:
                 continue
+            if set(label) == {TransformType.normal.value}:
+                continue
             result.append(GeomTransform(MemorizedModel(label), self.params, i))
         return result
 
