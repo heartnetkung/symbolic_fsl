@@ -7,6 +7,7 @@ def list_properties(a: Shape)->dict[str, Any]:
     result = a.to_input_var()
     del result['shape_type']
     del result['shape_value']
+    del result['single_color']
     result['center'] = (a.x+a.width/2, a.y+a.height/2)
     result['colors'] = list_shape_colors(a)
     result |= list_shape_representations(a)
