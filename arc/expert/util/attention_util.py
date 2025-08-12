@@ -18,7 +18,7 @@ def default_make_df(
     x_shapes = []
     for sample, shape_indexes in zip(atn.sample_index, atn.x_index):
         row = [state.out_shapes[sample][i] for i in shape_indexes]
-        x_shapes.append(row)
+        x_shapes.append(row+atn.extra_shapes)
     return generate_df(x, x_shapes, edit_index=edit_index)
 
 
