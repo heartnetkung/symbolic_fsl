@@ -47,8 +47,8 @@ previous_v1_params2[124] = proto.update(
     parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params2[125] = proto.update(
-    parser_x_modes=(ParseMode.color_proximity_diag,),
-    parser_y_modes=(ParseMode.color_proximity_diag,))
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params2[126] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),

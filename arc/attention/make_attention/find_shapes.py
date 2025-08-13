@@ -37,7 +37,7 @@ def _find_common_shapes(all_y_shapes: list[list[Shape]])->list[Shape]:
 def _to_repr(grid: Grid)->Optional[str]:
     if grid.width*grid.height <= 2:
         return None
-    return repr(grid)
+    return repr(grid.normalize_color())
 
 
 def _reset_position(shape: Shape)->Shape:

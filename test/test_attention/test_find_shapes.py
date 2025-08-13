@@ -4,6 +4,16 @@ from ...arc.attention.low_level import *
 from ...arc.attention.make_attention.find_shapes import *
 
 
+def test_125():
+    all_y_shapes = [
+        list_objects(y125_0.replace_color(0, NULL_COLOR)),
+        list_objects(y125_1.replace_color(0, NULL_COLOR)),
+        list_objects(y125_2.replace_color(0, NULL_COLOR))
+    ]
+    result = find_common_y_shapes(all_y_shapes)
+    assert result == [Unknown(0, 0, Grid([[6, 6, 6], [6, -1, 6]]))]
+
+
 def test_281():
     all_y_shapes = [
         list_sparse_objects(y281_0.replace_color(0, NULL_COLOR)),
@@ -15,13 +25,13 @@ def test_281():
 
 def test_333():
     all_y_shapes = [
-        [Unknown(0, 0, y333_0)],
-        [Unknown(0, 0, y333_1)],
-        [Unknown(0, 0, y333_2)],
-        [Unknown(0, 0, y333_3)],
-        [Unknown(0, 0, y333_4)],
-        [Unknown(0, 0, y333_5)],
-        [Unknown(0, 0, y333_6)]
+        [Unknown(0, 0, y333_0.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_1.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_2.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_3.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_4.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_5.replace_color(0, NULL_COLOR))],
+        [Unknown(0, 0, y333_6.replace_color(0, NULL_COLOR))]
     ]
     result = find_common_y_shapes(all_y_shapes)
     assert set(result) == {shapes[0] for shapes in all_y_shapes}
@@ -196,4 +206,31 @@ y398_7 = Grid([
     [1, 0, 1],
     [0, 1, 0],
     [1, 0, 0]
+])
+
+y125_0 = Grid([
+    [0, 6, 6, 6, 0, 0, 0, 0],
+    [0, 6, 0, 6, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 6, 6, 6],
+    [0, 0, 0, 0, 0, 6, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 4, 0, 0, 0, 4, 0]
+])
+
+y125_1 = Grid([
+    [0, 3, 3, 3, 0],
+    [0, 3, 0, 3, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 4, 0, 0]
+])
+
+y125_2 = Grid([
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 8, 8, 8, 0, 0, 0],
+    [0, 8, 0, 8, 6, 6, 6],
+    [0, 0, 0, 0, 6, 0, 6],
+    [0, 0, 4, 0, 0, 4, 0]
 ])
