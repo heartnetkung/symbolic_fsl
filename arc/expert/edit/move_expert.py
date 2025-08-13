@@ -26,6 +26,8 @@ class MoveExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             if (np.array_equal(current_x_values, x_values) and
                     np.array_equal(current_y_values, y_values)):
                 continue
+            if not has_relationship(task.atn, 'same_shape', i):
+                continue
 
             result.append(Move(MemorizedModel(x_values), MemorizedModel(y_values),
                                self.params, i))
