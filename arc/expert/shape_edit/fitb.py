@@ -32,7 +32,7 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             x_shapes = get_x_col(state, atn, self.feat_index)
             new_widths, new_heights = self.expansion.get_widths_heights(x_shapes)
         else:
-            shape_df = default_make_df(state, atn, self.feat_index)
+            shape_df = default_make_df(state, task, self.feat_index)
             new_widths = self.width_model.predict_int(shape_df)
             new_heights = self.height_model.predict_int(shape_df)
 
@@ -67,7 +67,7 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             w_models: list[MLModel] = [ConstantModel(99)]
             h_models: list[MLModel] = [ConstantModel(99)]
         else:
-            shape_df = default_make_df(state, task.atn, self.feat_index)
+            shape_df = default_make_df(state, task, self.feat_index)
             widths, heights = self.width_model.result, self.height_model.result
             w_models = regressor_factory(shape_df, widths, self.params, 'fitb.w')
             h_models = regressor_factory(shape_df, heights, self.params, 'fitb.h')

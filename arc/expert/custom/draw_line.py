@@ -24,7 +24,7 @@ class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
         assert state.out_shapes is not None
 
         atn = task.atn
-        shape_df = default_make_df(state, atn)
+        shape_df = default_make_df(state, task)
         grids = get_grids(state, atn)
         new_out_shapes = deepcopy(state.out_shapes)
         x_values = self.init_x_model.predict_int(shape_df)
@@ -54,8 +54,7 @@ class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
         assert isinstance(self.color_model, MemorizedModel)
         assert isinstance(self.nav_model, StepMemoryModel)
 
-        atn = task.atn
-        shape_df = default_make_df(state, atn)
+        shape_df = default_make_df(state, task)
         x_models = regressor_factory(
             shape_df, self.init_x_model.result, self.params, 'draw.x')
         y_models = regressor_factory(

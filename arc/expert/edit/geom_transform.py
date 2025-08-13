@@ -32,7 +32,7 @@ class GeomTransform(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert state.out_shapes != None
 
         atn = task.atn
-        df = default_make_df(state, atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         transforms = self.model.predict_enum(df, TransformType)
         result = deepcopy(state.out_shapes)
         for id1, shape_ids, transform in zip(atn.sample_index, atn.x_index, transforms):
@@ -44,7 +44,7 @@ class GeomTransform(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
                      task: TrainingAttentionTask)->list[InferenceAction]:
         assert isinstance(self.model, MemorizedModel)
 
-        df = default_make_df(state, task.atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         models = classifier_factory(df, self.model.result, self.params, 'geom')
         return [GeomTransform(model, self.params, self.feat_index) for model in models]
 

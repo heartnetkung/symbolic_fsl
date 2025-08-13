@@ -19,11 +19,11 @@ class FITP(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
         atn = task.atn
-        df = default_make_df(state, atn, self.fitb.feat_index)
+        df = default_make_df(state, task, self.fitb.feat_index)
         patch_colors = self.patch_model.predict_int(df)
 
         # preprocess
-        blob = _preprocess(state, task.atn, patch_colors, self.fitb.feat_index)
+        blob = _preprocess(state, atn, patch_colors, self.fitb.feat_index)
         if blob is None:
             return None
         bounds, replaced_shapes = blob
@@ -58,7 +58,7 @@ class FITP(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         subactions = self.fitb.train_models(
             state.update(out_shapes=replaced_shapes), task)
 
-        shape_df = default_make_df(state, task.atn, self.fitb.feat_index)
+        shape_df = default_make_df(state, task, self.fitb.feat_index)
         patch_models = regressor_factory(shape_df, self.patch_model.result,
                                          self.fitb.params, 'fitp')
         return [FITP(subaction, patch_model)  # type:ignore

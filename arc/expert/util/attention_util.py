@@ -6,19 +6,23 @@ from functools import lru_cache
 import pandas as pd
 import numpy as np
 from ...ml import *
+from typing import Union
 
 
 @lru_cache
 def default_make_df(
-        state: ArcState, atn: Attention, edit_index: int = -1)->pd.DataFrame:
+        state: ArcState, task: Union[AttentionTask, DrawLineTask],
+        edit_index: int = -1)->pd.DataFrame:
     '''Make dataframe from relevant information.'''
 
     assert state.out_shapes != None
-    x = [state.x[i] for i in atn.sample_index]
+    x = [state.x[i] for i in task.atn.sample_index]
     x_shapes = []
-    for sample, shape_indexes in zip(atn.sample_index, atn.x_index):
+    for sample, shape_indexes in zip(task.atn.sample_index, task.atn.x_index):
         row = [state.out_shapes[sample][i] for i in shape_indexes]
-        x_shapes.append(row+atn.extra_shapes)
+        if isinstance(task, AttentionTask):
+            row.extend(task.common_y_shapes)
+        x_shapes.append(row)
     return generate_df(x, x_shapes, edit_index=edit_index)
 
 

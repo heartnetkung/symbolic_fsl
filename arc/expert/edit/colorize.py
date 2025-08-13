@@ -18,7 +18,7 @@ class Colorize(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert state.out_shapes != None
 
         atn = task.atn
-        df = default_make_df(state, atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         colors = self.color_model.predict_int(df)
         result = deepcopy(state.out_shapes)
         for id1, shape_ids, color in zip(atn.sample_index, atn.x_index, colors):
@@ -30,6 +30,6 @@ class Colorize(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
                      task: TrainingAttentionTask)->list[InferenceAction]:
         assert isinstance(self.color_model, MemorizedModel)
 
-        df = default_make_df(state, task.atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         models = regressor_factory(df, self.color_model.result, self.params, 'colorize')
         return [Colorize(model, self.params, self.feat_index) for model in models]

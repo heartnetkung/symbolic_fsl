@@ -23,15 +23,14 @@ class CreateBoundlessDiagonal(
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
         assert state.out_shapes != None
 
-        atn = task.atn
-        df = default_make_df(state, atn)
+        df = default_make_df(state, task)
         y_values = self.y_intercept_model.predict_int(df)
         c_values = self.color_model.predict_int(df)
         o_values = self.orientation_model.predict_bool(df)
 
         result = deepcopy(state.out_shapes)
         for id1, y_intercept, color, northwest in zip(
-                atn.sample_index, y_values, c_values, o_values):
+                task.atn.sample_index, y_values, c_values, o_values):
             if northwest:
                 if y_intercept >= 0:
                     x, y, width = 0, y_intercept, MAX_GRID_SIZE
@@ -48,7 +47,7 @@ class CreateBoundlessDiagonal(
         assert isinstance(self.color_model, MemorizedModel)
         assert isinstance(self.orientation_model, MemorizedModel)
 
-        df = default_make_df(state, task.atn)
+        df = default_make_df(state, task)
         y_models = regressor_factory(
             df, self.y_intercept_model.result, self.params, 'bdiag.y')
         c_models = regressor_factory(

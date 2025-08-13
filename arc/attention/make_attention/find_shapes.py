@@ -4,11 +4,7 @@ import pandas as pd
 from copy import deepcopy
 
 
-def find_common_y_shapes(all_y_shapes: list[list[Shape]])->list[Shape]:
-    return _find_common_shapes(all_y_shapes)
-
-
-def _find_common_shapes(all_y_shapes: list[list[Shape]])->list[Shape]:
+def find_common_y_shapes(all_y_shapes: list[list[Shape]])->tuple[Shape, ...]:
     stats = {'sample_id': [], 'repr_': []}
     shape_dict = {}
 
@@ -29,9 +25,9 @@ def _find_common_shapes(all_y_shapes: list[list[Shape]])->list[Shape]:
 
     # too many repeated shapes, include everything
     if len(filtered_df) >= 3:
-        return list(shape_dict.values())
+        return tuple(shape_dict.values())
 
-    return [shape_dict[key] for key in filtered_df.index]
+    return tuple(shape_dict[key] for key in filtered_df.index)
 
 
 def _to_repr(grid: Grid)->Optional[str]:

@@ -14,6 +14,7 @@ from ..constant import GlobalParams
 @dataclass(frozen=True)
 class AttentionTask(InferenceTask):
     atn: Attention
+    common_y_shapes: tuple[Shape, ...]
 
     def get_cost(self)->int:
         return default_cost(self)
@@ -22,25 +23,27 @@ class AttentionTask(InferenceTask):
 @dataclass(frozen=True)
 class TrainingAttentionTask(Task[ArcTrainingState]):
     atn: TrainingAttention
+    common_y_shapes: tuple[Shape, ...]
     params: GlobalParams
 
     def to_models(self, before: ArcTrainingState,
                   after: ArcTrainingState)->list[ModeledTask]:
         assert before.out_shapes is not None
         models = to_models(self.atn, before.out_shapes, before.x, self.params)
-        return [ModeledAttentionTask(model) for model in models]
+        return [ModeledAttentionTask(model, self.common_y_shapes) for model in models]
 
     def to_inference(self)->InferenceTask:
-        return AttentionTask(self.atn)
+        return AttentionTask(self.atn, self.common_y_shapes)
 
 
 @dataclass(frozen=True)
 class ModeledAttentionTask(ModeledTask[ArcInferenceState]):
     model: AttentionModel
+    common_y_shapes: tuple[Shape, ...]
 
     def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
         assert before.out_shapes is not None
         atn = to_runtimes(self.model, before.out_shapes, before.x)
         if atn is None:
             return None
-        return AttentionTask(atn)
+        return AttentionTask(atn, self.common_y_shapes)

@@ -23,8 +23,7 @@ class CreateRectangle(ModelBasedArcAction[TrainingAttentionTask, AttentionTask])
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
         assert state.out_shapes != None
 
-        atn = task.atn
-        df = default_make_df(state, atn)
+        df = default_make_df(state, task)
         x_values = self.x_model.predict_int(df)
         y_values = self.y_model.predict_int(df)
         w_values = self.w_model.predict_int(df)
@@ -33,7 +32,8 @@ class CreateRectangle(ModelBasedArcAction[TrainingAttentionTask, AttentionTask])
 
         result = deepcopy(state.out_shapes)
         for id1, x, y, w, h, c in zip(
-                atn.sample_index, x_values, y_values, w_values, h_values, c_values):
+                task.atn.sample_index, x_values, y_values, w_values,
+                h_values, c_values):
             result[id1].append(FilledRectangle(x, y, w, h, c))
         return state.update(out_shapes=deduplicate_all_shapes(result))
 
@@ -45,7 +45,7 @@ class CreateRectangle(ModelBasedArcAction[TrainingAttentionTask, AttentionTask])
         assert isinstance(self.h_model, MemorizedModel)
         assert isinstance(self.c_model, MemorizedModel)
 
-        df = default_make_df(state, task.atn)
+        df = default_make_df(state, task)
         x_models = regressor_factory(df, self.x_model.result, self.params, 'rect.x')
         y_models = regressor_factory(df, self.y_model.result, self.params, 'rect.y')
         w_models = regressor_factory(df, self.w_model.result, self.params, 'rect.w')

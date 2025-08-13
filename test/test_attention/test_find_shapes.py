@@ -11,7 +11,7 @@ def test_125():
         list_objects(y125_2.replace_color(0, NULL_COLOR))
     ]
     result = find_common_y_shapes(all_y_shapes)
-    assert result == [Unknown(0, 0, Grid([[6, 6, 6], [6, -1, 6]]))]
+    assert result == (Unknown(0, 0, Grid([[6, 6, 6], [6, -1, 6]])),)
 
 
 def test_281():
@@ -20,7 +20,7 @@ def test_281():
         list_sparse_objects(y281_1.replace_color(0, NULL_COLOR))
     ]
     result = find_common_y_shapes(all_y_shapes)
-    assert result == [Unknown(0, 0, Grid([[5, 1, 5], [1, -1, 1], [5, 1, 5]]))]
+    assert result == (Unknown(0, 0, Grid([[5, 1, 5], [1, -1, 1], [5, 1, 5]])),)
 
 
 def test_333():

@@ -21,7 +21,7 @@ class Move(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert state.out_shapes != None
 
         atn = task.atn
-        df = default_make_df(state, atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         x_values = self.x_model.predict_int(df)
         y_values = self.y_model.predict_int(df)
         result = deepcopy(state.out_shapes)
@@ -39,7 +39,7 @@ class Move(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.x_model, MemorizedModel)
         assert isinstance(self.y_model, MemorizedModel)
 
-        df = default_make_df(state, task.atn, self.feat_index)
+        df = default_make_df(state, task, self.feat_index)
         x_models = regressor_factory(df, self.x_model.result, self.params, 'move.x')
         y_models = regressor_factory(df, self.y_model.result, self.params, 'move.y')
         return [Move(x_model, y_model, self.params, self.feat_index)

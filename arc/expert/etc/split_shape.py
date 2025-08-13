@@ -16,12 +16,12 @@ class SplitShape(ModelFreeArcAction[AttentionTask]):
     def perform(self, state: ArcState, task: AttentionTask)->Optional[ArcState]:
         assert state.out_shapes is not None
         atn = task.atn
-        if len(atn.extra_shapes) == 0:
+        if len(task.common_y_shapes) == 0:
             return None
 
         x_index = [index[self.feat_index] for index in atn.x_index]
         new_out_shapes = self._split_shape(
-            atn.sample_index, x_index, state.out_shapes, atn.extra_shapes)
+            atn.sample_index, x_index, state.out_shapes, task.common_y_shapes)
         if new_out_shapes is None:
             return None
 
@@ -31,7 +31,7 @@ class SplitShape(ModelFreeArcAction[AttentionTask]):
         assert state.y_shapes is not None
         new_y_shapes = self._split_shape(
             atn.sample_index, task.atn.y_index, state.y_shapes,  # type:ignore
-            atn.extra_shapes)
+            task.common_y_shapes)
         if new_y_shapes is None:
             return None
 

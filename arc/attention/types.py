@@ -31,8 +31,6 @@ class TrainingAttention:
     relationship_info: pd.DataFrame = field(compare=False, repr=False)
     # count of columns for each x cluster from left to right
     x_cluster_info: list[int]
-    # extra shapes to attend to regardless of row
-    extra_shapes: list[Shape]
 
     def __post_init__(self):
         # check n
@@ -61,7 +59,6 @@ class InferenceAttention:
 
     sample_index: list[int]
     x_index: list[list[int]]
-    extra_shapes: list[Shape]
     model: MLModel
 
     def __post_init__(self):
@@ -91,7 +88,6 @@ class AttentionModel:
     model: MLModel
     n_columns: int
     x_cluster_info: list[int]
-    extra_shapes: list[Shape]
 
 
 def create_empty_attention(
@@ -109,4 +105,4 @@ def create_empty_attention(
     y_index = [0]*train_count
     sample_index = list(range(train_count))
     empty_df = pd.DataFrame({})
-    return TrainingAttention(sample_index, x_index, y_index, empty_df, [], [])
+    return TrainingAttention(sample_index, x_index, y_index, empty_df, [])
