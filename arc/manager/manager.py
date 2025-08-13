@@ -6,6 +6,7 @@ import logging
 from ..attention import *
 from .reparse.reparse_creator import *
 from .submanager.crop_manager import CropManager
+from ..algorithm.find_shapes import *
 
 
 class ArcManager(Manager[ArcTrainingState]):

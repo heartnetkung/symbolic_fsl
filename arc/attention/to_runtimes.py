@@ -3,7 +3,6 @@ from ..graphic import *
 from ..base import *
 from .to_runtime.train_model import *
 from .to_runtime.align_x import *
-from .make_attention.find_shapes import *
 
 
 def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],

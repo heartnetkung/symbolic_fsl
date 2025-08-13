@@ -39,7 +39,7 @@ class SplitShape(ModelFreeArcAction[AttentionTask]):
 
     def _split_shape(self, sample_index: list[int], shape_index: list[int],
                      all_shapes: list[list[Shape]],
-                     subshapes: list[Shape])->Optional[list[list[Shape]]]:
+                     subshapes: tuple[Shape, ...])->Optional[list[list[Shape]]]:
         seen_shapes, appending = set(), {}
         dedup = Deduplicator()
 

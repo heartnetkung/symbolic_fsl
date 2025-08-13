@@ -1,7 +1,7 @@
 from ...arc.base import *
 from ...arc.graphic import *
 from ...arc.attention.low_level import *
-from ...arc.attention.make_attention.find_shapes import *
+from ...arc.algorithm.find_shapes import *
 
 
 def test_125():

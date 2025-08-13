@@ -1,6 +1,7 @@
 from ..base import *
 from ..graphic import *
 from copy import deepcopy
+from collections.abc import Iterable
 
 MAX_COLORLESS_SHAPE_MASS = 100
 
@@ -15,7 +16,7 @@ class LoopStopper:
 
 
 def recursive_shape_split(
-        shape: Shape, subshapes: list[Shape],
+        shape: Shape, subshapes: Iterable[Shape],
         colorless: bool = False, transform: bool = False)->Optional[list[Shape]]:
     '''
     Split the given shape into subshapes such that
