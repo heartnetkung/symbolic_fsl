@@ -27,7 +27,6 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
 
         dedup_key = repr([(shapes[0].width, shapes[0].height)
                           for shapes in state.out_shapes+state.y_shapes])
-        print(dedup_key)
         if self.size_deduplicator.has_seen_before(dedup_key):
             return result
 
