@@ -35,7 +35,8 @@ class MockInferenceState(TrainingState[int, int]):
 
 
 class MockTask(ModelFreeTask):
-    pass
+    def is_finishing_task(self)->bool:
+        return True
 
 
 class MockManager(Manager[MockTrainingState]):

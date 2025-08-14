@@ -41,4 +41,5 @@ class CleanUpTask(ModelFreeTask):
 
 @dataclass(frozen=True)
 class DrawCanvasTask(ModelFreeTask):
-    pass
+    def is_finishing_task(self)->bool:
+        return True

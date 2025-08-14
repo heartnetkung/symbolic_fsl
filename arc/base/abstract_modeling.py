@@ -86,6 +86,9 @@ class Task(Generic[TS], ABC):
     def __repr__(self)->str:
         return default_repr(self)
 
+    def is_finishing_task(self)->bool:
+        return False
+
 
 T = TypeVar('T', bound=Task)
 IT = TypeVar('IT', bound=InferenceTask)

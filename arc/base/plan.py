@@ -80,6 +80,11 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
                 logger.info('manager.decide error', exc_info=True)
                 continue
 
+            # the final step is excusively for finishing task
+            if depth == max_depth-1:
+                task_states = [(task, state) for task, state in task_states
+                               if task.is_finishing_task()]
+
             for task, local_state in task_states:
                 logger.info('task: %s', task)
                 for expert in hr.recruit(task):

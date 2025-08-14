@@ -41,7 +41,7 @@ class ArcManager(Manager[ArcTrainingState]):
             return [(create_reparse_split(state), state.update(split_reparse=True))]
 
         # finish up
-        if state.out is not None:
+        if state.out is not None:  # if canvas is already drawn, stop producing tasks.
             return []
         if _all_shapes_matched(state.out_shapes, state.y_shapes):
             return [(DrawCanvasTask(), state)]
