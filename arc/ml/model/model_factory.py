@@ -57,7 +57,7 @@ def make_all_models(
         if (y.dtype.name == 'bool') and (y_type == LabelType.cls_):
             y = y.astype(int)
 
-        new_models = _model_factory(X, X2, y, params, print_str+str(i), y_type)
+        new_models = _model_factory(X, X2, y, params, f'{print_str}_{i}', y_type)
         if len(new_models) == 0:
             return [[]]*len(all_y)
 
