@@ -8,11 +8,13 @@ import numpy as np
 from ...ml import *
 from typing import Union
 
+TaskWithAtn = Union[DrawLineTask, TrainingDrawLineTask,
+                     AttentionTask, TrainingAttentionTask, ]
+
 
 @lru_cache
 def default_make_df(
-        state: ArcState, task: Union[AttentionTask, DrawLineTask],
-        edit_index: int = -1)->pd.DataFrame:
+        state: ArcState, task: TaskWithAtn, edit_index: int = -1)->pd.DataFrame:
     '''Make dataframe from relevant information.'''
 
     assert state.out_shapes != None
@@ -20,7 +22,7 @@ def default_make_df(
     x_shapes = []
     for sample, shape_indexes in zip(task.atn.sample_index, task.atn.x_index):
         row = [state.out_shapes[sample][i] for i in shape_indexes]
-        if isinstance(task, AttentionTask):
+        if isinstance(task, AttentionTask) or isinstance(task, TrainingAttentionTask):
             row.extend(task.common_y_shapes)
         x_shapes.append(row)
     return generate_df(x, x_shapes, edit_index=edit_index)
