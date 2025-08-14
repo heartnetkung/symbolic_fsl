@@ -14,6 +14,8 @@ DUMMY_MODEL = ConstantModel(1)
 class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
     def __init__(self, params: GlobalParams)->None:
         self.params = params
+        # since free draw can run on any condition, it will run only once per size
+        self.size_deduplicator = Deduplicator()
 
     def solve_problem(self, state: ArcTrainingState, task: FreeDrawTask)->list[Action]:
         assert state.out_shapes is not None
@@ -23,9 +25,10 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         if not _has_exactly_one_shape(state):
             return result
 
-        # since free draw can run on any condition, it will run twice on
-        # different unknown_bg. Thus, we stop the second run to save compute.
-        if not _is_unknown_bg_false(state):
+        dedup_key = repr([(shapes[0].width, shapes[0].height)
+                          for shapes in state.out_shapes+state.y_shapes])
+        print(dedup_key)
+        if self.size_deduplicator.has_seen_before(dedup_key):
             return result
 
         df = generate_size_df(state.x, state.out_shapes)
@@ -84,22 +87,5 @@ def _has_exactly_one_shape(state: ArcTrainingState)->bool:
     assert state.y_shapes is not None
     for x_shapes, y_shapes in zip(state.out_shapes, state.y_shapes):
         if (len(x_shapes) != 1) or (len(y_shapes) != 1):
-            return False
-    return True
-
-
-def _is_unknown_bg_false(state: ArcTrainingState)->bool:
-    assert state.out_shapes is not None
-    assert state.x_bg is not None
-    assert state.y_bg is not None
-
-    if state.x_bg != state.y_bg:
-        return True
-
-    for x_shapes, bg in zip(state.out_shapes, state.x_bg):
-        x_shape = x_shapes[0]
-        if x_shape._grid.has_color(NULL_COLOR):
-            return True
-        if x_shape._grid.has_color(bg):
             return False
     return True

@@ -25,12 +25,12 @@ class ArcManager(Manager[ArcTrainingState]):
         # parse, reparse, and operations that can run once
         if state.x_shapes is None:
             return [(ParseGridTask(), state)]
+        if state.free_draw is False:
+            return [(FreeDrawTask(), state.update(free_draw=True))]
         if state.run_physics is False:
             return [(PhysicsTask(), state.update(run_physics=True))]
         if state.partitionless_logic is False:
             return [(PartitionlessLogicTask(), state.update(partitionless_logic=True))]
-        if state.free_draw is False:
-            return [(FreeDrawTask(), state.update(free_draw=True))]
         if state.edge_reparse is False:
             return [(create_reparse_edge(state), state.update(edge_reparse=True))]
         if state.merge_nearby_reparse is False:
