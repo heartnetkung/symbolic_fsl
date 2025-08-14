@@ -40,7 +40,8 @@ class Move(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.y_model, MemorizedModel)
 
         df = default_make_df(state, task, self.feat_index)
-        x_models = regressor_factory(df, self.x_model.result, self.params, 'move.x')
-        y_models = regressor_factory(df, self.y_model.result, self.params, 'move.y')
+        labels = [self.x_model.result, self.y_model.result]
+        label_types = [LabelType.reg]*2
+        all_models = make_all_models(df, self.params, 'move', labels, label_types)
         return [Move(x_model, y_model, self.params, self.feat_index)
-                for x_model, y_model in model_selection(x_models, y_models)]
+                for x_model, y_model in model_selection(*all_models)]

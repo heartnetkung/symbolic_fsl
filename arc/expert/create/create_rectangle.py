@@ -46,12 +46,11 @@ class CreateRectangle(ModelBasedArcAction[TrainingAttentionTask, AttentionTask])
         assert isinstance(self.c_model, MemorizedModel)
 
         df = default_make_df(state, task)
-        x_models = regressor_factory(df, self.x_model.result, self.params, 'rect.x')
-        y_models = regressor_factory(df, self.y_model.result, self.params, 'rect.y')
-        w_models = regressor_factory(df, self.w_model.result, self.params, 'rect.w')
-        h_models = regressor_factory(df, self.h_model.result, self.params, 'rect.h')
-        c_models = regressor_factory(df, self.c_model.result, self.params, 'rect.c')
+        labels = [self.x_model.result, self.y_model.result,
+                  self.w_model.result, self.h_model.result, self.c_model.result]
+        label_types = [LabelType.reg]*5
+        all_models = make_all_models(df, self.params, 'rect', labels, label_types)
         return [CreateRectangle(
             x_model, y_model, w_model, h_model, c_model, self.params)
             for x_model, y_model, w_model, h_model, c_model in model_selection(
-            x_models, y_models, w_models, h_models, c_models)]
+            *all_models)]

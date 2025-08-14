@@ -30,20 +30,44 @@ class TrainingData:
         return hash(f'{self.X} {self.y}')
 
 
-def classifier_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
-                       print_str: str)->list[MLModel]:
-    if y.dtype.name == 'bool':
-        y = y.astype(int)
-    return _model_factory(X, y, params, print_str, LabelType.classification)
+def make_classifier(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
+                    print_str: str)->list[MLModel]:
+    return make_all_models(X, params, print_str, [y], [LabelType.cls_])[0]
 
 
-def regressor_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
-                      print_str: str)->list[MLModel]:
-    return _model_factory(X, y, params, print_str, LabelType.regression)
+def make_regressor(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
+                   print_str: str)->list[MLModel]:
+    return make_all_models(X, params, print_str, [y], [LabelType.reg])[0]
 
 
-def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
-                   print_str: str, type: LabelType)->list[MLModel]:
+def make_all_models(
+        X: pd.DataFrame, params: GlobalParams, print_str: str, all_y: list[np.ndarray],
+        y_types: list[LabelType])->list[list[MLModel]]:
+    '''Train multiple models that share the same input at once.'''
+
+    assert len(y_types) == len(all_y)
+
+    X = _drop_constants(X)
+    X2 = _drop_repeated(X)
+    if X2.empty:
+        return [[]]*len(all_y)
+
+    all_results = []
+    for i, (y, y_type) in enumerate(zip(all_y, y_types)):
+        if (y.dtype.name == 'bool') and (y_type == LabelType.cls_):
+            y = y.astype(int)
+
+        new_models = _model_factory(X, X2, y, params, print_str+str(i), y_type)
+        if len(new_models) == 0:
+            return [[]]*len(all_y)
+
+        all_results.append(new_models)
+    return all_results
+
+
+def _model_factory(
+        X: pd.DataFrame, X2: pd.DataFrame, y: np.ndarray,
+        params: GlobalParams, print_str: str, y_type: LabelType)->list[MLModel]:
     if len(X) != len(y):
         return []
 
@@ -60,16 +84,10 @@ def _model_factory(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     if len(exact_result) > 0:
         return exact_result
 
-    # preprocess
-    X = _drop_constants(X)
-    X2 = _drop_repeated(X)
-    if X2.empty:
-        return []
-
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
     # TODO should we remove top level tree models? since we already included it in ppdt
-    ppdt_models = make_models(TrainingData(X2, y, params), type)
+    ppdt_models = make_models(TrainingData(X2, y, params), y_type)
     assoc_models = make_association(X, y, params)
     tree_models = [MatchColumn(TreeFeatEng(model), X2)
                    for model in make_tree(tree_feat_eng(X2), y, params)]

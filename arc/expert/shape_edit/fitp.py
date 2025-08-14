@@ -59,8 +59,8 @@ class FITP(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             state.update(out_shapes=replaced_shapes), task)
 
         shape_df = default_make_df(state, task, self.fitb.feat_index)
-        patch_models = regressor_factory(shape_df, self.patch_model.result,
-                                         self.fitb.params, 'fitp')
+        patch_models = make_regressor(shape_df, self.patch_model.result,
+                                      self.fitb.params, 'fitp')
         return [FITP(subaction, patch_model)  # type:ignore
                 for subaction, patch_model in product(subactions, patch_models)]
 

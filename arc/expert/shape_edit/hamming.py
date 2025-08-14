@@ -45,7 +45,7 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         x_shapes = get_x_col(state, task.atn, self.feat_index)
         grids = get_grids(state, task.atn)
         df = generate_pixel_df(grids, x_shapes)
-        models = regressor_factory(
+        models = make_regressor(
             df, self.pixel_model.result, self.params, 'hamming')
         return [Hamming(self.feat_index, model, self.params) for model in models]
 

@@ -57,11 +57,12 @@ def _create_wh_models(
     elif are_same:
         return ColumnModel('grid_width'), ColumnModel('grid_height')
 
-    w_models = regressor_factory(df, widths, params, 'fdraw.w')
-    h_models = regressor_factory(df, heights, params, 'fdraw.h')
-    if (len(w_models) == 0) or (len(h_models) == 0):
+    labels = [widths, heights]
+    label_types = [LabelType.reg]*2
+    all_models = make_all_models(df, params, 'fdraw.size', labels, label_types)
+    if (len(all_models[0]) == 0):
         return None
-    return w_models[0], h_models[0]
+    return all_models[0][0], all_models[1][0]
 
 
 def _make_label(all_shapes: list[list[Shape]])->tuple[

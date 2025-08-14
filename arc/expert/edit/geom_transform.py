@@ -45,7 +45,7 @@ class GeomTransform(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.model, MemorizedModel)
 
         df = default_make_df(state, task, self.feat_index)
-        models = classifier_factory(df, self.model.result, self.params, 'geom')
+        models = make_classifier(df, self.model.result, self.params, 'geom')
         return [GeomTransform(model, self.params, self.feat_index) for model in models]
 
 

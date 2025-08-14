@@ -48,13 +48,9 @@ class CreateBoundlessDiagonal(
         assert isinstance(self.orientation_model, MemorizedModel)
 
         df = default_make_df(state, task)
-        y_models = regressor_factory(
-            df, self.y_intercept_model.result, self.params, 'bdiag.y')
-        c_models = regressor_factory(
-            df, self.color_model.result, self.params, 'bdiag.c')
-        o_models = classifier_factory(
-            df, self.orientation_model.result, self.params, 'bdiag.o')
-        return [CreateBoundlessDiagonal(
-            y_model, c_model, o_model, self.params)
-            for y_model, c_model, o_model in model_selection(
-            y_models, c_models, o_models)]
+        labels = [self.y_intercept_model.result,
+                  self.color_model.result, self.orientation_model.result]
+        label_types = [LabelType.reg, LabelType.reg, LabelType.cls_]
+        all_models = make_all_models(df, self.params, 'bdiag', labels, label_types)
+        return [CreateBoundlessDiagonal(y_model, c_model, o_model, self.params)
+                for y_model, c_model, o_model in model_selection(*all_models)]

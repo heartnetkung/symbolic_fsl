@@ -6,8 +6,8 @@ import pytest
 from ...arc.base import GlobalParams
 import re
 
-reg = LabelType.regression
-cls_ = LabelType.classification
+reg = LabelType.reg
+cls_ = LabelType.cls_
 
 
 def test_constant():

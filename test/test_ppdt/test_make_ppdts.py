@@ -5,8 +5,8 @@ from ...arc.ml.model.ppdt_factory import make_ppdts, LabelType
 from ...arc.base import GlobalParams
 import pytest
 
-reg = LabelType.regression
-cls_ = LabelType.classification
+reg = LabelType.reg
+cls_ = LabelType.cls_
 
 
 def test_step_function():

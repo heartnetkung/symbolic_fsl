@@ -67,7 +67,7 @@ class FreeDraw(ModelBasedArcAction[FreeDrawTask, FreeDrawTask]):
         widths = self.width_model.predict_int(df)
         heights = self.height_model.predict_int(df)
         df = generate_pixel_df(state.x, state.out_shapes, widths, heights)
-        models = regressor_factory(
+        models = make_regressor(
             df, self.pixel_model.result, self.params, 'free_draw')
         return [FreeDraw(self.param, self.width_model, self.height_model,
                          model, self.params) for model in models]

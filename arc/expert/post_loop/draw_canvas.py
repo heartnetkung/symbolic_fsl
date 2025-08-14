@@ -51,7 +51,7 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
         assert isinstance(self.layer_model, MemorizedModel)
         df = _create_sort_df(state.y, state.y_shapes)
         if df is not None:
-            models = classifier_factory(
+            models = make_classifier(
                 df, self.layer_model.result, self.params, 'draw_canvas.l')
         else:
             models = [ConstantModel(1)]

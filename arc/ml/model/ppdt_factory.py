@@ -1,12 +1,11 @@
 import numpy as np
 import pandas as pd
 from ...constant import GlobalParams, cal_system2_cost
-from .ml_model import MLModel, CLS_FIELD_SUFFIX, ConstantModel, ColumnModel
+from .ml_model import *
 from ..linprog import *
 from .base_models import *
 from scipy.stats import mode
 import re
-from enum import Enum
 from itertools import product
 from typing import Optional
 from .comparison_factory import make_comparison_models
@@ -17,16 +16,6 @@ DECIMAL_FILTER = re.compile(r'\d\.\d\d+')
 MAX_LINPROG_REG_SAMPLE = 100  # linprog reg is not really scalable and mostly timeout
 MAX_CLASSIFIERS = 5
 MAX_REG_COMPLEXITY = 4
-
-
-class LabelType(Enum):
-    '''
-    LabelType specify the type of label useful for contraining the training process.
-    In regression, addition and multiplication are allowed in "then" clause.
-    In classification, they are not allowed because the numerical value does not matter.
-    '''
-    classification = 0
-    regression = 1
 
 
 def make_ppdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
@@ -80,7 +69,7 @@ def make_regressors(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
     max_result = params.ppdt_max_regressor_choices
     result: list[MLModel] = []
 
-    if type == LabelType.regression and (len(y) in range(2, MAX_LINPROG_REG_SAMPLE)):
+    if type == LabelType.reg and (len(y) in range(2, MAX_LINPROG_REG_SAMPLE)):
         for raw_result in solve_reg(X, y, params, max_result=max_result):
             new_model = PolynomialRegressor(X, raw_result.poly_coef, params)
             no_2_digit_decimal = DECIMAL_FILTER.search(new_model.code) is None
@@ -98,7 +87,7 @@ def _select_trivial_values(X: pd.DataFrame, y: np.ndarray,
     mode_result, (n_row, n_col) = mode(y), X.shape
     match_count = mode_result.count+1  # mode has 1 extra score since it's simpler
     result: list[MLModel] = [ConstantModel(mode(y).mode)]
-    if (match_count >= n_row) or (type == LabelType.classification):
+    if (match_count >= n_row) or (type == LabelType.cls_):
         return result
 
     single_column_model: Optional[ColumnModel] = None

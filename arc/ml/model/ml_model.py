@@ -7,10 +7,21 @@ from ...constant import GlobalParams, MISSING_VALUE
 from typing import Any, Optional, Callable, TypeVar
 import inspect
 from functools import cached_property
+from enum import Enum
 
 
 CLS_FIELD_SUFFIX = '_cls'
 T = TypeVar('T')
+
+
+class LabelType(Enum):
+    '''
+    LabelType specify the type of label useful for contraining the training process.
+    In regression, addition and multiplication are allowed in "then" clause.
+    In classification, they are not allowed because the numerical value does not matter.
+    '''
+    cls_ = 0
+    reg = 1
 
 
 class MLModel(ABC):

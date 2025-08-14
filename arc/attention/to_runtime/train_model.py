@@ -31,4 +31,4 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]],
 
 def train_model(df: pd.DataFrame, label: np.ndarray,
                 params: GlobalParams)->list[MLModel]:
-    return classifier_factory(df, label, params, 'attention')
+    return make_classifier(df, label, params, 'attention')

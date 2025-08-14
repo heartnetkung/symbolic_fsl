@@ -55,25 +55,23 @@ class DrawLine(ModelBasedArcAction[TrainingDrawLineTask, DrawLineTask]):
         assert isinstance(self.nav_model, StepMemoryModel)
 
         shape_df = default_make_df(state, task)
-        x_models = regressor_factory(
-            shape_df, self.init_x_model.result, self.params, 'draw.x')
-        y_models = regressor_factory(
-            shape_df, self.init_y_model.result, self.params, 'draw.y')
-        d_models = classifier_factory(
-            shape_df, self.dir_model.result, self.params, 'draw.d')
-        c_models = regressor_factory(
-            shape_df, self.color_model.result, self.params, 'draw.c')
-
         pixel_df = make_training_nav_df(state, task)
         if pixel_df is None:
             return []
 
-        n_models = classifier_factory(
+        labels = [self.init_x_model.result, self.init_y_model.result,
+                  self.color_model.result, self.dir_model.result]
+        label_types = [LabelType.reg]*3+[LabelType.cls_]
+        all_models = make_all_models(
+            shape_df, self.params, 'draw_line', labels, label_types)
+
+        n_models = make_classifier(
             pixel_df, self.nav_model.result, self.params, 'draw.n')
+        all_models.append(n_models)
 
         return [DrawLine(x_model, y_model, d_model, n_model, c_model, self.params)
-                for x_model, y_model, d_model, n_model, c_model in model_selection(
-            x_models, y_models, d_models, n_models, c_models)]
+                for x_model, y_model, c_model, d_model, n_model in model_selection(
+            *all_models)]
 
 
 def _make_line(full_grid: Grid, init_x: int, init_y: int, init_dir: Direction,

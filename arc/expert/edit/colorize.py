@@ -31,5 +31,5 @@ class Colorize(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.color_model, MemorizedModel)
 
         df = default_make_df(state, task, self.feat_index)
-        models = regressor_factory(df, self.color_model.result, self.params, 'colorize')
+        models = make_regressor(df, self.color_model.result, self.params, 'colorize')
         return [Colorize(model, self.params, self.feat_index) for model in models]

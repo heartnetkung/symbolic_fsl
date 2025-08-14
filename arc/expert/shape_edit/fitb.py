@@ -64,13 +64,14 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
         if self.expansion.is_symmetry():
             widths, heights = self.expansion.get_widths_heights(x_shapes)
-            w_models: list[MLModel] = [ConstantModel(99)]
-            h_models: list[MLModel] = [ConstantModel(99)]
+            all_models: list[list[MLModel]] = [[ConstantModel(99)]]*2
         else:
             shape_df = default_make_df(state, task, self.feat_index)
             widths, heights = self.width_model.result, self.height_model.result
-            w_models = regressor_factory(shape_df, widths, self.params, 'fitb.w')
-            h_models = regressor_factory(shape_df, heights, self.params, 'fitb.h')
+            labels = [widths, heights]
+            label_types = [LabelType.reg]*2
+            all_models: list[list[MLModel]] = make_all_models(
+                shape_df, self.params, 'fitb.size', labels, label_types)
 
         expanded_shapes, bounds = [], []
         for shape, w, h in zip(x_shapes, widths, heights):
@@ -84,13 +85,13 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
 
         grids = get_grids(state, task.atn)
         pixel_df = generate_pixel_df(grids, expanded_shapes, bounds)
-        p_models = regressor_factory(
+        p_models = make_regressor(
             pixel_df, self.pixel_model.result, self.params, 'fitb.p')
+        all_models.append(p_models)
 
         return [FillInTheBlank(
             self.expansion, self.feat_index, w_model, h_model, p_model, self.params)
-            for w_model, h_model, p_model in model_selection(
-                w_models, h_models, p_models)]
+            for w_model, h_model, p_model in model_selection(*all_models)]
 
 
 def draw_shape(shape: Shape, bound: tuple[int, int, int, int],
