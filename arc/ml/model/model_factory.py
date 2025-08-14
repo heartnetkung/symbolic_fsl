@@ -86,12 +86,10 @@ def _model_factory(
 
     logger.info('solving: %s %s %s', X2.shape, y, print_str)
 
-    # TODO should we remove top level tree models? since we already included it in ppdt
     ppdt_models = make_models(TrainingData(X2, y, params), y_type)
     assoc_models = make_association(X, y, params)
-    # tree_models = [MatchColumn(TreeFeatEng(model), X2)
-    #                for model in make_tree(tree_feat_eng(X2), y, params)]
-    tree_models = []
+    tree_models = [MatchColumn(TreeFeatEng(model), X2)
+                   for model in make_tree(tree_feat_eng(X2), y, params)]
 
     logger.info('ppdt_models: %d %s', len(ppdt_models), ppdt_models)
     logger.info('assoc_models: %d %s', len(assoc_models), assoc_models)
