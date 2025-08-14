@@ -3,10 +3,9 @@ from ..base import *
 from ..graphic import *
 from .task import *
 import logging
-from ..attention import *
 from .reparse.reparse_creator import *
 from .submanager.crop_manager import CropManager
-from ..algorithm.find_shapes import *
+from .submanager.attention_manager import AttentionManager
 
 
 class ArcManager(Manager[ArcTrainingState]):
@@ -18,6 +17,7 @@ class ArcManager(Manager[ArcTrainingState]):
     def __init__(self, params: GlobalParams):
         self.params = params
         self.crop_manager = CropManager()
+        self.atn_manager = AttentionManager(params)
 
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
@@ -48,37 +48,10 @@ class ArcManager(Manager[ArcTrainingState]):
         if _all_shapes_subset(state.out_shapes, state.y_shapes):
             return [(CleanUpTask(), state)]
 
-        attentions = self._make_attention_task(state)
+        attentions = self.atn_manager.decide(state)
         draw_lines = _to_task_states(state, make_line_tasks(state, self.params))
         crop_tasks = self.crop_manager.decide(state)
         return attentions+draw_lines+crop_tasks
-
-    def _make_attention_task(self, state: ArcTrainingState)->list[
-            tuple[Task[ArcTrainingState], ArcTrainingState]]:
-        assert state.out_shapes is not None
-        assert state.y_shapes is not None
-        cache = state.attention_cache
-
-        results, attentions = [], []
-        if cache is not None:
-            assert isinstance(cache, TrainingAttention)
-            is_solved = is_attention_solved(cache, state.out_shapes, state.y_shapes)
-            if is_solved == FuzzyBool.maybe:
-                return []
-            if is_solved == FuzzyBool.no:
-                attentions = remake_attentions(
-                    cache, state.out_shapes, state.y_shapes, state.x)
-
-        if attentions == []:
-            attentions = make_attentions(state.out_shapes, state.y_shapes, state.x)
-
-        common_y_shapes = find_common_y_shapes(state.y_shapes)
-        for attention in attentions:
-            new_state = state.update(attention_cache=attention)
-            new_attention = TrainingAttentionTask(
-                attention, common_y_shapes, self.params)
-            results.append((new_attention, new_state))
-        return results
 
 
 def _all_shapes_matched(a: Optional[list[list[Shape]]],
