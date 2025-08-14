@@ -10,7 +10,6 @@ from functools import cached_property
 from enum import Enum
 
 
-CLS_FIELD_SUFFIX = '_cls'
 T = TypeVar('T')
 
 

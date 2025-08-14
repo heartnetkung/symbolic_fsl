@@ -21,13 +21,8 @@ MAX_REG_COMPLEXITY = 4
 def make_ppdts(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
                type: LabelType)->list[MLModel]:
     '''List all possible EDPT models that perfectly fit the data.'''
-    result = []
-    reg_columns = [col for col in X.columns if not col.endswith(CLS_FIELD_SUFFIX)]
-    X_reg = X[reg_columns].copy()
-    assert isinstance(X_reg, pd.DataFrame)
-
-    all_regressors = []
-    _make_all_regressors(X_reg, y, params, type, [], all_regressors)
+    result, all_regressors = [], []
+    _make_all_regressors(X, y, params, type, [], all_regressors)
     # print('all_regressors', all_regressors) # very useful
 
     for regressors in all_regressors:
