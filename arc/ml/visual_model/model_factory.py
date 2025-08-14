@@ -1,6 +1,5 @@
 from .visual_model import *
 from .bound_scan import BoundScan, BoundScanModel
-from .coord_scan import CoordScan, CoordScanModel
 import numpy as np
 import pandas as pd
 from ...graphic import *
