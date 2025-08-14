@@ -44,9 +44,9 @@ class DrawCanvasExpert(Expert[ArcTrainingState, DrawCanvasTask]):
 
         l_models: list[MLModel] = [MemorizedModel(
             _create_sort_label(state.y, state.y_shapes))]
-        all_models.append(l_models)
+        all_models2 = all_models + [l_models]
         return [DrawCanvas(w_model, h_model, self.params, l_model)
-                for w_model, h_model, l_model in model_selection(*all_models)]
+                for w_model, h_model, l_model in model_selection(*all_models2)]
 
     def _get_cache(self, state: ArcTrainingState)->Cache:
         if not self.cache_calculated:
