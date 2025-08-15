@@ -6,6 +6,7 @@ import logging
 from .reparse.reparse_creator import *
 from .submanager.crop_manager import CropManager
 from .submanager.attention_manager import AttentionManager
+from .submanager.util import *
 
 
 class ArcManager(Manager[ArcTrainingState]):
@@ -17,7 +18,8 @@ class ArcManager(Manager[ArcTrainingState]):
     def __init__(self, params: GlobalParams):
         self.params = params
         self.crop_manager = CropManager()
-        self.atn_manager = AttentionManager(params)
+        common_finder = CommonYFinder()
+        self.atn_manager = AttentionManager(common_finder, params)
 
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:

@@ -1,6 +1,6 @@
 from ...base import *
 from ...graphic import *
-from ...manager.reparse import *
+from ...manager.task import *
 from enum import Enum
 from itertools import combinations
 import networkx as nx

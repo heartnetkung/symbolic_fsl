@@ -6,16 +6,6 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class ReparseStackTask(ModelFreeTask):
-    pass
-
-
-@dataclass(frozen=True)
-class MergeNearbyTask(ModelFreeTask):
-    pass
-
-
-@dataclass(frozen=True)
 class ReparseSplitTask(ModelFreeTask):
     subshape: ShapeGraph
     transformed_subshape: ShapeGraph

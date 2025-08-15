@@ -4,6 +4,7 @@ from .reparse_edge import ReparseEdgeParam, ReparseEdge
 from .reparse_split import ReparseSplitParam, ReparseSplit
 from .reparse_stack import ReparseStackParam, ReparseStack
 from ...manager.reparse import *
+from ...manager.task import *
 
 
 class MergeNearbyExpert(Expert[ArcTrainingState, MergeNearbyTask]):

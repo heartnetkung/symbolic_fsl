@@ -3,13 +3,22 @@ from dataclasses import dataclass
 from typing import Callable
 from .attention_task import TrainingAttentionTask, AttentionTask
 from .draw_line import *
-from .reparse.reparse_creator import (
-    ReparseStackTask, ReparseSplitTask, ReparseEdgeTask, MergeNearbyTask)
+from .reparse.reparse_creator import (ReparseSplitTask, ReparseEdgeTask)
 # no import star unless subfolder
 
 
 @dataclass(frozen=True)
 class ParseGridTask(ModelFreeTask):
+    pass
+
+
+@dataclass(frozen=True)
+class ReparseStackTask(ModelFreeTask):
+    pass
+
+
+@dataclass(frozen=True)
+class MergeNearbyTask(ModelFreeTask):
     pass
 
 
