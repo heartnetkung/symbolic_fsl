@@ -47,11 +47,12 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
                 dynamic_mode = mode(X_train_top_colors).mode
                 if dynamic_mode in x_common_colors:
                     result.append((ConstantModel(dynamic_mode),
-                               ConstantModel(dynamic_mode)))
+                                   ConstantModel(dynamic_mode)))
 
     if ((X_global_top_color in x_common_colors) and
         (y_global_top_color in y_common_colors) and
-            (X_global_top_color != y_global_top_color)):
+            (X_global_top_color != y_global_top_color) and
+            (not is_small_size(state))):
         result.append((ConstantModel(X_global_top_color),
                        ConstantModel(y_global_top_color)))
 
@@ -63,6 +64,13 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
     if len(result) > 0:
         return result
     return [(ConstantModel(COMMON_BG), ConstantModel(COMMON_BG))]  # type:ignore
+
+
+def is_small_size(state: ArcState)->bool:
+    for grid in state.x:
+        if grid.width*grid.height <= 9:
+            return True
+    return False
 
 
 def make_background_df(state: ArcState)->pd.DataFrame:
