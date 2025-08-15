@@ -41,6 +41,9 @@ def _cluster_y(y_df: pd.DataFrame, feat_arr: pd.DataFrame)->list[pd.DataFrame]:
 
         new_result = y_df.copy()
         new_result['y_label'] = model.labels_
+        if len(new_result) < min_samples:
+            continue
+
         # valid cluster must have consistent labels
         if _is_cluster_consistent(new_result):
             results[repr(model.labels_)] = new_result
