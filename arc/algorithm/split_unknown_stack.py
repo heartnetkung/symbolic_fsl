@@ -1,11 +1,13 @@
 from ..base import *
 from ..graphic import *
 from copy import deepcopy
+from collections.abc import Sequence
 
 THRESHOLD = 0.6
 
 
-def split_unknown_stack(shape: Shape, subshapes: list[Shape])->Optional[list[Shape]]:
+def split_unknown_stack(
+        shape: Shape, subshapes: Sequence[Shape])->Optional[list[Shape]]:
     result = []
     for subshape in subshapes:
         offsets = _find_subshape_approx(shape._grid, subshape._grid)
