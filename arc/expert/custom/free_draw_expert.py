@@ -25,8 +25,9 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         if not _has_exactly_one_shape(state):
             return result
 
-        dedup_key = repr([(shapes[0].width, shapes[0].height)
-                          for shapes in state.out_shapes+state.y_shapes])
+        dedup_key = repr([(
+            shapes[0].width, shapes[0].height, shapes[0]._grid.has_color(NULL_COLOR))
+            for shapes in state.out_shapes+state.y_shapes])
         if self.size_deduplicator.has_seen_before(dedup_key):
             return result
 
