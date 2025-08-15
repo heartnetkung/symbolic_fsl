@@ -54,6 +54,8 @@ class GlobalParams:
     enable_stack: bool = True
     enable_split: bool = True
 
+    # number of results to return
+    n_result = 2
     # maximum reparse operations per solution
     # max_reparse: int = 0
     max_reparse: int = 1
