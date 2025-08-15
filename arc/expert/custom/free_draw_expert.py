@@ -25,12 +25,8 @@ class FreeDrawExpert(Expert[ArcTrainingState, FreeDrawTask]):
         if not _has_exactly_one_shape(state):
             return result
 
-        if _is_full_and_has_null(state):
-            return result
-
-        dedup_key = repr([(
-            shapes[0].width, shapes[0].height)
-            for shapes in state.out_shapes+state.y_shapes])
+        dedup_key = repr([(shapes[0].width, shapes[0].height)
+                          for shapes in state.out_shapes+state.y_shapes])
         if self.size_deduplicator.has_seen_before(dedup_key):
             return result
 
@@ -90,20 +86,5 @@ def _has_exactly_one_shape(state: ArcTrainingState)->bool:
     assert state.y_shapes is not None
     for x_shapes, y_shapes in zip(state.out_shapes, state.y_shapes):
         if (len(x_shapes) != 1) or (len(y_shapes) != 1):
-            return False
-    return True
-
-
-def _is_full_and_has_null(state: ArcTrainingState)->bool:
-    assert state.out_shapes is not None
-    assert state.y_shapes is not None
-
-    for shapes, grid in zip(state.out_shapes+state.y_shapes, state.x+state.y):
-        shape = shapes[0]
-        if shape.width != grid.width:
-            return False
-        if shape.height != grid.height:
-            return False
-        if not shape._grid.has_color(NULL_COLOR):
             return False
     return True
