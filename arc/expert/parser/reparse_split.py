@@ -3,7 +3,8 @@ from ...graphic import *
 from ...algorithm.recursive_shape_split import recursive_shape_split
 from ...algorithm.split_unknown_stack import split_unknown_stack
 from enum import Enum
-from ...manager.reparse import *
+from ...manager.task import ReparseSplitTask
+from ...algorithm.find_shapes import *
 
 
 class ReparseSplitParam(Enum):
@@ -31,38 +32,27 @@ class ReparseSplit(TrainingOnlyAction[ArcTrainingState, ReparseSplitTask]):
             return state
 
         has_layer = state.has_layer
-        if self.param == ReparseSplitParam.transform:
-            graph = task.transformed_subshape
-        elif self.param == ReparseSplitParam.approximate:
-            graph = task.approx_subshape
+        if self.param == ReparseSplitParam.approximate:
             has_layer = True
-        else:
-            graph = task.subshape
-        if graph.number_of_edges() not in range(1, MAX_REPARSE_EDGE):
-            return None
 
-        new_shapes = self._reparse(graph, state.y_shapes)
+        new_shapes = self._reparse(task, state.y_shapes)
         if new_shapes is None:
             return None
         return state.update(y_shapes=new_shapes, has_layer=has_layer,
                             reparse_count=state.reparse_count+1)
 
-    def _reparse(self, graph: ShapeGraph,
+    def _reparse(self, task: ReparseSplitTask,
                  all_shapes: list[list[Shape]])->Optional[list[list[Shape]]]:
         all_results, found = [], False
         is_transform = self.param == ReparseSplitParam.transform
         is_colorless = self.param == ReparseSplitParam.colorless
         is_approximate = self.param == ReparseSplitParam.approximate
+        subshapes = task.common_y_shapes
 
         for shapes in all_shapes:
             new_result = []
             for shape in shapes:
-                subshape_tuples = graph.lookup(shape)
-                if len(subshape_tuples) == 0:
-                    new_result.append(shape)
-                    continue
 
-                subshapes = [shape for shape, data in subshape_tuples]
                 if is_approximate:
                     result = split_unknown_stack(shape, subshapes)
                 else:

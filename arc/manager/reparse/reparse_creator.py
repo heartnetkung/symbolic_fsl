@@ -6,34 +6,11 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class ReparseSplitTask(ModelFreeTask):
-    subshape: ShapeGraph
-    transformed_subshape: ShapeGraph
-    colorless_subshape: ShapeGraph
-    colorless_transformed_subshape: ShapeGraph
-    approx_subshape: ShapeGraph
-
-
-@dataclass(frozen=True)
 class ReparseEdgeTask(ModelFreeTask):
     supershape: ShapeGraph
     transformed_supershape: ShapeGraph
     colorless_supershape: ShapeGraph
     colorless_transformed_supershape: ShapeGraph
-
-
-def create_reparse_split(state: ArcTrainingState)->ReparseSplitTask:
-    assert state.x_shapes is not None
-    assert state.y_shapes is not None
-    all_edges = _create_subset_edges(state.x_shapes, state.y_shapes, True)
-    all_nodes = [state.x_shapes, state.y_shapes]
-    return ReparseSplitTask(
-        ShapeGraph(all_nodes, all_edges['subshape'], True),  # type:ignore
-        ShapeGraph(all_nodes, all_edges['transformed_subshape'], True),  # type:ignore
-        ShapeGraph(all_nodes, all_edges['colorless_subshape'], True),  # type:ignore
-        ShapeGraph(all_nodes,
-                   all_edges['colorless_transformed_subshape'], True),  # type:ignore
-        ShapeGraph(all_nodes, all_edges['approx_subshape'], True))  # type:ignore
 
 
 def create_reparse_edge(state: ArcTrainingState)->ReparseEdgeTask:

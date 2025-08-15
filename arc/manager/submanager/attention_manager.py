@@ -1,7 +1,6 @@
 from ...base import *
 from ...graphic import *
 from ..attention_task import TrainingAttentionTask
-from ...algorithm.find_shapes import *
 from ...attention import *
 from .util import *
 

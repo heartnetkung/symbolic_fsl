@@ -3,7 +3,9 @@ from dataclasses import dataclass
 from typing import Callable
 from .attention_task import TrainingAttentionTask, AttentionTask
 from .draw_line import *
-from .reparse.reparse_creator import (ReparseSplitTask, ReparseEdgeTask)
+from .reparse.reparse_creator import ReparseEdgeTask
+from collections.abc import Sequence
+from ..graphic import Shape
 # no import star unless subfolder
 
 
@@ -20,6 +22,11 @@ class ReparseStackTask(ModelFreeTask):
 @dataclass(frozen=True)
 class MergeNearbyTask(ModelFreeTask):
     pass
+
+
+@dataclass(frozen=True)
+class ReparseSplitTask(ModelFreeTask):
+    common_y_shapes: Sequence[Shape]
 
 
 @dataclass(frozen=True)
