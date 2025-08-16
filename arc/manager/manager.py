@@ -6,7 +6,6 @@ import logging
 from .reparse.reparse_creator import *
 from .submanager.crop_manager import CropManager
 from .submanager.attention_manager import AttentionManager
-from .submanager.split_manager import SplitManager
 from .submanager.util import *
 
 
@@ -21,7 +20,6 @@ class ArcManager(Manager[ArcTrainingState]):
         self.crop_manager = CropManager()
         common_finder = CommonYFinder()
         self.atn_manager = AttentionManager(common_finder, params)
-        self.split_manager = SplitManager(common_finder)
 
     def decide(self, state: ArcTrainingState)->list[
             tuple[Task[ArcTrainingState], ArcTrainingState]]:
@@ -42,7 +40,7 @@ class ArcManager(Manager[ArcTrainingState]):
         if state.stack_reparse is False:
             return [(ReparseStackTask(), state.update(stack_reparse=True))]
         if state.split_reparse is False:
-            return self.split_manager.decide(state.update(split_reparse=True))
+            return [(ReparseSplitTask(), state.update(split_reparse=True))]
 
         # finish up
         if state.out is not None:  # if canvas is already drawn, stop producing tasks.

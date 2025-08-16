@@ -26,7 +26,7 @@ class MergeNearbyTask(ModelFreeTask):
 
 @dataclass(frozen=True)
 class ReparseSplitTask(ModelFreeTask):
-    common_y_shapes: Sequence[Shape]
+    pass
 
 
 @dataclass(frozen=True)

@@ -5,6 +5,7 @@ from ...algorithm.split_unknown_stack import split_unknown_stack
 from enum import Enum
 from ...manager.task import ReparseSplitTask
 from ...algorithm.find_shapes import *
+import itertools
 
 
 class ReparseSplitParam(Enum):
@@ -47,17 +48,18 @@ class ReparseSplit(TrainingOnlyAction[ArcTrainingState, ReparseSplitTask]):
         is_transform = self.param == ReparseSplitParam.transform
         is_colorless = self.param == ReparseSplitParam.colorless
         is_approximate = self.param == ReparseSplitParam.approximate
-        subshapes = task.common_y_shapes
+        subshapes = list(itertools.chain.from_iterable(all_shapes))
 
         for shapes in all_shapes:
             new_result = []
             for shape in shapes:
+                subshapes2 = _filter_subshapes(shape, subshapes)
 
                 if is_approximate:
-                    result = split_unknown_stack(shape, subshapes)
+                    result = split_unknown_stack(shape, subshapes2)
                 else:
                     result = recursive_shape_split(
-                        shape, subshapes, is_colorless, is_transform)
+                        shape, subshapes2, is_colorless, is_transform)
 
                 if result is None:
                     new_result.append(shape)
@@ -66,3 +68,14 @@ class ReparseSplit(TrainingOnlyAction[ArcTrainingState, ReparseSplitTask]):
                     new_result += result
             all_results.append(new_result)
         return all_results if found else None
+
+
+def _filter_subshapes(shape: Shape, subshapes: list[Shape])->list[Shape]:
+    result = []
+    for subshape in subshapes:
+        if (subshape.width > shape.width) or (subshape.height > shape.height):
+            continue
+        if (subshape.width == shape.width) and (subshape.height == shape.height):
+            continue
+        result.append(subshape)
+    return result

@@ -33,23 +33,21 @@ def recursive_shape_split(
         subshape_grids = subshape_grids_temp
 
     if colorless:
+        original_shape = shape
         shape = Unknown(shape.x, shape.y, shape._grid.normalize_color())
         if _mass_larger_than(shape.grid, MAX_COLORLESS_SHAPE_MASS):
             return None
-
-        subshape_grids_original = subshape_grids
         subshape_grids = [grid.normalize_color() for grid in subshape_grids]
     else:
-        subshape_grids_original = subshape_grids
+        original_shape = shape
 
-    subshape_grids, subshape_grids_original = _clean_subshapes(
-        subshape_grids, subshape_grids_original)
+    subshape_grids = _clean_subshapes(subshape_grids)
     return _recursive_shape_split(
-        _trim(shape), subshape_grids, stopper, subshape_grids_original)
+        _trim(shape),  _trim(original_shape), subshape_grids, stopper)
 
 
-def _recursive_shape_split(shape: Shape, subshapes: list[Grid], stopper: LoopStopper,
-                           subshapes_original: list[Grid])->Optional[list[Shape]]:
+def _recursive_shape_split(shape: Shape, original_shape: Shape, subshapes: list[Grid],
+                           stopper: LoopStopper)->Optional[list[Shape]]:
     if stopper.should_stop():
         return None
 
@@ -57,7 +55,7 @@ def _recursive_shape_split(shape: Shape, subshapes: list[Grid], stopper: LoopSto
     if first_pixel is None:
         return []  # success
 
-    for subshape, subshape_original in zip(subshapes, subshapes_original):
+    for subshape in subshapes:
         offset = shape._grid.find_subgrid(subshape)
         if offset is None:
             continue  # shape not found
@@ -66,28 +64,24 @@ def _recursive_shape_split(shape: Shape, subshapes: list[Grid], stopper: LoopSto
         if first_pixel == _find_first_pixel(subtracted_shape):
             continue  # the first pixel needs to change
 
-        new_container = _trim(subtracted_shape)
+        subtracted_original = _subtract(original_shape, subshape, offset[0], offset[1])
         new_result = _recursive_shape_split(
-            new_container, subshapes, stopper, subshapes_original)
+            _trim(subtracted_shape), _trim(subtracted_original), subshapes, stopper)
         if new_result is None:
             continue  # depth-first fails
 
         # success
         new_x, new_y = shape.x+offset[0], shape.y+offset[1]
-        return [from_grid(new_x, new_y, subshape_original)]+new_result
+        return [_intersect(original_shape, subshape, offset[0], offset[1])]+new_result
     return None
 
 
-def _clean_subshapes(subshapes: list[Grid],
-                     original_subshapes: list[Grid])->tuple[list[Grid], list[Grid]]:
-    assert len(subshapes) == len(original_subshapes)
-
+def _clean_subshapes(subshapes: list[Grid])->list[Grid]:
     result = {}
-    for subshape, orig_subshape in zip(subshapes, original_subshapes):
-        if not _mass_larger_than(subshape, 1):
-            continue
-        result[repr(subshape)] = (subshape, orig_subshape)
-    return [pair[0] for pair in result.values()], [pair[1] for pair in result.values()]
+    for subshape in subshapes:
+        if _mass_larger_than(subshape, 1):
+            result[repr(subshape)] = subshape
+    return list(result.values())
 
 
 def _mass_larger_than(grid: Grid, n: int)->bool:
@@ -124,3 +118,12 @@ def _find_first_pixel(shape: Shape)->Optional[int]:
         if color != NULL_COLOR:
             return i
     return None
+
+
+def _intersect(larger: Shape, smaller: Grid, offset_x: int, offset_y: int)->Shape:
+    result = make_grid(smaller.width, smaller.height)
+    for i in range(smaller.height):
+        for j in range(smaller.width):
+            if smaller.data[i][j] != NULL_COLOR:
+                result.data[i][j] = larger._grid.safe_access(j+offset_x, i+offset_y)
+    return from_grid(larger.x+offset_x, larger.y+offset_y, result)
