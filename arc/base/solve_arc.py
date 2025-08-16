@@ -8,6 +8,7 @@ from .plan import *
 from .reason import *
 import time
 import logging
+from ..constant import N_RESULT
 
 MAX_TIME_S = 600
 MAX_PLAN_DEPTH = 13
@@ -67,7 +68,7 @@ def solve_arc(
 
     # reason
     reasoning_result = reason(planning_result.plan, dataset.to_inference_state(),
-                              params.n_result, max_reason_path, time_left)
+                              N_RESULT, max_reason_path, time_left)
     elapsed_time = time.time()-start_time
     correct, correct_trace = None, None
 

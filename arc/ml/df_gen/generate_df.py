@@ -6,11 +6,10 @@ from .column_maker import *
 from .grid_columns import *
 
 
-def generate_df(
-        grids: Optional[list[Grid]] = None,
-        all_shapes: Optional[list[list[Shape]]] = None,
-        extra_columns: Optional[list[ColumnMaker]] = None,
-        edit_index: int = -1)->pd.DataFrame:
+def generate_df(grids: Optional[list[Grid]] = None,
+                all_shapes: Optional[list[list[Shape]]] = None,
+                extra_columns: Optional[list[ColumnMaker]] = None,
+                edit_index: int = -1)->pd.DataFrame:
     '''
     Usual routine of generating dataframe from shapes and grids.
     '''

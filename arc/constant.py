@@ -16,6 +16,7 @@ BOOLS = [False, True]
 MAX_SHAPES_PER_GRID = 30
 MAX_REPARSE_EDGE = 300
 COST_PATTERN = re.compile(r'\*|\+|\- | < | > |==|<=|>=|!=')
+N_RESULT = 2
 
 
 class ParseMode(Enum):
@@ -54,16 +55,14 @@ class GlobalParams:
     enable_stack: bool = True
     enable_split: bool = True
 
-    # number of results to return
-    n_result = 2
     # maximum reparse operations per solution
     # max_reparse: int = 0
     max_reparse: int = 1
     # list of parse modes to try
-    # parser_x_modes: Iterable[ParseMode] = (ParseMode.crop,)
-    # parser_y_modes: Iterable[ParseMode] = (ParseMode.crop,)
-    parser_x_modes: Iterable[ParseMode] = ParseMode
-    parser_y_modes: Iterable[ParseMode] = ParseMode
+    parser_x_modes: Iterable[ParseMode] = (ParseMode.color_proximity_normal,)
+    parser_y_modes: Iterable[ParseMode] = (ParseMode.proximity_normal,)
+    # parser_x_modes: Iterable[ParseMode] = ParseMode
+    # parser_y_modes: Iterable[ParseMode] = ParseMode
 
     @cached_property
     def nprandom(self):

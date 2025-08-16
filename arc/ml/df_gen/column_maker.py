@@ -18,9 +18,8 @@ class ColumnMaker(ABC):
 
 
 class ShapeColumns(ColumnMaker):
-    def append_all(
-            self, result: dict[str, list[float]], grids: Optional[list[Grid]],
-            all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
+    def append_all(self, result: dict[str, list[float]], grids: Optional[list[Grid]],
+                   all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
         if all_shapes is None:
             return
 
