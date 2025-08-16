@@ -27,17 +27,18 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         atn = task.atn
         result = deepcopy(state.out_shapes)
         grids = get_grids(state, atn)
+        shape_df = default_make_df(state, task, self.feat_index)
 
         if self.expansion.is_symmetry():
             x_shapes = get_x_col(state, atn, self.feat_index)
             new_widths, new_heights = self.expansion.get_widths_heights(x_shapes)
         else:
-            shape_df = default_make_df(state, task, self.feat_index)
             new_widths = self.width_model.predict_int(shape_df)
             new_heights = self.height_model.predict_int(shape_df)
 
-        for width, height, grid, id1, shape_ids in zip(
-                new_widths, new_heights, grids, atn.sample_index, atn.x_index):
+        for width, height, grid, id1, shape_ids, record in zip(
+                new_widths, new_heights, grids, atn.sample_index, atn.x_index,
+                shape_df.to_dict('records')):
 
             id2 = shape_ids[self.feat_index]
             shape = result[id1][id2]
@@ -46,7 +47,10 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
                 return None
 
             new_shape = draw_shape(shape, bound, width, height)
-            pixel_df = generate_pixel_df([grid], [new_shape], [bound])
+            pixel_df = generate_pixel_df([grid], [new_shape], [bound], [record])
+            if len(pixel_df) == 0:
+                return None
+
             pixel_color = self.pixel_model.predict_int(pixel_df)
             for x, y, color in zip(pixel_df['x'], pixel_df['y'], pixel_color):
                 new_shape.grid.safe_assign(x, y, color)
@@ -61,12 +65,12 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.pixel_model, StepMemoryModel)
 
         x_shapes = get_x_col(state, task.atn, self.feat_index)
+        shape_df = default_make_df(state, task, self.feat_index)
 
         if self.expansion.is_symmetry():
             widths, heights = self.expansion.get_widths_heights(x_shapes)
             all_models: list[list[MLModel]] = [[ConstantModel(99)]]*2
         else:
-            shape_df = default_make_df(state, task, self.feat_index)
             widths, heights = self.width_model.result, self.height_model.result
             labels = [widths, heights]
             label_types = [LabelType.reg]*2
@@ -84,7 +88,8 @@ class FillInTheBlank(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
             bounds.append(bound)
 
         grids = get_grids(state, task.atn)
-        pixel_df = generate_pixel_df(grids, expanded_shapes, bounds)
+        pixel_df = generate_pixel_df(
+            grids, expanded_shapes, bounds, shape_df.to_dict('records'))
         p_models = make_regressor(
             pixel_df, self.pixel_model.result, self.params, 'fitb.p')
         all_models.append(p_models)

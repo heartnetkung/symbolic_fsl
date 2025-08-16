@@ -4,10 +4,11 @@ from ...base import *
 from ...graphic import *
 from ...ml import *
 from .fitb_feat_eng import *
+from typing import Any
 
 COLS = [
     # misc
-    'grid_width', 'grid_height', 'x', 'y', 'x%2', 'y%2',
+    'x', 'y', 'x%2', 'y%2',
     # nearby pixels
     'cell(x-1,y)', 'cell(x,y-1)', 'cell(x-1,y-1)', 'cell(x+1,y)', 'cell(x,y+1)',
     'cell(x+1,y+1)', 'cell(x+1,y-1)', 'cell(x-1,y+1)',
@@ -30,17 +31,18 @@ COLS = [
 ]
 
 
-def generate_pixel_df(grids: list[Grid], shapes: list[Shape],
-                      bounds: list[tuple[int, int, int, int]])->pd.DataFrame:
+def generate_pixel_df(
+        grids: list[Grid], shapes: list[Shape], bounds: list[tuple[int, int, int, int]],
+        shape_infos: list[dict[str, Any]])->pd.DataFrame:
     result = {col: [] for col in COLS}
-    for grid, shape, bound in zip(grids, shapes, bounds):
-        _gen_df(grid, shape, result, bound)
+    for grid, shape, bound, shape_info in zip(grids, shapes, bounds, shape_infos):
+        _gen_df(grid, shape, result, bound, shape_info)
     return pd.DataFrame(_ensure_size(result))
 
 
 def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
-            bound: tuple[int, int, int, int])->None:
-    properties = shape.to_input_var() | _get_extra_property(shape)
+            bound: tuple[int, int, int, int], shape_info: dict[str, Any])->None:
+    properties = shape_info | _get_extra_property(shape)
     grid, canvas_width, canvas_height = shape._grid, canvas.width, canvas.height
     leftside_pixels = cal_leftside_pixels(grid)
     rightside_pixels = cal_rightside_pixels(grid)
@@ -63,8 +65,6 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
             _gen_shape_properties(properties, result)
 
             # misc
-            result['grid_width'].append(canvas_width)
-            result['grid_height'].append(canvas_height)
             result['x'].append(x)
             result['y'].append(y)
             result['x%2'].append(x % 2)
@@ -134,13 +134,14 @@ def _gen_df(canvas: Grid, shape: Shape, result: dict[str, list],
 
 def _gen_shape_properties(properties: dict[str, int], df_data: dict[str, list])->None:
     for k, v in properties.items():
-        key = f'shape.{k}'
-        df_data[key] = df_data.get(key, [])+[v]
+        existing_value = df_data.get(k, [])
+        existing_value.append(v)
+        df_data[k] = existing_value
 
 
 def _get_extra_property(shape: Shape)->dict[str, int]:
     result = {}
-    result['least_color'] = shape._grid.get_least_color()
+    result['shape.least_color'] = shape._grid.get_least_color()
     return result
 
 

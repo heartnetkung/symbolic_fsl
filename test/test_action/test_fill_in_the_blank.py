@@ -29,7 +29,7 @@ def test_top_side():
         ExpansionMode.top_left, 0,
         ColumnModel('shape0.width'), ColumnModel('shape0.height'),
         FunctionModel(lambda x: np.where(
-            x['is_topside(x,y)'], x['shape.top_color'], -1)),
+            x['is_topside(x,y)'], x['shape0.top_color'], -1)),
         params
     )
 
@@ -220,7 +220,7 @@ def test_star():
             [3,  -1, 2, -1, 3]]))]]
 
     def redraw(df: pd.DataFrame):
-        result = np.where(df['is_plus_path(x,y)'] == 1, df['shape.top_color'], -1)
+        result = np.where(df['is_plus_path(x,y)'] == 1, df['shape0.top_color'], -1)
         result2 = np.where(df['is_cross_path(x,y)'] == 1,
                            df['shape.least_color'], result)
         return result2
