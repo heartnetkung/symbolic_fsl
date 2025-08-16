@@ -32,16 +32,25 @@ class PutObjectExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
     def solve_problem(self, state: ArcTrainingState,
                       task: TrainingAttentionTask)->list[Action]:
+        y_shapes = get_y_shapes(state, task.atn)
+        if not _has_unknown_object(y_shapes):
+            return []
 
         result = []
         # from common y shapes
-        y_shapes = get_y_shapes(state, task.atn)
         blob = _create_labels(task.common_y_shapes, y_shapes)
         if blob is not None:
             selection, x, y = blob
             result.append(PutObject(MemorizedModel(selection), MemorizedModel(x),
                                     MemorizedModel(y), self.params))
         return result
+
+
+def _has_unknown_object(y_shapes: list[Shape])->bool:
+    for y_shape in y_shapes:
+        if isinstance(y_shape, Unknown):
+            return True
+    return False
 
 
 def _create_labels(common_shapes: Sequence[Shape], y_shapes: list[Shape])->Optional[
@@ -61,7 +70,7 @@ def _create_common_shapes_label(common_shapes: Sequence[Shape], y_shapes: list[S
                                 type: TransformType)->Optional[np.ndarray]:
     mapping = {type.to_repr(common_shape): i
                for i, common_shape in enumerate(common_shapes)}
-    if len(mapping) != len(common_shapes): # repeated representation
+    if len(mapping) != len(common_shapes):  # repeated representation
         return None
 
     result = []
