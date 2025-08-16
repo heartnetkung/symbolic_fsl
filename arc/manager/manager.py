@@ -47,8 +47,7 @@ class ArcManager(Manager[ArcTrainingState]):
         # finish up
         if state.out is not None:  # if canvas is already drawn, stop producing tasks.
             return []
-        if (_grid_match(state.out_shapes, state.y, state.y_bg) or
-                _all_shapes_matched(state.out_shapes, state.y_shapes)):
+        if _all_shapes_matched(state.out_shapes, state.y_shapes):
             return [(DrawCanvasTask(), state)]
         if _all_shapes_subset(state.out_shapes, state.y_shapes):
             return [(CleanUpTask(), state)]
@@ -57,18 +56,6 @@ class ArcManager(Manager[ArcTrainingState]):
         draw_lines = _to_task_states(state, make_line_tasks(state, self.params))
         crop_tasks = self.crop_manager.decide(state)
         return attentions+draw_lines+crop_tasks
-
-
-def _grid_match(out_shapes: Optional[list[list[Shape]]], y: list[Grid],
-                bgs: Optional[list[int]])->bool:
-    if (out_shapes is None) or (bgs is None):
-        return False
-
-    for shapes, grid, bg in zip(out_shapes, y, bgs):
-        canvas = draw_canvas(grid.width, grid.height, shapes, bg)
-        if canvas != grid:
-            return False
-    return True
 
 
 def _all_shapes_matched(a: Optional[list[list[Shape]]],
