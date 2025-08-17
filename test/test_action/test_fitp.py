@@ -3,8 +3,8 @@ from .util import *
 
 def test_399():
     params = GlobalParams()
-    x_shapes = [[Unknown(0, 0, x1)]]
-    y_shapes = [[Unknown(0, 0, y1)]]
+    x_shapes = [[Unknown(0, 0, x1)], [Unknown(0, 0, x1)]]
+    y_shapes = [[Unknown(0, 0, y1)], [Unknown(0, 0, y1)]]
 
     subaction = FillInTheBlank(
         ExpansionMode.top_left, 0,
@@ -20,8 +20,8 @@ def test_399():
 
 def test_393():
     params = GlobalParams()
-    x_shapes = [[Unknown(0, 0, x2)]]
-    y_shapes = [[Unknown(0, 0, y2)]]
+    x_shapes = [[Unknown(0, 0, x2)], [Unknown(0, 0, x2)]]
+    y_shapes = [[Unknown(0, 0, y2)], [Unknown(0, 0, y2)]]
 
     subaction = FillInTheBlank(
         ExpansionMode.top_left, 0,
