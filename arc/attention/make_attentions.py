@@ -23,7 +23,7 @@ def make_attentions(
     if rel_df is None:
         return []
 
-    possible_y_clusters = cluster_y(rel_df)
+    possible_y_clusters = cluster_y(rel_df, len(x_train))
     return _make_attentions(output_train_shapes, y_train_shapes,
                             x_train, rel_df, possible_y_clusters)
 
