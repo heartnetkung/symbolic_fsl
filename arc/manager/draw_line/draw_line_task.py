@@ -28,7 +28,8 @@ class ModeledDrawLineTask(ModeledTask[ArcInferenceState]):
 
     def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
         assert before.out_shapes is not None
-        atn = to_runtimes(self.model, before.out_shapes, before.x)
+        assert before.x_shapes is not None
+        atn = to_runtimes(self.model, before.out_shapes, before.x, before.x_shapes)
         if atn is None:
             return None
         return DrawLineTask(atn, self.all_lines)
@@ -43,7 +44,9 @@ class TrainingDrawLineTask(Task[ArcTrainingState]):
     def to_models(self, before: ArcTrainingState,
                   after: ArcTrainingState)->list[ModeledTask]:
         assert before.out_shapes is not None
-        models = to_models(self.atn, before.out_shapes, before.x, self.params)
+        assert before.x_shapes is not None
+        models = to_models(self.atn, before.out_shapes, before.x,
+                           before.x_shapes, self.params)
         return [ModeledDrawLineTask(model, self.all_lines) for model in models]
 
     def to_inference(self)->InferenceTask:

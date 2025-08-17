@@ -71,10 +71,12 @@ def test_predict():
     assert attentions[0].y_index == [0, 0]
     assert attentions[0].x_cluster_info == [1]
 
-    models = to_models(attentions[0], all_x_shapes, x_train_grids, params)
+    models = to_models(
+        attentions[0], all_x_shapes, x_train_grids, all_x_shapes, params)
     assert len(models) > 3
     assert repr(models[0]).find('single_color') > 0
 
-    attention2 = to_runtimes(models[0], all_x_test_shapes, x_test_grids)
+    attention2 = to_runtimes(
+        models[0], all_x_test_shapes, x_test_grids, all_x_test_shapes)
     assert attention2.sample_index == [0]
     assert attention2.x_index == [[0]]

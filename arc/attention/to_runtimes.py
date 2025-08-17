@@ -3,10 +3,12 @@ from ..graphic import *
 from ..base import *
 from .to_runtime.train_model import *
 from .to_runtime.align_x import *
+from copy import deepcopy
 
 
 def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
-              x_train: list[Grid], params: GlobalParams)->list[AttentionModel]:
+              x_train: list[Grid], x_train_shapes: list[list[Shape]],
+              params: GlobalParams)->list[AttentionModel]:
     '''Generate models for predicting InferenceAttention.'''
 
     index_blob = gen_all_possible_index(output_train_shapes, atn.x_cluster_info)
@@ -15,7 +17,7 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
 
     possible_sample_index, possible_x_index = index_blob
     df = create_df(x_train, output_train_shapes,
-                   possible_sample_index, possible_x_index)
+                   possible_sample_index, possible_x_index, x_train_shapes)
     label = create_label(atn.sample_index, atn.x_index,
                          possible_sample_index, possible_x_index)
     models = train_model(df, label, params)
@@ -23,9 +25,9 @@ def to_models(atn: TrainingAttention, output_train_shapes: list[list[Shape]],
     return [AttentionModel(model, n_cols, atn.x_cluster_info) for model in models]
 
 
-def to_runtimes(
-        model: AttentionModel, output_test_shapes: list[list[Shape]],
-        x_test: list[Grid])->Optional[InferenceAttention]:
+def to_runtimes(model: AttentionModel, output_test_shapes: list[list[Shape]],
+                x_test: list[Grid],
+                x_test_shapes: list[list[Shape]])->Optional[InferenceAttention]:
     '''Predict InferenceAttention from the model.'''
 
     index_blob = gen_all_possible_index(output_test_shapes, model.x_cluster_info)
@@ -33,7 +35,7 @@ def to_runtimes(
         return None
 
     sample_index, x_index = index_blob
-    df = create_df(x_test, output_test_shapes, sample_index, x_index)
+    df = create_df(x_test, output_test_shapes, sample_index, x_index, x_test_shapes)
     correct_index = model.model.predict_bool(df)
 
     result_sample_index, result_x_index = [], []
