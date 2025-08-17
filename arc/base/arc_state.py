@@ -37,6 +37,7 @@ class ArcTrainingState(TrainingState[Grid, Grid]):
     free_draw: bool = False
 
     # attention cache, exclusively used by ArcManager
+    # or when y_shape is changed, thus the cache is invalid.
     attention_cache: Optional[Attention] = field(
         repr=False, default=None, compare=False)
 

@@ -35,7 +35,8 @@ class SplitShape(ModelFreeArcAction[AttentionTask]):
         if new_y_shapes is None:
             return None
 
-        return state.update(out_shapes=new_out_shapes, y_shapes=new_y_shapes)
+        return state.update(out_shapes=new_out_shapes, y_shapes=new_y_shapes,
+                            attention_cache=None)
 
     def _split_shape(self, sample_index: list[int], shape_index: list[int],
                      all_shapes: list[list[Shape]],
