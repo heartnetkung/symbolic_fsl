@@ -6,14 +6,14 @@ import numpy as np
 from sklearn.cluster import OPTICS, DBSCAN
 
 
-def cluster_y(rel_df: pd.DataFrame, sample_count: int)->list[pd.DataFrame]:
+def cluster_y(rel_df: pd.DataFrame)->list[pd.DataFrame]:
     '''
     Cluster y shapes based on their consistent relationship with x.
     For a cluster to be valid, it must be consistent and surjective.
     The result is all possible cluster formation.
     '''
     y_df, feat_arr = _preprocess(rel_df)
-    return _cluster_y(y_df, feat_arr, sample_count)
+    return _cluster_y(y_df, feat_arr)
 
 
 def _preprocess(rel_df: pd.DataFrame)->tuple[pd.DataFrame, pd.DataFrame]:
@@ -21,9 +21,8 @@ def _preprocess(rel_df: pd.DataFrame)->tuple[pd.DataFrame, pd.DataFrame]:
     return y_df, y_df.iloc[:, 2:]
 
 
-def _cluster_y(y_df: pd.DataFrame, feat_arr: pd.DataFrame,
-               sample_count: int)->list[pd.DataFrame]:
-    min_samples = min(sample_count, 3)
+def _cluster_y(y_df: pd.DataFrame, feat_arr: pd.DataFrame)->list[pd.DataFrame]:
+    min_samples = cal_consistency_requirement(y_df)
     models = [OPTICS(min_samples=min_samples, metric='precomputed', max_eps=99),
               DBSCAN(min_samples=min_samples, metric='precomputed')]
     metrics = ['l1', 'braycurtis']
@@ -42,7 +41,7 @@ def _cluster_y(y_df: pd.DataFrame, feat_arr: pd.DataFrame,
 
         new_result = y_df.copy()
         new_result['y_label'] = model.labels_
-        if len(new_result) < min_samples:
+        if len(new_result) < 2:
             continue
 
         # valid cluster must have consistent labels
