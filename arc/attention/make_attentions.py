@@ -89,6 +89,16 @@ def _make_attentions(
                 if new_result is not None:
                     results.append(new_result)
 
+                x_labels = dict.fromkeys(x_cluster['x_label'])
+                if len(x_labels) <= 2:
+                    continue
+
+                for x_label in x_labels:
+                    sub_df = current_df[current_df['x_label'] == x_label].copy()
+                    new_result2 = _make_inner_attentions(sub_df, output_train_shapes)
+                    if new_result2 is not None:
+                        results.append(new_result2)
+
     if len(results) == 0:
         empty_attention = create_empty_attention(y_train_shapes)
         if empty_attention is not None:
@@ -100,6 +110,9 @@ def _make_inner_attentions(
         df: pd.DataFrame, all_shapes: list[list[Shape]])->Optional[TrainingAttention]:
     grouped_series = df.sort_values(['sample_id', 'y_index', 'x_label']).groupby(
         ['sample_id', 'y_index'])[['x_index']].apply(lambda x: list(x['x_index']))
+    if grouped_series.empty:
+        return None
+
     index = grouped_series.index.to_frame()
     rel_info = df.iloc[:, 4:].groupby('x_label').mean().reset_index()
     cluster_counts = df.sort_values('x_label').groupby('x_label').size().to_list()
