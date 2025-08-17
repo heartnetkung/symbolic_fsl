@@ -32,7 +32,7 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
 
         for width, height, background, shapes in zip(
                 widths, heights, state.y_bg, out_shapes):
-            if (width == 0) or (height == 0):
+            if (width <= 0) or (height <= 0):
                 return None
 
             new_canvas = draw_canvas(width, height, shapes, background)
