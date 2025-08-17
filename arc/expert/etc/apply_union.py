@@ -25,6 +25,8 @@ class ApplyUnion(ModelFreeArcAction[AttentionTask]):
         for id1, indexes in zip(atn.sample_index, atn.x_index):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
             relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
+            if not _has_same_shape(relevant_shapes):
+                return None
 
             new_grid = draw_canvas(relevant_shapes[0].width, relevant_shapes[0].height,
                                    relevant_shapes, include_xy=False)
@@ -45,8 +47,21 @@ class ApplyUnion(ModelFreeArcAction[AttentionTask]):
         for id1, indexes in zip(atn.sample_index, atn.x_index):
             id2s = [indexes[feat_index] for feat_index in self.feat_indexes]
             relevant_shapes = [all_shapes[id1][id2] for id2 in id2s]
+            if not _has_same_shape(relevant_shapes):
+                return None
 
             new_grid = draw_canvas(relevant_shapes[0].width, relevant_shapes[0].height,
                                    relevant_shapes, include_xy=False)
             result.append(Unknown(0, 0, new_grid))
         return result
+
+
+def _has_same_shape(shapes: list[Shape])->bool:
+    first_shape = shapes[0]
+    for i in range(1, len(shapes)):
+        current = shapes[i]
+        if first_shape.width != current.width:
+            return False
+        if first_shape.height != current.height:
+            return False
+    return True
