@@ -39,6 +39,10 @@ class Crop(ModelBasedArcAction[CropTask, CropTask]):
         models = bound_model_factory(state.x, df, self.bound_model.result, self.params)
         return [Crop(model, self.params) for model in models]
 
+    def get_cost(self)->int:
+        # crop skip cleanup step, thus it needs an extra cost
+        return super().get_cost()+1
+
 
 def get_canvases(state: ArcState, task: CropTask)->list[Grid]:
     if task.crop_from_out_shapes:
