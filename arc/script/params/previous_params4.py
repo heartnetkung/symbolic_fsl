@@ -90,10 +90,6 @@ previous_v1_params4[346] = proto.update(
     parser_x_modes=(ParseMode.partition_by_size,),
     parser_y_modes=(ParseMode.crop,))
 
-previous_v1_params4[346] = proto.update(
-    parser_x_modes=(ParseMode.crop,),
-    parser_y_modes=(ParseMode.crop,))
-
 previous_v1_params4[350] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,))
