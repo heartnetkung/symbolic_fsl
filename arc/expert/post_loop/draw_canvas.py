@@ -10,18 +10,21 @@ from functools import cmp_to_key
 
 class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
     def __init__(self, width_model: MLModel, height_model: MLModel,
-                 params: GlobalParams, layer_model: Optional[MLModel] = None)->None:
+                 params: GlobalParams, layer_model: Optional[MLModel] = None,
+                 is_all_equal: bool = False)->None:
         self.width_model = width_model
         self.height_model = height_model
         self.layer_model = layer_model
         self.params = params
+        self.is_all_equal = is_all_equal
         super().__init__()
 
     def perform(self, state: ArcState, task: DrawCanvasTask)->Optional[ArcState]:
         assert state.out_shapes is not None
         assert state.y_bg is not None
         if self.layer_model is not None:
-            out_shapes = _sort_all_shapes(state.x, state.out_shapes, self.layer_model)
+            out_shapes = _sort_all_shapes(
+                state.x, state.out_shapes, self.layer_model, self.is_all_equal)
         else:
             out_shapes = state.out_shapes
 
@@ -49,14 +52,15 @@ class DrawCanvas(ModelBasedArcAction[DrawCanvasTask, DrawCanvasTask]):
             return [self]
 
         assert isinstance(self.layer_model, MemorizedModel)
-        df = _create_sort_df(state.y, state.y_shapes)
+        is_all_equal = state.x_shapes == state.y_shapes
+        df = _create_sort_df(state.y, state.y_shapes, state.x, is_all_equal)
         if df is not None:
             models = make_classifier(
                 df, self.layer_model.result, self.params, 'draw_canvas.l')
         else:
             models = [ConstantModel(1)]
-        return [DrawCanvas(self.width_model, self.height_model, self.params, model)
-                for model in models]
+        return [DrawCanvas(self.width_model, self.height_model, self.params,
+                           model, is_all_equal) for model in models]
 
 
 def create_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
@@ -75,23 +79,32 @@ def _has_invalid_color(grid: Grid)->bool:
     return False
 
 
-def _create_sort_df(grids: list[Grid],
-                    all_shapes: list[list[Shape]])->Optional[pd.DataFrame]:
-    grids2, all_shapes2 = [], []
-    for grid, shapes in zip(grids, all_shapes):
-        for shape1, shape2 in permutations(shapes, 2):
-            label = make_sort_label(grid, shape1, shape2)
+def _create_sort_df(y_grids: list[Grid], all_y_shapes: list[list[Shape]],
+                    x_grids: list[Grid], is_all_equal: bool)->Optional[pd.DataFrame]:
+    grids2, all_shapes2, x_labels = [], [], []
+    for y_grid, y_shapes, x_grid in zip(y_grids, all_y_shapes, x_grids):
+        for shape1, shape2 in permutations(y_shapes, 2):
+            label = make_sort_label(y_grid, shape1, shape2)
             if label is None:
                 continue
 
-            grids2.append(grid)
-            grids2.append(grid)
+            if is_all_equal:
+                x_label = make_sort_label(x_grid, shape1, shape2)
+                if x_label is not None:
+                    x_labels.append(not x_label)
+                    x_labels.append(x_label)
+
+            grids2.append(y_grid)
+            grids2.append(y_grid)
             all_shapes2.append([shape1, shape2])
             all_shapes2.append([shape2, shape1])
 
     if len(grids2) == 0:
         return None
-    return generate_df(grids2, all_shapes2)
+    result = generate_df(grids2, all_shapes2)
+    if len(x_labels) == len(result):
+        result['x_label'] = x_labels
+    return result
 
 
 def make_sort_label(grid: Grid, a: Shape, b: Shape)->Optional[bool]:
@@ -126,8 +139,8 @@ def _diff_count(grid: Grid, a: Shape, b: Shape)->int:
 
 
 def _sort_all_shapes(grids: list[Grid],  all_shapes: list[list[Shape]],
-                     model: MLModel)->list[list[Shape]]:
-    table = _gen_sorting_table(grids, all_shapes, model)
+                     model: MLModel, is_all_equal: bool)->list[list[Shape]]:
+    table = _gen_sorting_table(grids, all_shapes, model, is_all_equal)
     comp = Comparator(table)
 
     result = []
@@ -138,15 +151,19 @@ def _sort_all_shapes(grids: list[Grid],  all_shapes: list[list[Shape]],
     return result
 
 
-def _gen_sorting_table(grids: list[Grid], all_shapes: list[list[Shape]],
-                       model: MLModel)->dict[tuple[int, int, int], bool]:
-    index, grid_df, shapes_df = [], [], []
+def _gen_sorting_table(
+        grids: list[Grid], all_shapes: list[list[Shape]],
+        model: MLModel, is_all_equal: bool)->dict[tuple[int, int, int], bool]:
+    index, grid_df, shapes_df, x_labels = [], [], [], []
     for id1, (grid, shapes) in enumerate(zip(grids, all_shapes)):
         for i, j in permutations(range(len(shapes)), 2):
             shape1, shape2 = shapes[i], shapes[j]
             label = make_sort_label(grid, shape1, shape2)
             if label is None:
                 continue
+
+            if is_all_equal:
+                x_labels.append(not label)
 
             index.append((id1, i, j))
             grid_df.append(grid)
@@ -156,6 +173,8 @@ def _gen_sorting_table(grids: list[Grid], all_shapes: list[list[Shape]],
         return {}
 
     df = generate_df(grid_df, shapes_df)
+    if len(x_labels) == len(df):
+        df['x_label'] = x_labels
     prediction = model.predict_bool(df)
     return {key: pred for pred, key in zip(prediction, index)}
 
