@@ -95,6 +95,7 @@ def _make_attentions(
 
                 for x_label in x_labels:
                     sub_df = current_df[current_df['x_label'] == x_label].copy()
+                    assert isinstance(sub_df, pd.DataFrame)
                     new_result2 = _make_inner_attentions(sub_df, output_train_shapes)
                     if new_result2 is not None:
                         results.append(new_result2)
