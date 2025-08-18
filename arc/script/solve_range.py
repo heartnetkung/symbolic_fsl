@@ -8,15 +8,17 @@ class Report:
     def __init__(self)->None:
         self.indexes = []
         self.data = {'duration': [], 'success': [], 'n_solution': [], 'path_count': [],
-                     'plan_message': [], 'reason_message': []}
+                     'cost@success': [], 'plan_message': [], 'reason_message': []}
 
     def append(self, index: int, duration: float, success: bool, n_solution: int,
-               path_count: int, plan_message: str, reason_message: str)->None:
+               path_count: int, cost: int, plan_message: str,
+               reason_message: str)->None:
         self.indexes.append(index)
         self.data['duration'].append(duration)
         self.data['success'].append(success)
         self.data['n_solution'].append(n_solution)
         self.data['path_count'].append(path_count)
+        self.data['cost@success'].append(path_count)
         self.data['plan_message'].append(plan_message)
         self.data['reason_message'].append(reason_message)
 
@@ -38,10 +40,11 @@ def solve_range(start: int, end: int, choice: DatasetChoice)->None:
         print(f'solving #{i}')
         try:
             result = solve_one(i, choice, logging.ERROR)
+            cost = result.correct_trace.cost if result.correct_trace is not None else -1
             report.append(
                 i, result.elapsed_time_s, result.correct == True,
                 len(result.predictions), result.reasoning_result.path_count,
-                result.planning_result.message, result.reasoning_result.message)
+                cost, result.planning_result.message, result.reasoning_result.message)
         except:
             print(traceback.format_exc())
     report.print()

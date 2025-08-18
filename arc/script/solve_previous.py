@@ -32,9 +32,10 @@ def solve_previous(index: int = -1)->None:
 
         try:
             result = solve_one(index, DatasetChoice.train_v1, logging.ERROR, params)
+            cost = result.correct_trace.cost if result.correct_trace is not None else -1
             report.append(
                 index, result.elapsed_time_s, result.correct == True,
-                len(result.predictions), result.reasoning_result.path_count,
+                len(result.predictions), result.reasoning_result.path_count, cost,
                 result.planning_result.message, result.reasoning_result.message)
         except KeyboardInterrupt:
             raise
