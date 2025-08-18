@@ -11,7 +11,7 @@ import logging
 from ..constant import N_RESULT
 
 MAX_TIME_S = 600
-MAX_PLAN_DEPTH = 13
+MAX_PLAN_DEPTH = 12
 MAX_PLAN_ITR = 5000
 MAX_REASON_PATH = 500
 PLAN_TIME_RATIO = 0.8

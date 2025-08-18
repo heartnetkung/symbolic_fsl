@@ -36,11 +36,6 @@ class CropTask(ModelFreeTask):
 
 
 @dataclass(frozen=True)
-class PartitionlessLogicTask(ModelFreeTask):
-    pass
-
-
-@dataclass(frozen=True)
 class PhysicsTask(ModelFreeTask):
     pass
 
