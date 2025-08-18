@@ -15,7 +15,8 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
     def __init__(self, x_mode: ParseMode, y_mode: ParseMode, x_bg_model: MLModel,
                  y_bg_model: MLModel, unknown_background: bool,
                  x_partition_color: Optional[int] = None,
-                 y_partition_color: Optional[int] = None)->None:
+                 y_partition_color: Optional[int] = None,
+                 y_constant_size: Optional[tuple[int, int]] = None)->None:
         self.x_mode = x_mode
         self.y_mode = y_mode
         self.x_bg_model = x_bg_model
@@ -23,6 +24,7 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         self.unknown_background = unknown_background
         self.x_partition_color = x_partition_color
         self.y_partition_color = y_partition_color
+        self.y_constant_size = y_constant_size
         super().__init__()
 
     def perform(self, state: ArcState, task: ParseGridTask)->Optional[ArcState]:
@@ -30,9 +32,14 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         x_bg = self.x_bg_model.predict_int(df)
         y_bg = self.y_bg_model.predict_int(df)
 
-        x_shapes = self._perform(state.x, self.x_mode, x_bg, self.x_partition_color)
-        if x_shapes is None:
-            return None
+        if self.x_mode == ParseMode.partition_by_size:
+            x_shapes = self._perform_partition_by_size(state.x, x_bg)
+            if x_shapes is None:
+                return None
+        else:
+            x_shapes = self._perform(state.x, self.x_mode, x_bg, self.x_partition_color)
+            if x_shapes is None:
+                return None
         x_shapes = filter_overwhelming_shapes(x_shapes)
         if not isinstance(state, ArcTrainingState):
             return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
@@ -66,6 +73,32 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         if mode == ParseMode.color_proximity_normal:
             return [list_objects(grid, False) for grid in grids2]
         raise Exception('unsupported parse mode')
+
+    def _perform_partition_by_size(
+            self, x_grids: list[Grid], x_bg: list[int])->Optional[list[list[Shape]]]:
+        if self.y_constant_size is None:
+            return None
+
+        y_width, y_height = self.y_constant_size
+        results = []
+        for x_grid, bg in zip(x_grids, x_bg):
+            if (x_grid.width < y_width) or (x_grid.height < y_height):
+                return None
+            if (x_grid.width == y_width) and (x_grid.height == y_height):
+                return None
+            if x_grid.width % y_width != 0:
+                return None
+            if x_grid.height % y_height != 0:
+                return None
+
+            new_result = []
+            for x_offset in range(0, x_grid.width, y_width):
+                for y_offset in range(0, x_grid.height, y_height):
+                    new_grid = x_grid.replace_color(bg, NULL_COLOR).crop(
+                        x_offset, y_offset, y_width, y_height)
+                    new_result.append(Unknown(x_offset, y_offset, new_grid))
+            results.append(new_result)
+        return results
 
 
 def _make_partition_shapes(

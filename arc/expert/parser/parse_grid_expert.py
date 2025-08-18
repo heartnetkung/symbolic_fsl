@@ -17,6 +17,7 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
         x_partition_colors = _cache_partition_color(state.x)
         y_partition_colors = _cache_partition_color(state.y)
         df = make_background_df(state)
+        y_constant_size = _get_constant_y_size(state.y)
 
         # independent parse
         for x_mode, y_mode, (x_model, y_model), unknown_bg in product(
@@ -28,6 +29,13 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
                 if x_mode in (ParseMode.proximity_diag, ParseMode.proximity_normal):
                     continue
                 if y_mode in (ParseMode.proximity_diag, ParseMode.proximity_normal):
+                    continue
+            if y_mode == ParseMode.partition_by_size:
+                continue
+            if x_mode == ParseMode.partition_by_size:
+                if y_mode != ParseMode.crop:
+                    continue
+                if unknown_bg:
                     continue
             if x_mode == ParseMode.partition:
                 if x_partition_colors is None:
@@ -42,7 +50,7 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
 
             result.append(IndependentParse(
                 x_mode, y_mode, x_model, y_model, unknown_bg,
-                x_partition_color, y_partition_color))
+                x_partition_color, y_partition_color, y_constant_size))
         return result
 
 
@@ -69,3 +77,11 @@ def _get_partition_color(possible_colors: set[int], backgrounds: list[int])->int
     if len(result) != 1:
         return NULL_COLOR
     return result.pop()
+
+
+def _get_constant_y_size(y_grids: list[Grid])->Optional[tuple[int, int]]:
+    first_size = (y_grids[0].width, y_grids[0].height)
+    for i in range(1, len(y_grids)):
+        if (y_grids[i].width, y_grids[i].height) != first_size:
+            return None
+    return first_size
