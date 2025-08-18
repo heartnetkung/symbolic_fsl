@@ -94,9 +94,11 @@ def _to_rect(shape: Shape)->list[Shape]:
     endset_y = _resolve_offset(endsets_y)
 
     w, h = shape.width-offset_x-endset_x, shape.height-offset_y-endset_y
-    grid2 = shape._grid.crop(offset_x, offset_y, w, h)
+    if (w <= 0) or (h <= 0):
+        return []
 
     # if the grid is almost rectangle, just return it as rectangle.
+    grid2 = shape._grid.crop(offset_x, offset_y, w, h)
     noise_ratio = np.sum(np.array(grid2.data) == NULL_COLOR) / (w*h)
     if noise_ratio < NOISE_RATIO:
         return [FilledRectangle(shape.x+offset_x, shape.y+offset_y, w, h, color)]
