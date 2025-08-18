@@ -116,9 +116,8 @@ def _make_partition_shapes(
             return None
 
         grid_shapes = list_objects(grid.keep_color(separator))
-        if len(grid_shapes) != 1:
-            return None
-        if (grid_shapes[0].mass / (grid.width*grid.height)) > MASS_THRESHOLD:
+        total_mass = sum([shape.mass for shape in grid_shapes])
+        if (total_mass / (grid.width*grid.height)) > MASS_THRESHOLD:
             return None
 
         result.append(partitions+grid_shapes)
