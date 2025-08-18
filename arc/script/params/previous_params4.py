@@ -87,7 +87,7 @@ previous_v1_params4[343] = proto.update(
     parser_y_modes=(ParseMode.crop,), enable_free_draw=True)
 
 previous_v1_params4[346] = proto.update(
-    parser_x_modes=(ParseMode.crop,),
+    parser_x_modes=(ParseMode.partition_by_size,),
     parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params4[346] = proto.update(
@@ -171,7 +171,7 @@ previous_v1_params4[393] = proto.update(
     parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params4[394] = proto.update(
-    parser_x_modes=(ParseMode.crop,),
+    parser_x_modes=(ParseMode.partition_by_size,),
     parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params4[399] = proto.update(
