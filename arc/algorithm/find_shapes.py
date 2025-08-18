@@ -24,7 +24,7 @@ def find_common_y_shapes(all_y_shapes: list[list[Shape]])->tuple[Shape, ...]:
     assert isinstance(filtered_df, pd.DataFrame)
 
     # too many repeated shapes, include everything
-    if len(filtered_df) >= 3:
+    if len(filtered_df) >= 2:
         return tuple(shape_dict.values())
 
     return tuple(shape_dict[key] for key in filtered_df.index)
