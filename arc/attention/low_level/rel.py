@@ -58,11 +58,7 @@ def touch_overlap(a: Shape, b: Shape)->set[str]:
         return {'overlap'}
     if len(list_sparse_objects(union_shape._grid)) != 1:
         return set()
-    width_difference = max(a.width, b.width)-union_shape.width
-    height_difference = max(a.height, b.height)-union_shape.height
-    if width_difference == 0 and height_difference == 0:
-        return {'touch'}
-    return set()
+    return {'touch'}
 
 
 def _exact_contain(a: Shape, b: Shape)->set[str]:
