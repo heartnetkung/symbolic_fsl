@@ -5,12 +5,13 @@ import numpy as np
 from ...constant import *
 
 
-def list_relationship(a: Shape, b: Shape)->set[str]:
+def list_relationship(a: Shape, b: Shape, include_properties=True)->set[str]:
     result = set()
     a_dict, b_dict = list_properties(a), list_properties(b)
-    for k, v in a_dict.items():
-        if b_dict.get(k) == v:
-            result.add(f'same_{k}')
+    if include_properties:
+        for k, v in a_dict.items():
+            if b_dict.get(k) == v:
+                result.add(f'same_{k}')
 
     result |= touch_overlap(a, b)
     result |= _color_intersect(a_dict, b_dict)
@@ -19,6 +20,7 @@ def list_relationship(a: Shape, b: Shape)->set[str]:
     result |= _unknown_scale(a, b, a_dict, b_dict)
     result |= _x_or_y(a, b)
     result |= _full_overlap(a, b)
+    result |= _is_contain(a, b)
     return result
 
 
@@ -36,6 +38,19 @@ def _x_or_y(a: Shape, b: Shape)->set[str]:
         result.add('subset_y')
         result.add('subset_x_or_y')
     return result
+
+
+def _is_contain(a: Shape, b: Shape)->set[str]:
+    a_x2, a_y2 = a.x+a.width, a.y+a.height
+    b_x2, b_y2 = b.x+b.width, b.y+b.height
+
+    if ((a.x == b.x) and (a.y == b.y) and (a_x2 == b_x2) and (a_y2 == b_y2)):
+        return set()
+    if ((a.x <= b.x) and (a.y <= b.y) and (a_x2 >= b_x2) and (a_y2 >= b_y2)):
+        return {'contain'}
+    if ((b.x <= a.x) and (b.y <= a.y) and (b_x2 >= a_x2) and (b_y2 >= a_y2)):
+        return {'contain'}
+    return set()
 
 
 def _is_subrange(a: range, b: range)->bool:
