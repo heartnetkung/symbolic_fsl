@@ -61,8 +61,8 @@ def touch_overlap(a: Shape, b: Shape)->set[str]:
     width_difference = max(a.width, b.width)-union_shape.width
     height_difference = max(a.height, b.height)-union_shape.height
     if width_difference == 0 and height_difference == 0:
-        return {'contain', 'touch'}
-    return {'touch'}
+        return {'touch'}
+    return set()
 
 
 def _exact_contain(a: Shape, b: Shape)->set[str]:
