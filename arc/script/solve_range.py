@@ -18,7 +18,7 @@ class Report:
         self.data['success'].append(success)
         self.data['n_solution'].append(n_solution)
         self.data['path_count'].append(path_count)
-        self.data['cost@success'].append(path_count)
+        self.data['cost@success'].append(cost)
         self.data['plan_message'].append(plan_message)
         self.data['reason_message'].append(reason_message)
 
