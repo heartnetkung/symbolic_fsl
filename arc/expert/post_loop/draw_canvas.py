@@ -163,7 +163,7 @@ def _gen_sorting_table(
                 continue
 
             if is_all_equal:
-                x_labels.append(not label)
+                x_labels.append(0 if label else 1)
 
             index.append((id1, i, j))
             grid_df.append(grid)
