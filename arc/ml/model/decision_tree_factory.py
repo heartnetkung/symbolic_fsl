@@ -18,11 +18,15 @@ class DTClassifier(MLModel):
         self.model = model
         self.columns = columns
 
-    def predict(self, X: pd.DataFrame)->np.ndarray:
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         return self.model.predict(X)
 
     def _to_code(self) -> str:
         return _tree2code(self.model, self.columns)
+
+    def _get_used_columns(self)->list[str]:
+        return [self.columns[i] for i in self.model.tree_.feature
+                if i != UNDEFINED_VALUE]
 
 
 def make_tree(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,

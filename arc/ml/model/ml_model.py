@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import logging
 import numpy as np
 import pandas as pd
-from ...constant import GlobalParams, MISSING_VALUE
+from ...constant import GlobalParams, MISSING_VALUE, IgnoredException
 from typing import Any, Optional, Callable, TypeVar
 import inspect
 from functools import cached_property
@@ -47,12 +47,20 @@ class MLModel(ABC):
     def __repr__(self)->str:
         return self.code
 
-    @abstractmethod
     def predict(self, X: pd.DataFrame)->np.ndarray:
+        used_columns = self._get_used_columns()
+        if pd.isna(X[used_columns]).any(axis=None):  # type:ignore
+            raise IgnoredException()
+        return self._predict(X)
+
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         '''
         Use the current fitted state to predict new output.
         '''
-        pass
+        raise Exception('not implemented')
+
+    def _get_used_columns(self)->list[str]:
+        raise Exception('not implemented')
 
     def predict_int(self, X: pd.DataFrame)->list[int]:
         '''Predict int values'''
@@ -93,10 +101,13 @@ class ColumnModel(MLModel):
     def _to_code(self) -> str:
         return f'return {self.col_name}'
 
-    def predict(self, X: pd.DataFrame)->np.ndarray:
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         col = X[self.col_name]
         assert col is not None
         return col.to_numpy()
+
+    def _get_used_columns(self)->list[str]:
+        return [self.col_name]
 
 
 class ConstantColumnModel(MLModel):
@@ -109,10 +120,13 @@ class ConstantColumnModel(MLModel):
     def _to_code(self) -> str:
         return f'return {self.col_name} == {self.value}'
 
-    def predict(self, X: pd.DataFrame)->np.ndarray:
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         col = X[self.col_name]
         assert col is not None
         return np.where(col == self.value, 1, 0)
+
+    def _get_used_columns(self)->list[str]:
+        return [self.col_name]
 
 
 class MemorizedModel(MLModel):
