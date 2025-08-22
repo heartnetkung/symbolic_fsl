@@ -51,12 +51,11 @@ class ModeledAttentionTask(ModeledTask[ArcInferenceState]):
     g_model: GlobalAttentionModel
     common_y_shapes: tuple[Shape, ...]
 
-    def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
+    def to_runtimes(self, before: ArcInferenceState)->list[InferenceTask]:
         assert before.out_shapes is not None
         assert before.x_shapes is not None
         atn = to_runtimes(self.model, before.out_shapes, before.x, before.x_shapes)
         if atn is None:
-            return None
+            return []
         g_atns = to_gruntimes(self.g_model, before.x_shapes, before.x)
-        # TODO maybe use all g_atns
-        return AttentionTask(atn, g_atns[0], self.common_y_shapes)
+        return [AttentionTask(atn, g_atn, self.common_y_shapes) for g_atn in g_atns]

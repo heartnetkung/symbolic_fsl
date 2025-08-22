@@ -26,8 +26,8 @@ class ModelFreeTask(Task[TS], ModeledTask[IS], InferenceTask):
     def to_models(self, before: TS, after: TS)->list[ModeledTask]:
         return [self]
 
-    def to_runtimes(self, before: IS)->Optional[InferenceTask]:
-        return self
+    def to_runtimes(self, before: IS)->list[InferenceTask]:
+        return [self]
 
     def get_cost(self)->int:
         return 0

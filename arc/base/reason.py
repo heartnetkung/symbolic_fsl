@@ -119,20 +119,19 @@ class StateCache:
         task_actions = self.model_cache.get_models(train_before, train_after)
         for modeled_task, runtime_action in task_actions:
             try:
-                runtime_task = modeled_task.to_runtimes(infer_before)
-                if runtime_task is None:
-                    continue
+                runtime_tasks = modeled_task.to_runtimes(infer_before)
 
-                new_state = runtime_action.perform_infer(infer_before, runtime_task)
-                if new_state is None:
-                    continue
+                for runtime_task in runtime_tasks:
+                    new_state = runtime_action.perform_infer(infer_before, runtime_task)
+                    if new_state is None:
+                        continue
 
-                new_prefix = [(runtime_task, runtime_action)]
-                saved_prefix = next_iteration_data.get(new_state, None)
-                if saved_prefix is None:
-                    next_iteration_data[new_state] = new_prefix
-                elif Trace.cal_cost(saved_prefix) > Trace.cal_cost(new_prefix):
-                    next_iteration_data[new_state] = new_prefix
+                    new_prefix = [(runtime_task, runtime_action)]
+                    saved_prefix = next_iteration_data.get(new_state, None)
+                    if saved_prefix is None:
+                        next_iteration_data[new_state] = new_prefix
+                    elif Trace.cal_cost(saved_prefix) > Trace.cal_cost(new_prefix):
+                        next_iteration_data[new_state] = new_prefix
             except IgnoredException:
                 pass
             except Exception:

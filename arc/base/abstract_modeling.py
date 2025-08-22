@@ -63,7 +63,7 @@ class InferenceTask(ABC):
 class ModeledTask(Generic[IS], ABC):
     ''''''
     @abstractmethod
-    def to_runtimes(self, before: IS)->Optional[InferenceTask]:
+    def to_runtimes(self, before: IS)->list[InferenceTask]:
         '''Predict new inputs.'''
         pass
 

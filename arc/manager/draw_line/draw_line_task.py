@@ -26,13 +26,13 @@ class ModeledDrawLineTask(ModeledTask[ArcInferenceState]):
     model: AttentionModel
     all_lines: AllLineShapes
 
-    def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
+    def to_runtimes(self, before: ArcInferenceState)->list[InferenceTask]:
         assert before.out_shapes is not None
         assert before.x_shapes is not None
         atn = to_runtimes(self.model, before.out_shapes, before.x, before.x_shapes)
         if atn is None:
-            return None
-        return DrawLineTask(atn, self.all_lines)
+            return []
+        return [DrawLineTask(atn, self.all_lines)]
 
 
 @dataclass(frozen=True)
