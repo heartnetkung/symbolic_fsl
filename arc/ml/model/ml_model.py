@@ -91,6 +91,9 @@ class ConstantModel(MLModel):
     def predict(self, X: pd.DataFrame)->np.ndarray:
         return np.full(X.shape[0], self.output)
 
+    def _get_used_columns(self)->list[str]:
+        return []
+
 
 class ColumnModel(MLModel):
     '''Model that select a column from the input and return.'''

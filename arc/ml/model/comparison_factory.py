@@ -17,7 +17,7 @@ class ComparisonModel(MLModel):
         self.col2 = col2
         self.eq = eq
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         if self.eq:
             return np.isclose(X[self.col1], X[self.col2])
         return np.logical_not(np.isclose(X[self.col1], X[self.col2]))
@@ -43,7 +43,7 @@ class ConstantComparisonModel(MLModel):
         self.value = value
         self.eq = eq
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         if self.eq:
             return np.isclose(X[self.col], self.value)
         return np.logical_not(np.isclose(X[self.col], self.value))

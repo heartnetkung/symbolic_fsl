@@ -15,7 +15,7 @@ class PolynomialRegressor(MLModel):
     def _to_code(self) -> str:
         return 'return '+_poly_to_str(self.columns, self.coefs)
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         return np.matmul(make_reg_features(X.fillna(0), self.params), self.coefs)
 
     def _get_used_columns(self)->list[str]:
@@ -39,7 +39,7 @@ class PolynomialClassifier(MLModel):
             return f'if {_poly_to_str(self.columns, coefs2)} >= {coef0}:'
         return f'if {_poly_to_str(self.columns, coefs2)} < {coef0}:'
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         result = np.matmul(make_cls_features(X.fillna(0), self.params), self.coefs)
         is_equal, is_greater = np.isclose(result, 0), result > 0
         if self.is_greater_than:
@@ -59,13 +59,21 @@ class PPDT(MLModel):
         self.cls = classifiers
         self.regs = regressors
 
-    def predict(self, X: pd.DataFrame)->np.ndarray:
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         assert len(self.cls) + 1 == len(self.regs)
         result = self.regs[-1].predict(X)
         for i in range(len(self.cls)-1, -1, -1):
             mask = self.cls[i].predict(X)
             result[mask] = self.regs[i].predict(X)[mask]
         return result
+
+    def _get_used_columns(self)->list[str]:
+        all_columns = []
+        for classifier in self.cls:
+            all_columns.extend(classifier._get_used_columns())
+        for regressor in self.regs:
+            all_columns.extend(regressor._get_used_columns())
+        return list(dict.fromkeys(all_columns))
 
     def _to_code(self) -> str:
         assert len(self.cls) + 1 == len(self.regs)

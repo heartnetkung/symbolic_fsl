@@ -3,6 +3,7 @@ from ...arc.ml.model.association_factory import *
 from ...arc.ml.model.comparison_factory import *
 from ...arc.ml.model.base_models import *
 from ...arc.ml.model.decision_tree_factory import *
+from ...arc.ml.model.model_factory import *
 from ...arc.base import *
 from ...arc.constant import *
 import pandas as pd
@@ -45,26 +46,37 @@ def test_association():
 
 
 def test_tree():
-    inner_model = DecisionTreeClassifier()
-    inner_model.fit(normal_df, label)
-    model = DTClassifier(inner_model, normal_df.columns)
-    do_test(model)
+    inner_model1 = DecisionTreeClassifier()
+    inner_model1.fit(tree_feat_eng(normal_df), label)
+    outer_model1 = TreeFeatEng(DTClassifier(inner_model1, normal_df.columns))
+    do_test(outer_model1)
+
+    inner_model2 = DecisionTreeClassifier()
+    inner_model2.fit(normal_df, label.astype(bool))
+    outer_model2 = PPDT([DTClassifier(inner_model2, normal_df.columns)],
+                        [ConstantModel(1), ConstantModel(0)], params)
+    do_test(outer_model2)
 
 
 def test_comparison():
     model = ComparisonModel('a', 'c', True, params)
-    do_test(model)
+    outer_model1 = PPDT([model], [ConstantModel(1), ConstantModel(0)], params)
+    do_test(outer_model1)
+
     model2 = ConstantComparisonModel('a', 1, True, params)
-    do_test(model2)
+    outer_model2 = PPDT([model2], [ConstantModel(1), ConstantModel(0)], params)
+    do_test(outer_model2)
 
 
 def test_reg():
     results = solve_reg(normal_df, label, params)
     model = PolynomialRegressor(normal_df, results[0].poly_coef, params)
-    do_test(model)
+    outer_model = PPDT([], [model], params)
+    do_test(outer_model)
 
 
 def test_cls():
     results = solve_cls(normal_df, label, params)
     model = PolynomialClassifier(normal_df, results[0].poly_coef, True, params)
-    do_test(model)
+    outer_model = PPDT([model], [ConstantModel(1), ConstantModel(0)], params)
+    do_test(outer_model)

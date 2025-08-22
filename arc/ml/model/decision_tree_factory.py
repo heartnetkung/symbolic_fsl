@@ -18,7 +18,7 @@ class DTClassifier(MLModel):
         self.model = model
         self.columns = columns
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         return self.model.predict(X)
 
     def _to_code(self) -> str:

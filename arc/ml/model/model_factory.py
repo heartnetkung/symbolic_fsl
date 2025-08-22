@@ -133,8 +133,11 @@ class TreeFeatEng(MLModel):
     def __init__(self, inner_model: MLModel)->None:
         self.inner_model = inner_model
 
-    def predict(self, X: pd.DataFrame)->np.ndarray:
+    def _predict(self, X: pd.DataFrame)->np.ndarray:
         return self.inner_model.predict(tree_feat_eng(X))
+
+    def _get_used_columns(self)->list[str]:
+        return self.inner_model._get_used_columns()
 
     def _to_code(self) -> str:
         return self.inner_model.code
