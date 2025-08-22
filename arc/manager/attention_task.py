@@ -3,6 +3,9 @@ from ..base import (Task, ModeledTask, InferenceTask, ArcTrainingState,
 from dataclasses import dataclass
 from ..attention import (TrainingAttention, InferenceAttention, Attention,
                          to_models, to_runtimes, AttentionModel)
+from ..global_attention import (
+    TrainingGlobalAttention, GlobalAttention, GlobalAttentionModel,
+    InferenceGlobalAttention, make_gattention, to_gmodel, to_gruntimes)
 import pandas as pd
 import numpy as np
 from typing import Optional
@@ -14,6 +17,7 @@ from ..constant import GlobalParams
 @dataclass(frozen=True)
 class AttentionTask(InferenceTask):
     atn: Attention
+    g_atn: GlobalAttention
     common_y_shapes: tuple[Shape, ...]
 
     def get_cost(self)->int:
@@ -23,6 +27,7 @@ class AttentionTask(InferenceTask):
 @dataclass(frozen=True)
 class TrainingAttentionTask(Task[ArcTrainingState]):
     atn: TrainingAttention
+    g_atn: TrainingGlobalAttention
     common_y_shapes: tuple[Shape, ...]
     params: GlobalParams
 
@@ -32,15 +37,18 @@ class TrainingAttentionTask(Task[ArcTrainingState]):
         assert before.x_shapes is not None
         models = to_models(self.atn, before.out_shapes, before.x,
                            before.x_shapes, self.params)
-        return [ModeledAttentionTask(model, self.common_y_shapes) for model in models]
+        g_model = to_gmodel(self.g_atn, before.x_shapes, before.x)
+        return [ModeledAttentionTask(model, g_model, self.common_y_shapes)
+                for model in models]
 
     def to_inference(self)->InferenceTask:
-        return AttentionTask(self.atn, self.common_y_shapes)
+        return AttentionTask(self.atn, self.g_atn, self.common_y_shapes)
 
 
 @dataclass(frozen=True)
 class ModeledAttentionTask(ModeledTask[ArcInferenceState]):
     model: AttentionModel
+    g_model: GlobalAttentionModel
     common_y_shapes: tuple[Shape, ...]
 
     def to_runtimes(self, before: ArcInferenceState)->Optional[InferenceTask]:
@@ -49,4 +57,6 @@ class ModeledAttentionTask(ModeledTask[ArcInferenceState]):
         atn = to_runtimes(self.model, before.out_shapes, before.x, before.x_shapes)
         if atn is None:
             return None
-        return AttentionTask(atn, self.common_y_shapes)
+        g_atns = to_gruntimes(self.g_model, before.x_shapes, before.x)
+        # TODO maybe use all g_atns
+        return AttentionTask(atn, g_atns[0], self.common_y_shapes)

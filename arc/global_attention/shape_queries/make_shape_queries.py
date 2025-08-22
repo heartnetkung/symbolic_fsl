@@ -2,19 +2,12 @@ from .make_rel_df import make_rel_df
 from ...graphic import *
 import pandas as pd
 import numpy as np
-from dataclasses import dataclass
 from ...ml import *
-
-
-@dataclass(frozen=True)
-class QueryResult:
-    sample_index: list[int]
-    shape_index: list[int]
-    models: list[ColumnModel]
+from ..types import *
 
 
 def make_shape_queries(
-        grids: list[Grid], all_shapes: list[list[Shape]])->list[QueryResult]:
+        grids: list[Grid], all_shapes: list[list[Shape]])->list[ShapeQuery]:
     assert len(grids) == len(all_shapes)
     df = make_rel_df(grids, all_shapes)
     df.sort_values('sample_index', inplace=True)
@@ -35,10 +28,10 @@ def make_shape_queries(
 
     results = []
     for index, rels in cluster.items():
-        sample_index = list(range(_len))
-        shape_index = list(index)
-        models = [ColumnModel(rel) for rel in rels]
-        results.append(QueryResult(sample_index, shape_index, models))
+        sample_index = tuple(range(_len))
+        shape_index = tuple(index)
+        models = tuple(ColumnModel(rel) for rel in rels)
+        results.append(ShapeQuery(sample_index, shape_index, models))
     return results
 
 

@@ -6,24 +6,31 @@ from ..ml import ColumnModel
 
 
 @dataclass(frozen=True)
+class ShapeQuery:
+    '''A noticable shape with consistent relationship, one for each sample.'''
+    sample_index: tuple[int, ...]
+    shape_index: tuple[int, ...]
+    models: tuple[ColumnModel, ...]
+
+
+@dataclass(frozen=True)
 class TrainingGlobalAttention:
-    # all these pointers is used with x_shapes not out_shapes
-    query_sample_index: list[int]
-    query_shape_index: list[int]
-    query_models: list[ColumnModel]
+    shape_queries: tuple[ShapeQuery, ...]
 
 
 @dataclass(frozen=True)
 class GlobalAttentionModel:
-    query_model: ColumnModel
+    query_models: tuple[tuple[ColumnModel, ...], ...]
 
 
 @dataclass(frozen=True)
 class InferenceGlobalAttention:
-    # all these pointers is used with x_shapes not out_shapes
-    query_sample_index: list[int]
-    query_shape_index: list[int]
-    query_model: ColumnModel
+    shape_queries: tuple[ShapeQuery, ...]
+
+
+def create_null_shape_query(len_: int)->ShapeQuery:
+    null_index = tuple([-1]*len_)
+    return ShapeQuery(null_index, null_index, tuple())
 
 
 GlobalAttention = Union[TrainingGlobalAttention, InferenceGlobalAttention]

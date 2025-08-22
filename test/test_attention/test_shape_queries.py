@@ -7,16 +7,17 @@ from ...arc.global_attention import *
 def test_361():
     x_grids = [x361_0, x361_1, x361_2]
     all_x_shapes = [list_objects(grid.remove_bg()) for grid in x_grids]
-    attentions = make_attentions(all_x_shapes, x_grids)
-    assert len(attentions) == 2
-    atn = attentions[1]
-    for id1, id2 in zip(atn.query_sample_index, atn.query_shape_index):
+    atn = make_gattention(all_x_shapes, x_grids)
+    query = atn.shape_queries[1]
+    for id1, id2 in zip(query.sample_index, query.shape_index):
         shape = all_x_shapes[id1][id2]
         assert shape.top_color == 5
 
     model = ColumnModel('top_color_5')
-    atn2 = to_runtimes(GlobalAttentionModel(model), all_x_shapes, x_grids)
-    for id1, id2 in zip(atn2.query_sample_index, atn2.query_shape_index):
+    atn2 = to_gruntimes(GlobalAttentionModel(
+        tuple([tuple([model])])), all_x_shapes, x_grids)
+    query2 = atn2[0].shape_queries[0]
+    for id1, id2 in zip(query2.sample_index, query2.shape_index):
         shape = all_x_shapes[id1][id2]
         assert shape.top_color == 5
 

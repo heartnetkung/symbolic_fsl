@@ -1,13 +1,14 @@
 from ...base import *
 from ...graphic import *
-from ..attention_task import TrainingAttentionTask
 from ...attention import *
+from ..attention_task import TrainingAttentionTask
 from .util import *
 
 
 class AttentionManager(Manager[ArcTrainingState]):
     def __init__(self, common_finder: CommonYFinder, params: GlobalParams)->None:
         self.common_finder = common_finder
+        self.global_maker = GlobalAttentionMaker()
         self.params = params
 
     def decide(self, state: ArcTrainingState)->list[
@@ -30,9 +31,10 @@ class AttentionManager(Manager[ArcTrainingState]):
             attentions = make_attentions(state.out_shapes, state.y_shapes, state.x)
 
         common_y_shapes = self.common_finder.find_common_y(state.y_shapes)
+        g_atn = self.global_maker.make_global_attentions(state)
         for attention in attentions:
             new_state = state.update(attention_cache=attention)
             new_attention = TrainingAttentionTask(
-                attention, common_y_shapes, self.params)
+                attention, g_atn, common_y_shapes, self.params)
             results.append((new_attention, new_state))
         return results

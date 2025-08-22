@@ -1,3 +1,3 @@
 from .types import (TrainingGlobalAttention, GlobalAttentionModel,
                     InferenceGlobalAttention, GlobalAttention)
-from .make_attentions import make_attentions, to_models, to_runtimes
+from .make_gattentions import make_gattention, to_gmodel, to_gruntimes
