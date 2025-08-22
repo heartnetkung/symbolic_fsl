@@ -165,7 +165,7 @@ def _match_column(X: pd.DataFrame, expected_columns: list[str])->pd.DataFrame:
 
     appending_cols = expected_cols-existing_cols
     if len(appending_cols) > 0:
-        appending = {col: [MISSING_VALUE]*X.shape[0] for col in appending_cols}
+        appending = {col: [None]*X.shape[0] for col in appending_cols}
         X = pd.concat((X, pd.DataFrame(appending)), axis=1)
 
     return X[expected_columns].copy()  # type:ignore
