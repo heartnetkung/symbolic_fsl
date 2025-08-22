@@ -25,9 +25,12 @@ def to_gruntimes(atn_model: GlobalAttentionModel, x_test_shapes: list[list[Shape
     for models in atn_model.query_models:
         query = {}
         for model in models:
-            selection = model.predict_bool(df)
-            if check_query_result(df, len_, selection):
-                query[tuple(selection)] = (model, selection)
+            try:
+                selection = model.predict_bool(df)
+                if check_query_result(df, len_, selection):
+                    query[tuple(selection)] = (model, selection)
+            except KeyError:
+                pass
 
         if len(query) == 0:
             all_shape_queries.append([create_null_shape_query(len_)])
