@@ -12,6 +12,9 @@ class ShapeQuery:
     shape_index: tuple[int, ...]
     models: tuple[ColumnModel, ...]
 
+    def is_null(self)->bool:
+        return len(self.models) == 0
+
 
 @dataclass(frozen=True)
 class TrainingGlobalAttention:

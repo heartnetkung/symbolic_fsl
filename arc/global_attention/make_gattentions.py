@@ -40,7 +40,7 @@ def to_gruntimes(atn_model: GlobalAttentionModel, x_test_shapes: list[list[Shape
                 selected_rows = df[selection]
                 sample_index = tuple(selected_rows['sample_index'].astype(int))
                 shape_index = tuple(selected_rows['shape_index'].astype(int))
-                new_queries.append(ShapeQuery(sample_index, shape_index, model))
+                new_queries.append(ShapeQuery(sample_index, shape_index, (model,)))
             all_shape_queries.append(new_queries)
 
     return [InferenceGlobalAttention(query_comb)
