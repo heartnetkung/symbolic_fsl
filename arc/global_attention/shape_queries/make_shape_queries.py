@@ -4,11 +4,19 @@ import pandas as pd
 import numpy as np
 from ...ml import *
 from ..types import *
+from ...constant import MAX_SHAPES_PER_GRID
+
+
+MAX_RETURN = 2
 
 
 def make_shape_queries(
         grids: list[Grid], all_shapes: list[list[Shape]])->list[ShapeQuery]:
     assert len(grids) == len(all_shapes)
+    for shapes in all_shapes:
+        if len(shapes) > MAX_SHAPES_PER_GRID:
+            return []
+
     df = make_rel_df(grids, all_shapes)
     df.sort_values('sample_index', inplace=True)
     groups = df.groupby('rel').agg({'sample_index': ['size', 'nunique']}).reset_index()
@@ -32,7 +40,8 @@ def make_shape_queries(
         shape_index = tuple(index)
         models = tuple(ColumnModel(rel) for rel in rels)
         results.append(ShapeQuery(sample_index, shape_index, models))
-    return results
+    results.sort(key=lambda query: -len(query.models))
+    return results[:MAX_RETURN]
 
 
 def make_query_df(grids: list[Grid], all_shapes: list[list[Shape]])->pd.DataFrame:
