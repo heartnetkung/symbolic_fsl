@@ -133,11 +133,8 @@ class TreeFeatEng(MLModel):
     def __init__(self, inner_model: MLModel)->None:
         self.inner_model = inner_model
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         return self.inner_model.predict(tree_feat_eng(X))
-
-    def _get_used_columns(self)->list[str]:
-        return self.inner_model._get_used_columns()
 
     def _to_code(self) -> str:
         return self.inner_model.code
@@ -168,7 +165,7 @@ def _match_column(X: pd.DataFrame, expected_columns: list[str])->pd.DataFrame:
 
     appending_cols = expected_cols-existing_cols
     if len(appending_cols) > 0:
-        appending = {col: [None]*X.shape[0] for col in appending_cols}
+        appending = {col: [MISSING_VALUE]*X.shape[0] for col in appending_cols}
         X = pd.concat((X, pd.DataFrame(appending)), axis=1)
 
     return X[expected_columns].copy()  # type:ignore

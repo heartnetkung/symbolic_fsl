@@ -18,9 +18,6 @@ class PolynomialRegressor(MLModel):
     def predict(self, X: pd.DataFrame)->np.ndarray:
         return np.matmul(make_reg_features(X.fillna(0), self.params), self.coefs)
 
-    def _get_used_columns(self)->list[str]:
-        return _get_used_columns(self.columns, self.coefs)
-
 
 class PolynomialClassifier(MLModel):
     def __init__(self, X: pd.DataFrame, coefs: np.ndarray, is_greater_than: bool,
@@ -46,9 +43,6 @@ class PolynomialClassifier(MLModel):
             return np.logical_or(is_greater, is_equal)
         return np.logical_not(np.logical_or(is_greater, is_equal))
 
-    def _get_used_columns(self)->list[str]:
-        return _get_used_columns(self.columns, self.coefs)
-
 
 class PPDT(MLModel):
     '''Ensemble model composing of classifiers and regressors'''
@@ -59,21 +53,13 @@ class PPDT(MLModel):
         self.cls = classifiers
         self.regs = regressors
 
-    def _predict(self, X: pd.DataFrame)->np.ndarray:
+    def predict(self, X: pd.DataFrame)->np.ndarray:
         assert len(self.cls) + 1 == len(self.regs)
         result = self.regs[-1].predict(X)
         for i in range(len(self.cls)-1, -1, -1):
             mask = self.cls[i].predict(X)
             result[mask] = self.regs[i].predict(X)[mask]
         return result
-
-    def _get_used_columns(self)->list[str]:
-        all_columns = []
-        for classifier in self.cls:
-            all_columns.extend(classifier._get_used_columns())
-        for regressor in self.regs:
-            all_columns.extend(regressor._get_used_columns())
-        return list(dict.fromkeys(all_columns))
 
     def _to_code(self) -> str:
         assert len(self.cls) + 1 == len(self.regs)
@@ -89,17 +75,6 @@ class PPDT(MLModel):
         else:
             ans.append(self.regs[-1].code)
         return '\n'.join(ans)
-
-
-def _get_used_columns(columns: list[str], coefs: np.ndarray)->list[str]:
-    result = []
-    for column, coef in zip(columns, coefs):
-        if column == '1':
-            continue
-        if np.isclose(0, coef):
-            continue
-        result.append(column)
-    return result
 
 
 def _poly_to_str(columns: list[str], coefs: np.ndarray)->str:

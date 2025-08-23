@@ -27,9 +27,6 @@ class ComparisonModel(MLModel):
             return f'if {self.col1} == {self.col2}:'
         return f'if {self.col1} != {self.col2}:'
 
-    def _get_used_columns(self)->list[str]:
-        return [self.col1, self.col2]
-
 
 class ConstantComparisonModel(MLModel):
     '''
@@ -52,9 +49,6 @@ class ConstantComparisonModel(MLModel):
         if self.eq:
             return f'if {self.col} == {self.value}:'
         return f'if {self.col} != {self.value}:'
-
-    def _get_used_columns(self)->list[str]:
-        return [self.col]
 
 
 def make_comparison_models(X: pd.DataFrame, y: np.ndarray,

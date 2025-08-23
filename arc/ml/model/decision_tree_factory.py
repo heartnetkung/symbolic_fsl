@@ -24,10 +24,6 @@ class DTClassifier(MLModel):
     def _to_code(self) -> str:
         return _tree2code(self.model, self.columns)
 
-    def _get_used_columns(self)->list[str]:
-        return [self.columns[i] for i in self.model.tree_.feature
-                if i != UNDEFINED_VALUE]
-
 
 def make_tree(X: pd.DataFrame, y: np.ndarray, params: GlobalParams,
               max_depth=MAX_DEPTH)->list[MLModel]:
