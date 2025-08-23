@@ -7,7 +7,7 @@ from dataclasses import dataclass
 HIDDEN_COLOR = -2
 
 
-def split_stack(a: Shape)->Optional[list[Shape]]:
+def split_stack(a: Shape, greedy: bool)->Optional[list[Shape]]:
     '''
     Split a single-color shape into multiple rectangles.
     Used by merge_stack.
@@ -16,7 +16,7 @@ def split_stack(a: Shape)->Optional[list[Shape]]:
     if a.__class__ == FilledRectangle:
         return None
 
-    offset_x, offset_y = a.x, a.y
+    offset_x, offset_y = 0, 0
     results, current_grid = [], deepcopy(a._grid)
 
     for i in range(a.height):
@@ -35,7 +35,8 @@ def split_stack(a: Shape)->Optional[list[Shape]]:
 
         # collect result
         for rectangle in rectangles:
-            results.append(rectangle.to_shape(offset_x, offset_y))
+            results.append(rectangle.to_shape(
+                offset_x, offset_y, greedy, a))
             _remove_color(current_grid, rectangle)
 
         # trim and update data for the next iteration
@@ -103,10 +104,23 @@ class _PartialRectangle:
     color: int
     done: bool = False
 
-    def to_shape(self, offset_x: int, offset_y: int)->FilledRectangle:
+    def to_shape(self, offset_x: int, offset_y: int, greedy: bool,
+                 shape: Shape)->FilledRectangle:
+        if not greedy:
+            return FilledRectangle(
+                offset_x+self.min_x+shape.x, self.y+offset_y+shape.y,
+                self.max_x-self.min_x+1, self.height, self.color)
+
+        reverse_expand = 0
+        for potention_y in range(self.y+offset_y-1, -1, -1):
+            if self._can_reverse_expand(shape._grid.data[potention_y]):
+                reverse_expand += 1
+
         return FilledRectangle(
-            offset_x+self.min_x, self.y+offset_y, self.max_x-self.min_x+1,
-            self.height, self.color)
+            offset_x+self.potential_min_x+shape.x,
+            self.y+offset_y-reverse_expand+shape.y,
+            self.potential_max_x-self.potential_min_x+1,
+            self.height+reverse_expand, self.color)
 
     def expand(self, row: list[int])->None:
         if self.done:
@@ -123,3 +137,9 @@ class _PartialRectangle:
             if row[i] == self.color:
                 self.min_x -= 1
         self.height += 1
+
+    def _can_reverse_expand(self, row: list[int])->bool:
+        for i in range(self.min_x, self.max_x+1):
+            if row[i] not in (self.color, HIDDEN_COLOR):
+                return False
+        return True

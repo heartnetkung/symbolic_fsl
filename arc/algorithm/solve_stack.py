@@ -4,7 +4,8 @@ from collections import deque
 from .split_stack import *
 
 
-def solve_stack(shapes: list[Shape], grid: Grid)->Optional[list[Shape]]:
+def solve_stack(shapes: list[Shape], grid: Grid,
+                greedy: bool = False)->Optional[list[Shape]]:
     '''
     Merge multiple single-color shapes into multiple rectangles.
     '''
@@ -15,7 +16,7 @@ def solve_stack(shapes: list[Shape], grid: Grid)->Optional[list[Shape]]:
 
     found, result = False, []
     for color, shapes in shape_dict.items():
-        shapes2, found2 = _convert_shapes(shapes, grid, color)
+        shapes2, found2 = _convert_shapes(shapes, grid, color, greedy)
 
         shapes2.sort(key=lambda a: a.y*100+a.x)
         shapes3, found3 = _merge_loop(shapes2, grid, color)
@@ -58,7 +59,7 @@ def _create_shape_dict(
 
 
 def _convert_shapes(shapes: list[Shape], grid: Grid,
-                    color: int)->tuple[list[Shape], bool]:
+                    color: int, greedy: bool)->tuple[list[Shape], bool]:
     found, shapes2, shapes3 = False, [], []
     for i, shape in enumerate(shapes):
         rect = _to_rectangle(shape, grid, color)
@@ -69,7 +70,7 @@ def _convert_shapes(shapes: list[Shape], grid: Grid,
             shapes2.append(shape)
 
     for shape in shapes2:
-        splitted = split_stack(shape)
+        splitted = split_stack(shape, greedy)
         if splitted is not None:
             found = True
             shapes3 += splitted

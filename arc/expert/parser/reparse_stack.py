@@ -7,7 +7,8 @@ from enum import Enum
 
 class ReparseStackParam(Enum):
     skip = 0
-    normal = 1
+    reluctant = 1
+    greedy = 2
 
 
 class ReparseStack(ModelFreeArcAction[ReparseStackTask]):
@@ -47,9 +48,10 @@ class ReparseStack(ModelFreeArcAction[ReparseStackTask]):
     def _perform_side(self, all_shapes: list[list[Shape]], grids: list[Grid],
                       bgs: list[int])->tuple[bool, list[list[Shape]]]:
         all_results, found = [], False
+        is_greedy = self.param == ReparseStackParam.greedy
         for shapes, grid, bg in zip(all_shapes, grids, bgs):
-            grid2 = grid.replace_color(bg, NULL_COLOR)  # TODO why?
-            stacked_shapes = solve_stack(shapes, grid2)
+            grid2 = grid.replace_color(bg, NULL_COLOR)
+            stacked_shapes = solve_stack(shapes, grid2, is_greedy)
             sample_results = shapes if stacked_shapes is None else stacked_shapes
             found = True if stacked_shapes is not None else found
             all_results.append(sample_results)
