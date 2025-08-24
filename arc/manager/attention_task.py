@@ -36,7 +36,7 @@ class TrainingAttentionTask(Task[ArcTrainingState]):
         assert before.out_shapes is not None
         assert before.x_shapes is not None
         models = to_models(self.atn, before.out_shapes, before.x,
-                           before.x_shapes, self.params)
+                           before.x_shapes, self.params, self.g_atn)
         g_model = to_gmodel(self.g_atn, before.x_shapes, before.x)
         return [ModeledAttentionTask(model, g_model, self.common_y_shapes)
                 for model in models]
@@ -54,8 +54,12 @@ class ModeledAttentionTask(ModeledTask[ArcInferenceState]):
     def to_runtimes(self, before: ArcInferenceState)->list[InferenceTask]:
         assert before.out_shapes is not None
         assert before.x_shapes is not None
-        atn = to_runtimes(self.model, before.out_shapes, before.x, before.x_shapes)
-        if atn is None:
-            return []
+
         g_atns = to_gruntimes(self.g_model, before.x_shapes, before.x)
-        return [AttentionTask(atn, g_atn, self.common_y_shapes) for g_atn in g_atns]
+        result = []
+        for g_atn in g_atns:
+            atn = to_runtimes(self.model, before.out_shapes,
+                              before.x, before.x_shapes, g_atn)
+            if atn is not None:
+                result.append(AttentionTask(atn, g_atn, self.common_y_shapes))
+        return result
