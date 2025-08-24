@@ -41,7 +41,7 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]],
 
     extra_columns: list[ColumnMaker] = []
     if g_atn is not None:
-        extra_columns = [QueryShapeColumn(query, i, original_shapes, sample_index)
+        extra_columns = [_QueryShapeColumn(query, i, original_shapes, sample_index)
                          for i, query in enumerate(g_atn.shape_queries)]
 
     result = generate_df(
@@ -54,7 +54,7 @@ def train_model(df: pd.DataFrame, label: np.ndarray,
     return make_classifier(df, label, params, 'attention')
 
 
-class QueryShapeColumn(ColumnMaker):
+class _QueryShapeColumn(ColumnMaker):
     def __init__(self, query: ShapeQuery, index: int,
                  all_full_shapes: list[list[Shape]], sample_index: list[int])->None:
         self.query = query
@@ -65,6 +65,7 @@ class QueryShapeColumn(ColumnMaker):
     def append_all(
             self, result: dict[str, list[float]], grids: Optional[list[Grid]],
             all_shapes: Optional[list[list[Shape]]], edit_index: int)->None:
+        assert all_shapes is not None
         if self.query.is_null():
             return
 
