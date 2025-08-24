@@ -12,16 +12,18 @@ from typing import Optional
 def gen_rel_product(all_x_shapes: list[list[Shape]],
                     all_y_shapes: list[list[Shape]])->Optional[pd.DataFrame]:
     result = {'sample_id': [], 'x_index': [], 'y_index': [], 'rel': []}
+    exclude_exact = _should_exclude_exact(all_x_shapes, all_y_shapes)
+
     for sample_id, (x_shapes, y_shapes) in enumerate(zip(all_x_shapes, all_y_shapes)):
-        if len(x_shapes)> MAX_SHAPES_PER_GRID:
+        if len(x_shapes) > MAX_SHAPES_PER_GRID:
             return None
-        if len(y_shapes)> MAX_SHAPES_PER_GRID:
+        if len(y_shapes) > MAX_SHAPES_PER_GRID:
             return None
 
         x_shapes_set = set(x_shapes)
         for x_index, y_index in product(range(len(x_shapes)), range(len(y_shapes))):
             x_shape, y_shape = x_shapes[x_index], y_shapes[y_index]
-            if y_shape in x_shapes_set:
+            if (y_shape in x_shapes_set) and exclude_exact:
                 continue
 
             for rel in list_relationship(x_shape, y_shape):
@@ -30,6 +32,14 @@ def gen_rel_product(all_x_shapes: list[list[Shape]],
                 result['y_index'].append(y_index)
                 result['rel'].append(rel)
     return filter_consistency(pd.DataFrame(result), 'rel')
+
+
+def _should_exclude_exact(all_x_shapes: list[list[Shape]],
+                          all_y_shapes: list[list[Shape]])->int:
+    exact_count = 0
+    for x_shapes, y_shapes in zip(all_x_shapes, all_y_shapes):
+        exact_count += len(set(x_shapes) & set(y_shapes))
+    return exact_count >= len(all_x_shapes)
 
 
 def gen_prop(all_shapes: list[list[Shape]],
