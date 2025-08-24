@@ -48,6 +48,7 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
         y_shapes = self._perform(state.y, self.y_mode, y_bg, self.y_partition_color)
         if y_shapes is None:
             return None
+
         y_shapes = filter_overwhelming_shapes(y_shapes)
         return state.update(out_shapes=x_shapes, x_shapes=x_shapes,
                             x_bg=x_bg, y_bg=y_bg, y_shapes=y_shapes)
@@ -55,8 +56,10 @@ class IndependentParse(ModelFreeArcAction[ParseGridTask]):
     def _perform(self, grids: list[Grid], mode: ParseMode,
                  backgrounds: list[int],
                  partition_color: Optional[int])->Optional[list[list[Shape]]]:
-        grids2 = [grid.replace_color(bg, NULL_COLOR)
-                  for grid, bg in zip(grids, backgrounds)]
+        grids2 = []
+        for grid, bg in zip(grids, backgrounds):
+            new_grid = grid.replace_color(bg, NULL_COLOR)
+            grids2.append(new_grid if new_grid.get_top_color() != NULL_COLOR else grid)
         unknown_grids = grids if self.unknown_background else grids2
 
         if mode == ParseMode.crop:
