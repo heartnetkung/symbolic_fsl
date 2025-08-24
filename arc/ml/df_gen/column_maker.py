@@ -39,9 +39,11 @@ def extract_properties(shape: Shape)->dict[str, Any]:
     if shape.mass > 2:
         result['is_symmetry(+v)'] = int(shape._grid.flip_v() == shape._grid)
         result['is_symmetry(+h)'] = int(shape._grid.flip_h() == shape._grid)
+        result['is_symmetry(+t)'] = int(shape._grid.transpose() == shape._grid)
     else:
         result['is_symmetry(+h)'] = -1
         result['is_symmetry(+v)'] = -1
+        result['is_symmetry(+t)'] = -1
     return result
 
 
