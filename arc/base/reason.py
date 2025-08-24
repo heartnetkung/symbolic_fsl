@@ -149,6 +149,7 @@ def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
     for path_no, path in enumerate(plan.shortest_simple_paths()):
         logger.info('\n========= path_no: %d', path_no)
         last_path_no = path_no
+        _print_path(plan, path)
 
         if path_no > max_path:
             logger.info('max_path limit \n%s', result)
@@ -180,3 +181,13 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
     for new_state, new_prefix in next_iteration_data.items():
         _fill_traces(new_state, path, index+1,
                      end_time, prefix+new_prefix, result, cache)
+
+
+def _print_path(plan: PlanningGraph, path: list[TrainingState])->None:
+    if not logger.isEnabledFor(logging.INFO):
+        return
+
+    previous_node = path[0]
+    for i, node in enumerate(path[1:]):
+        logger.info('%d\n%s', i, plan.get_edge_data(previous_node, node))
+        previous_node = node
