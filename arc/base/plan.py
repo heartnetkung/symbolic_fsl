@@ -100,8 +100,9 @@ def plan(initial_state: TrainingState, manager: Manager, hr: Recruiter,
                             logger.info('new state: %s', new_state)
                         if add_success:
                             logger.info('new action: %s', new_action)
-                        if soltion_success:
-                            logger.info('solution success')
+                        if soltion_success and logger.isEnabledFor(logging.INFO):
+                            logger.info('successful_trace: %s',
+                                        plan.find_action_path(new_state))
 
         if len(next_queue) == 0:
             logger.info('options exhausted')
