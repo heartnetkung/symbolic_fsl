@@ -31,7 +31,7 @@ class PlanningGraph:
             return True
         else:
             edge_data['data'].append((task, action))
-            return False
+            return True
 
     def shortest_simple_paths(self)->Generator[list[TrainingState], None, None]:
         for end_state in self.end_states:
