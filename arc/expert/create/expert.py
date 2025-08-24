@@ -85,7 +85,7 @@ def _to_diag(shapes: list[Shape])->Optional[list[Diagonal]]:
             return None
 
     width_heights = {(diag.width, diag.height) for diag in result}
-    if width_heights == {(1, 1)}: # if all dot, do rectangle instead
+    if width_heights == {(1, 1)}:  # if all dot, do rectangle instead
         return None
     return result
 
