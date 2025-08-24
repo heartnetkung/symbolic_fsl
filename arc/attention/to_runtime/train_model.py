@@ -72,8 +72,8 @@ class _QueryShapeColumn(ColumnMaker):
         for index, (id1, shapes) in enumerate(zip(self.sample_index, all_shapes)):
             id2 = self.query.shape_index[id1]
             query_shape = self.all_full_shapes[id1][id2]
-            shape_properties = query_shape.to_input_var() | _make_same_shape_column(
-                query_shape, shapes, self.index)
+            shape_properties = query_shape.to_input_var() | _make_extra_column(
+                query_shape, shapes)
             for k, v in shape_properties.items():
                 result_key = f'+query{self.index}.{k}'
                 result_value = result.get(result_key, None)
@@ -82,8 +82,7 @@ class _QueryShapeColumn(ColumnMaker):
                 result_value.append(v)
 
 
-def _make_same_shape_column(
-        query_shape: Shape, column_shapes: list[Shape], index: int)->dict[str, int]:
+def _make_extra_column(query_shape: Shape, column_shapes: list[Shape])->dict[str, int]:
     result = {}
     for i, shape in enumerate(column_shapes):
         key = f'same_shape(shape{i})'
@@ -91,4 +90,6 @@ def _make_same_shape_column(
             result[key] = 0
         else:
             result[key] = int(query_shape.shape_value == shape.shape_value)
+
+        result[f'is_contain(shape{i})'] = int(len(is_contain(query_shape, shape)) > 0)
     return result

@@ -20,7 +20,7 @@ def list_relationship(a: Shape, b: Shape, include_properties=True)->set[str]:
     result |= _unknown_scale(a, b, a_dict, b_dict)
     result |= _x_or_y(a, b)
     result |= _full_overlap(a, b)
-    result |= _is_contain(a, b)
+    result |= is_contain(a, b)
     return result
 
 
@@ -40,7 +40,7 @@ def _x_or_y(a: Shape, b: Shape)->set[str]:
     return result
 
 
-def _is_contain(a: Shape, b: Shape)->set[str]:
+def is_contain(a: Shape, b: Shape)->set[str]:
     a_x2, a_y2 = a.x+a.width, a.y+a.height
     b_x2, b_y2 = b.x+b.width, b.y+b.height
 
