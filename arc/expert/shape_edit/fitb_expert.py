@@ -48,7 +48,7 @@ class FillInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             if len(non_null_pixels) != 1:
                 continue
 
-            color = non_null_pixels.pop()
+            color = int(non_null_pixels.pop())
             min_width_height = _find_fritb_min_wh(y_shapes, color)
             if min_width_height is None:
                 continue
