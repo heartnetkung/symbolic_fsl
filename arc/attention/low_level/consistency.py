@@ -42,19 +42,6 @@ def _should_exclude_exact(all_x_shapes: list[list[Shape]],
     return exact_count >= len(all_x_shapes)
 
 
-def gen_prop(all_shapes: list[list[Shape]],
-             consider_all_props: bool = True)->pd.DataFrame:
-    prop_func = list_properties if consider_all_props else list_shape_representations
-    result = {'sample_id': [], 'index': [], 'prop': []}
-    for sample_id, shapes in enumerate(all_shapes):
-        for shape_index, shape in enumerate(shapes):
-            for prop_key, prop_value in prop_func(shape).items():
-                result['sample_id'].append(sample_id)
-                result['index'].append(shape_index)
-                result['prop'].append(f'{prop_key}: {prop_value}')
-    return filter_consistency(pd.DataFrame(result), 'prop')
-
-
 def cal_consistency_requirement(df: pd.DataFrame)->int:
     n_samples = len(pd.unique(df['sample_id']))
     # TODO should we do this? return min(n_samples, 3)
