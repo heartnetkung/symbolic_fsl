@@ -10,3 +10,4 @@ from .geom import apply_logic, union, subtract, LogicType
 from .visual_methods import shape_value, list_shape_colors, measure_gap, split_shape
 from .pattern_finder import find_h_symmetry, find_v_symmetry
 from .direction import Direction, sort_shapes
+from .container import NonOverlapingContainer
