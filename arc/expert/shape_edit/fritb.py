@@ -66,12 +66,13 @@ class FillRectangleInTheBlank(ModelFreeArcAction[AttentionTask]):
                         container.add(new_rect)
 
         if self.condition == FRITBCondition.largest:
-            all_areas = [shape.width*shape.height for shape in container.shapes]
+            all_areas = [shape.width*shape.height
+                         for shape in container.shapes.values()]
             largest_area = max(all_areas, default=0)
-            candidates = [shape for shape in container.shapes
+            candidates = [shape for shape in container.shapes.values()
                           if shape.width*shape.height == largest_area]
         elif self.condition == FRITBCondition.min_size:
-            candidates = container.shapes
+            candidates = list(container.shapes.values())
         else:
             raise Exception('unsupported type')
 

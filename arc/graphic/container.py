@@ -11,7 +11,8 @@ class NonOverlapingContainer:
 
     def __init__(self, width: int, height: int)->None:
         self.grid = make_grid(width, height)
-        self.shapes = []
+        self.shapes: dict[int, Shape] = {}
+        self.max_index = 0
 
     def __len__(self)->int:
         return len(self.shapes)
@@ -27,11 +28,12 @@ class NonOverlapingContainer:
                 if self.grid.safe_access(x, y) != NULL_COLOR:
                     return False
 
-        index = len(self.shapes)
-        self.shapes.append(shape)
+        self.shapes[self.max_index] = shape
         for x in range(shape.x, shape.x+shape.width):
             for y in range(shape.y, shape.y+shape.height):
-                self.grid.data[y][x] = index
+                self.grid.data[y][x] = self.max_index
+
+        self.max_index += 1
         return True
 
     def query_overlap(self, shape: Shape)->list[Shape]:
