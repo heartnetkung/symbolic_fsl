@@ -1,4 +1,5 @@
 from .fitb import ExpansionMode, FillInTheBlank, draw_shape
+from .fritb import FillRectangleInTheBlank, FRITBCondition
 from ...base import *
 from ...graphic import *
 from ...ml import *
@@ -42,6 +43,25 @@ class FillInTheBlankExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             result.append(FillInTheBlank(
                 mode, i, MemorizedModel(widths), MemorizedModel(heights),
                 StepMemoryModel(pixels), self.params))
+
+            non_null_pixels = set(pixels)-{NULL_COLOR}
+            if len(non_null_pixels) != 1:
+                continue
+
+            color = non_null_pixels.pop()
+            min_width_height = _find_fritb_min_wh(y_shapes, color)
+            if min_width_height is None:
+                continue
+
+            for cond in FRITBCondition:
+                new_action = FillRectangleInTheBlank(
+                    cond, i, color, min_width_height, self.params)
+                new_state = new_action.perform(state, task)  # type:ignore
+                if new_state is None:
+                    continue
+
+                if y_shapes == get_x_col(new_state, atn, i):
+                    result.append(new_action)
         return result
 
 
@@ -109,3 +129,18 @@ def _extract_pixels(x_shapes: list[Shape], y_shapes: list[Shape], widths: np.nda
 
                 result.append(y_cell)
     return np.array(result)
+
+
+def _find_fritb_min_wh(y_shapes: list[Shape], color: int)->Optional[int]:
+    width_heights = []
+    for y_shape in y_shapes:
+        subshapes = list_objects(y_shape._grid.keep_color(color))
+        for shape in subshapes:
+            if not isinstance(shape, FilledRectangle):
+                return None
+            width_heights.append(shape.width)
+            width_heights.append(shape.height)
+
+    if len(width_heights) == 0:
+        return None
+    return min(width_heights)
