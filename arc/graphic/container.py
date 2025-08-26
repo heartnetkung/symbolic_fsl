@@ -1,6 +1,7 @@
 from .shape import *
 from .types import *
 from .util import *
+from typing import Generator
 
 
 class NonOverlapingContainer:
@@ -22,16 +23,18 @@ class NonOverlapingContainer:
         Add a shape and return True if successful.
         If there is an overlapping shape, the operation fails and return False.
         '''
+        # zero pixel
+        coord = next(_shape_pixel_loop(shape, self.grid), None)
+        if coord is None:
+            return False
 
-        for x in range(shape.x, shape.x+shape.width):
-            for y in range(shape.y, shape.y+shape.height):
-                if self.grid.safe_access(x, y) != NULL_COLOR:
-                    return False
+        for x, y in _shape_pixel_loop(shape, self.grid):
+            if self.grid.data[y][x] != NULL_COLOR:
+                return False
 
         self.shapes[self.max_index] = shape
-        for x in range(shape.x, shape.x+shape.width):
-            for y in range(shape.y, shape.y+shape.height):
-                self.grid.data[y][x] = self.max_index
+        for x, y in _shape_pixel_loop(shape, self.grid):
+            self.grid.data[y][x] = self.max_index
 
         self.max_index += 1
         return True
@@ -43,11 +46,10 @@ class NonOverlapingContainer:
         '''
 
         result_indexes = set()
-        for x in range(shape.x, shape.x+shape.width):
-            for y in range(shape.y, shape.y+shape.height):
-                value = self.grid.safe_access(x, y)
-                if value >= 0:
-                    result_indexes.add(value)
+        for x, y in _shape_pixel_loop(shape, self.grid):
+            value = self.grid.safe_access(x, y)
+            if value >= 0:
+                result_indexes.add(value)
 
         return [self.shapes[i] for i in sorted(result_indexes)]
 
@@ -56,8 +58,12 @@ class NonOverlapingContainer:
         Remove a shape in the collection and return True if successful.
         If that object does not exist in the collection, return False.
         '''
-        index = self.grid.safe_access(shape.x, shape.y)
-        if index < 0:
+        coord = next(_shape_pixel_loop(shape, self.grid), None)
+        if coord is None:
+            return False
+
+        index = self.grid.data[coord[1]][coord[0]]
+        if index == NULL_COLOR:
             return False
 
         found_shape = self.shapes[index]
@@ -65,7 +71,19 @@ class NonOverlapingContainer:
             return False
 
         del self.shapes[index]
-        for x in range(shape.x, shape.x+shape.width):
-            for y in range(shape.y, shape.y+shape.height):
-                self.grid.data[y][x] = NULL_COLOR
+        for x, y in _shape_pixel_loop(shape, self.grid):
+            self.grid.data[y][x] = NULL_COLOR
         return True
+
+
+def _shape_pixel_loop(shape: Shape, grid: Grid)->Generator[tuple[int, int], None, None]:
+    valid_x, valid_y = range(0, grid.width), range(0, grid.height)
+
+    for x in range(shape.width):
+        for y in range(shape.height):
+            if shape._draw_cell(x, y) == NULL_COLOR:
+                continue
+
+            return_x, return_y = shape.x+x, shape.y+y
+            if (return_x in valid_x) and (return_y in valid_y):
+                yield (return_x, return_y)
