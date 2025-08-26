@@ -2,6 +2,7 @@ from .shape import *
 from .types import *
 from .util import *
 from typing import Generator
+from collections.abc import Iterable
 
 
 class NonOverlapingContainer:
@@ -17,6 +18,9 @@ class NonOverlapingContainer:
 
     def __len__(self)->int:
         return len(self.shapes)
+
+    def items(self)->Iterable[Shape]:
+        return self.shapes.values()
 
     def add(self, shape: Shape)->bool:
         '''
