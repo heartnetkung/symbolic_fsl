@@ -29,7 +29,7 @@ class Shape(RuntimeObject):
         super().__init__()
 
     @abstractmethod
-    def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
+    def _draw_cell(self, i: int, j: int)->int:
         '''
         Draw a cell to canvas with i starting from 0-height and j starting from 0-width
         If the color is not between 0 and 9, the draw is ignored.
@@ -80,7 +80,7 @@ class Shape(RuntimeObject):
                     i2, j2 = i, j
 
                 if i2 >= 0 and j2 >= 0 and i2 < grid_height and j2 < grid_width:
-                    color = self._draw_cell(canvas, i, j)
+                    color = self._draw_cell(i, j)
                     if valid_color(color):
                         canvas.data[i2][j2] = color
 
@@ -113,7 +113,7 @@ class FilledRectangle(Shape):
         super().__init__(x, y, width, height)
         self.color = color
 
-    def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
+    def _draw_cell(self, i: int, j: int)->int:
         return self.color
 
     def to_entropy_var(self)->dict[str, Any]:
@@ -161,7 +161,7 @@ class HollowRectangle(Shape):
         self.color = color
         self.stroke = stroke
 
-    def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
+    def _draw_cell(self, i: int, j: int)->int:
         if i < self.stroke or j < self.stroke:
             return self.color
         if i >= (self.height-self.stroke) or j >= (self.width-self.stroke):
@@ -242,7 +242,7 @@ class Diagonal(Shape):
         result['north_west'] = 1 if result['north_west'] else 0
         return result
 
-    def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
+    def _draw_cell(self, i: int, j: int)->int:
         if self.north_west and (i == j):
             return self.color
         if (not self.north_west) and (i+j+1 == self.width):
@@ -320,7 +320,7 @@ class Unknown(Shape):
                 to_append[f'[{i}][{j}]'] = self.grid.data[i][j]
         return super()._base_entropy() | to_append
 
-    def _draw_cell(self, canvas: Grid, i: int, j: int)->int:
+    def _draw_cell(self, i: int, j: int)->int:
         return self.grid.data[i][j]
 
     @property
