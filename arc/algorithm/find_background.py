@@ -62,7 +62,7 @@ def find_backgrounds(state: ArcTrainingState)->list[tuple[MLModel, MLModel]]:
         if x_mode in x_common_colors and x_mode != COMMON_BG:
             result.append((ConstantModel(x_mode), ConstantModel(x_mode)))
     if len(result) > 0:
-        return result
+        return _deduplicate(result)
     return [(ConstantModel(COMMON_BG), ConstantModel(COMMON_BG))]  # type:ignore
 
 
@@ -82,6 +82,10 @@ def find_background(grid: Grid)->int:
     diagonal = True
     grid2, color_map = _draw_color_map(grid, diagonal)
     return _find_most_touch(grid2, diagonal, color_map)
+
+
+def _deduplicate(bgs: list[tuple[MLModel, MLModel]])->list[tuple[MLModel, MLModel]]:
+    return list({repr(bg): bg for bg in bgs}.values())
 
 
 def _find_common_colors(grids: list[Grid])->set[int]:
