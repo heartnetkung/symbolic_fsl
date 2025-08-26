@@ -10,7 +10,7 @@ def test_basic():
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})
     result = plan(init_state, manager, hr, criteria, 5, 100, 100)
-    result2 = reason(result.plan, init_state2, 10, 10, 999)
+    result2 = adjust(result.plan, init_state2, 10, 10, 999)
 
     assert len(result2.traces) == 4
     assert result2.traces[0].cost == 4
@@ -32,7 +32,7 @@ def test_max_result():
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})
     result = plan(init_state, manager, hr, criteria, 5, 100, 100)
-    result2 = reason(result.plan, init_state2, 2, 10, 999)
+    result2 = adjust(result.plan, init_state2, 2, 10, 999)
 
     assert len(result2.traces) == 2
     assert result2.traces[0].cost == 4
@@ -50,7 +50,7 @@ def test_max_path():
     criteria = ArcSuccessCriteria()
     hr = BasicRecruiter({MockTask: [MockExpert()]})
     result = plan(init_state, manager, hr, criteria, 5, 100, 100)
-    result2 = reason(result.plan, init_state2, 10, 1, 999)
+    result2 = adjust(result.plan, init_state2, 10, 1, 999)
 
     assert len(result2.traces) == 3
     assert result2.traces[0].cost == 4

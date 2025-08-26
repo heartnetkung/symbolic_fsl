@@ -139,7 +139,7 @@ class StateCache:
         return next_iteration_data
 
 
-def reason(plan: PlanningGraph, init_state: InferenceState, max_result: int,
+def adjust(plan: PlanningGraph, init_state: InferenceState, max_result: int,
            max_path: int, max_time_s: int)->ReasoningResult:
     result = ResultCollection(max_result)
     state_cache = StateCache(plan)

@@ -8,11 +8,11 @@ class Report:
     def __init__(self)->None:
         self.indexes = []
         self.data = {'duration': [], 'success': [], 'n_solution': [], 'path_count': [],
-                     'cost@success': [], 'plan_message': [], 'reason_message': []}
+                     'cost@success': [], 'plan_message': [], 'adjust_message': []}
 
     def append(self, index: int, duration: float, success: bool, n_solution: int,
                path_count: int, cost: int, plan_message: str,
-               reason_message: str)->None:
+               adjust_message: str)->None:
         self.indexes.append(index)
         self.data['duration'].append(duration)
         self.data['success'].append(success)
@@ -20,7 +20,7 @@ class Report:
         self.data['path_count'].append(path_count)
         self.data['cost@success'].append(cost)
         self.data['plan_message'].append(plan_message)
-        self.data['reason_message'].append(reason_message)
+        self.data['adjust_message'].append(adjust_message)
 
     def print(self)->None:
         df = pd.DataFrame(self.data, index=self.indexes)  # type:ignore
@@ -43,8 +43,8 @@ def solve_range(start: int, end: int, choice: DatasetChoice)->None:
             cost = result.correct_trace.cost if result.correct_trace is not None else -1
             report.append(
                 i, result.elapsed_time_s, result.correct == True,
-                len(result.predictions), result.reasoning_result.path_count,
-                cost, result.planning_result.message, result.reasoning_result.message)
+                len(result.predictions), result.adjusting_result.path_count,
+                cost, result.planning_result.message, result.adjusting_result.message)
         except:
             print(traceback.format_exc())
     report.print()

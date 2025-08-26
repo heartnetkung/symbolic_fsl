@@ -16,7 +16,7 @@ def init(log_level: int)->GlobalParams:
     warnings.simplefilter("ignore", category=UserWarning)
     logging.basicConfig(stream=sys.stdout, format='%(message)s')
     logging.getLogger('arc.base.plan').setLevel(log_level)
-    logging.getLogger('arc.base.reason').setLevel(log_level)
+    logging.getLogger('arc.base.adjust').setLevel(log_level)
     logging.getLogger('arc.base.solve_arc').setLevel(log_level)
     logging.getLogger('arc.ml.model.model_factory').setLevel(log_level)
     init_pandas()

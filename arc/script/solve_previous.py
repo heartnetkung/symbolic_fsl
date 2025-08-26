@@ -35,8 +35,8 @@ def solve_previous(index: int = -1)->None:
             cost = result.correct_trace.cost if result.correct_trace is not None else -1
             report.append(
                 index, result.elapsed_time_s, result.correct == True,
-                len(result.predictions), result.reasoning_result.path_count, cost,
-                result.planning_result.message, result.reasoning_result.message)
+                len(result.predictions), result.adjusting_result.path_count, cost,
+                result.planning_result.message, result.adjusting_result.message)
         except KeyboardInterrupt:
             raise
         except:

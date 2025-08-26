@@ -11,5 +11,5 @@ from .basic_modeling import (ModelFreeTask, BasicRecruiter, ModelFreeArcAction,
                              ArcSuccessCriteria, default_cost, TrainingOnlyAction,
                              ModelBasedArcAction)
 from .plan import plan, PlanningResult
-from .reason import reason, ReasoningResult
+from .adjust import adjust, ReasoningResult
 from .solve_arc import ArcResult, solve_arc
