@@ -95,28 +95,31 @@ class ModelCache:
 
 
 class StateCache:
-    def __init__(self, plan: PlanningGraph)->None:
-        self.model_cache = ModelCache(plan)
+    def __init__(self)->None:
         self.cache = {}
 
-    def get_states(self, train_before: TrainingState, train_after: TrainingState,
-                   infer_before: InferenceState)->dict[InferenceState, list[
-                       tuple[InferenceTask, InferenceAction]]]:
+    def get_states(
+            self, train_before: TrainingState, train_after: TrainingState,
+            infer_before: InferenceState,
+            task_actions: list[tuple[ModeledTask, InferenceAction]])->dict[
+            InferenceState, list[tuple[InferenceTask, InferenceAction]]]:
 
         key = (train_before, train_after, infer_before)
         values = self.cache.get(key, None)
         if values is None:
-            new_values = self._infer_states(train_before, train_after, infer_before)
+            new_values = self._infer_states(
+                train_before, train_after, infer_before, task_actions)
             self.cache[key] = new_values
             return new_values
         return values
 
-    def _infer_states(self, train_before: TrainingState, train_after: TrainingState,
-                      infer_before: InferenceState)->dict[InferenceState, list[
-                          tuple[InferenceTask, InferenceAction]]]:
+    def _infer_states(
+            self, train_before: TrainingState, train_after: TrainingState,
+            infer_before: InferenceState,
+            task_actions: list[tuple[ModeledTask, InferenceAction]])->dict[
+            InferenceState, list[tuple[InferenceTask, InferenceAction]]]:
 
         next_iteration_data = {}
-        task_actions = self.model_cache.get_models(train_before, train_after)
         for modeled_task, runtime_action in task_actions:
             try:
                 runtime_tasks = modeled_task.to_runtimes(infer_before)
@@ -142,7 +145,8 @@ class StateCache:
 def adjust(plan: PlanningGraph, init_state: InferenceState, max_result: int,
            max_path: int, max_time_s: int)->AdjustingResult:
     result = ResultCollection(max_result)
-    state_cache = StateCache(plan)
+    model_cache = ModelCache(plan)
+    state_cache = StateCache()
     end_time = time.time()+max_time_s
     last_path_no = 0
 
@@ -159,7 +163,8 @@ def adjust(plan: PlanningGraph, init_state: InferenceState, max_result: int,
             logger.info('time limit \n%s', result)
             return AdjustingResult(result.to_list(), path_no+1, 'time limit')
 
-        _fill_traces(init_state, path, 0, end_time, [], result, state_cache)
+        _fill_traces(init_state, path, 0, end_time, [],
+                     result, model_cache, state_cache)
 
     logger.info('options exhausted \n%s', result)
     return AdjustingResult(result.to_list(), last_path_no+1, 'options exhausted')
@@ -167,7 +172,8 @@ def adjust(plan: PlanningGraph, init_state: InferenceState, max_result: int,
 
 def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
                  end_time: float, prefix: list[tuple[InferenceTask, InferenceAction]],
-                 result: ResultCollection, cache: StateCache)->None:
+                 result: ResultCollection, model_cache: ModelCache,
+                 state_cache: StateCache)->None:
     if index == len(path)-1:
         result.append(Trace(prefix, state))
         return
@@ -177,10 +183,11 @@ def _fill_traces(state: InferenceState, path: list[TrainingState], index: int,
         return
 
     node, next_node = path[index], path[index+1]
-    next_iteration_data = cache.get_states(node, next_node, state)
+    task_actions = model_cache.get_models(node, next_node)
+    next_iteration_data = state_cache.get_states(node, next_node, state, task_actions)
     for new_state, new_prefix in next_iteration_data.items():
-        _fill_traces(new_state, path, index+1,
-                     end_time, prefix+new_prefix, result, cache)
+        _fill_traces(new_state, path, index+1, end_time, prefix+new_prefix,
+                     result, model_cache, state_cache)
 
 
 def _print_path(plan: PlanningGraph, path: list[TrainingState])->None:
