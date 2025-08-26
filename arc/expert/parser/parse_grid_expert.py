@@ -13,7 +13,7 @@ class ParseGridExpert(Expert[ArcTrainingState, ParseGridTask]):
 
     def solve_problem(self, state: ArcTrainingState, task: ParseGridTask)->list[Action]:
         result = []
-        backgrounds = find_backgrounds(state)
+        backgrounds = dict.fromkeys(find_backgrounds(state))
         x_partition_colors = _cache_partition_color(state.x)
         y_partition_colors = _cache_partition_color(state.y)
         df = make_background_df(state)
