@@ -25,7 +25,7 @@ class ArcResult:
     X_test_count: int
     elapsed_time_s: float
     planning_result: PlanningResult
-    adjusting_result: ReasoningResult
+    adjusting_result: AdjustingResult
     correct: Optional[bool] = None  # if y_test is in dataset check if it's correct
     correct_trace: Optional[Trace] = None
 
