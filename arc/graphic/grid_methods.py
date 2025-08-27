@@ -156,11 +156,6 @@ def list_cells(grid: Grid)->list[Shape]:
     return result
 
 
-def parse_noise(grid: Grid, color: int)->Unknown:
-    x, y, subgrid = trim(np.where(np.array(grid.data) == color, color, NULL_COLOR))
-    return Unknown(x, y, subgrid)
-
-
 def partition(grid: Grid, rows: list[int], cols: list[int],
               row_colors: list[int], col_colors: list[int])->list[Shape]:
     np_grid = np.array(grid.data)
