@@ -23,8 +23,7 @@ def default_make_df(
     x = [state.x[i] for i in task.atn.sample_index]
     x_shapes = []
 
-    for row_index, (sample, shape_indexes) in enumerate(zip(
-            task.atn.sample_index, task.atn.x_index)):
+    for sample, shape_indexes in zip(task.atn.sample_index, task.atn.x_index):
         row = [state.out_shapes[sample][i] for i in shape_indexes]
         if isinstance(task, DrawLineTask) or isinstance(task, TrainingDrawLineTask):
             x_shapes.append(row)

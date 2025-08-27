@@ -146,16 +146,6 @@ def list_sparse_objects(grid: Grid, diagonal=True)->list[Shape]:
             for args in from_grid_args]
 
 
-def list_cells(grid: Grid)->list[Shape]:
-    ''''List all cells separately.'''
-    result = []
-    for y, row in enumerate(grid.data):
-        for x, cell in enumerate(row):
-            if cell != NULL_COLOR:
-                result.append(FilledRectangle(x, y, 1, 1, cell))
-    return result
-
-
 def partition(grid: Grid, rows: list[int], cols: list[int],
               row_colors: list[int], col_colors: list[int])->list[Shape]:
     np_grid = np.array(grid.data)

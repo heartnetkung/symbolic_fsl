@@ -48,13 +48,3 @@ class Hamming(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         models = make_regressor(
             df, self.pixel_model.result, self.params, 'hamming')
         return [Hamming(self.feat_index, model, self.params) for model in models]
-
-
-def _gen_dummy_df(grid: Grid)->pd.DataFrame:
-    data = {'x': [], 'y': []}
-    for y in range(grid.height):
-        for x in range(grid.width):
-            if grid.data[y][x] != NULL_COLOR:
-                data['x'].append(x)
-                data['y'].append(y)
-    return pd.DataFrame(data)

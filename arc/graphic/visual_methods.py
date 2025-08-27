@@ -41,54 +41,9 @@ def measure_gap(shape1: Shape, shape2: Shape, threshold: float)->float:
     return sqrt(min_distance)
 
 
-def split_shape(shape: Shape)->list[Shape]:
-    if shape.__class__ != Unknown:
-        return []
-
-    grid = shape._grid
-    divider1 = _split_shape_single_direction(grid)
-    divider2 = _split_shape_single_direction(grid.flip_v())
-    divider = divider1 if divider1 != -1 else divider2
-    if divider != -1:
-        x1, y1, grid1 = trim(np.array(grid.data)[0:divider, :])
-        x2, y2, grid2 = trim(np.array(grid.data)[divider:, :])
-        return [Unknown(shape.x+x1, shape.y+y1, grid1),
-                Unknown(shape.x+x2, shape.y+y2+divider, grid2)]
-
-    divider3 = _split_shape_single_direction(grid.transpose())
-    divider4 = _split_shape_single_direction(grid.transpose().flip_v())
-    divider = divider3 if divider3 != -1 else divider4
-    if divider != -1:
-        x1, y1, grid1 = trim(np.array(grid.data)[:, 0:divider])
-        x2, y2, grid2 = trim(np.array(grid.data)[:, divider:])
-        return [Unknown(shape.x+x1, shape.y+y1, grid1),
-                Unknown(shape.x+x2+divider, shape.y+y2, grid2)]
-
-    return []
-
-
 # ====================
 #  private methods
 # ====================
-
-def _split_shape_single_direction(grid: Grid)->int:
-    total_height = grid.height
-    left_height = 0
-    for i in range(total_height):
-        if grid.data[i][0] != NULL_COLOR:
-            break
-        left_height += 1
-
-    right_height = 0
-    for i in range(total_height):
-        if grid.data[-i-1][-1] != NULL_COLOR:
-            break
-        right_height += 1
-
-    if (left_height + right_height) < total_height:
-        return -1
-    return left_height
-
 
 def _find_center(shape: Shape)->FloatCoordinate:
     return FloatCoordinate(shape.x+(shape.width/2), shape.y+(shape.height/2))

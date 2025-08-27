@@ -157,8 +157,8 @@ def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
             'subshape.type': shape.shape_type,
             '+to_rank(subshape.x)%3': x_rank % 3,
             '+to_rank(subshape.x)%2': x_rank % 2,
-            '+to_rank(subshape.y)%3': x_rank % 3,
-            '+to_rank(subshape.y)%2': x_rank % 2}
+            '+to_rank(subshape.y)%3': y_rank % 3,
+            '+to_rank(subshape.y)%2': y_rank % 2}
         properties.append(new_property)
 
     result = {}

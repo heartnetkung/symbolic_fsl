@@ -122,10 +122,6 @@ class Grid:
             return NULL_COLOR
         return color_ranks[-1][0]
 
-    def print_grid(self)->None:
-        for row in self.data:
-            print(row)
-
     def print_grid2(self)->None:
         print('Grid([')
         _last = len(self.data)-1
@@ -307,7 +303,6 @@ def range_intersect(r1: range, r2: range)->range:
     if (r1.start > r2.stop) or (r2.start > r1.stop):
         return range(0, 0)
     return range(max(r1.start, r2.start), min(r1.stop, r2.stop))
-
 
 
 def find_separators(grid: Grid, color: int = NULL_COLOR)->tuple[

@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 from itertools import permutations
 from dataclasses import dataclass
-from operator import itemgetter
 from typing import Optional
 import math
 

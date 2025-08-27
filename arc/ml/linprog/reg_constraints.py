@@ -3,7 +3,6 @@ import numpy as np
 from scipy.optimize import LinearConstraint
 from .variables import *
 
-POS_ENCODING = 1.3
 BIG_M = 1e6
 EPSILON = 1e-4
 MIN_MATCH = 2

@@ -71,7 +71,6 @@ def _recursive_shape_split(shape: Shape, original_shape: Shape, subshapes: list[
             continue  # depth-first fails
 
         # success
-        new_x, new_y = shape.x+offset[0], shape.y+offset[1]
         return [_intersect(original_shape, subshape, offset[0], offset[1])]+new_result
     return None
 

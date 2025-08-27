@@ -131,17 +131,6 @@ def _subshape(a: Shape, b: Shape)->set[str]:
     return set()
 
 
-def _has_subshape(grid: Grid, smaller_grid: Grid)->bool:
-    width_diff = grid.width - smaller_grid.width
-    height_diff = grid.height - smaller_grid.height
-
-    for offset_y in range(height_diff+1):
-        for offset_x in range(width_diff+1):
-            if grid.offset_subshape(smaller_grid, offset_x, offset_y):
-                return True
-    return False
-
-
 def _unknown_scale(a: Shape, b: Shape, a_dict: dict[str, int],
                    b_dict: dict[str, int])->set[str]:
     if a.__class__ != Unknown or b.__class__ != Unknown:

@@ -41,14 +41,6 @@ class RunPhysicsExpert(Expert[ArcTrainingState, PhysicsTask]):
         return result
 
 
-def _check_single_color(all_shapes: list[list[Shape]])->bool:
-    for shapes in all_shapes:
-        for shape in shapes:
-            if shape.single_color == NULL_COLOR:
-                return False
-    return True
-
-
 def _check_mass(all_x_shapes: list[list[Shape]], all_y_shapes: list[list[Shape]],
                 x_grids: list[Grid], y_grids: list[Grid])->bool:
     for x_grid, y_grid, x_shapes, y_shapes in zip(

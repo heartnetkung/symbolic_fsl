@@ -53,23 +53,6 @@ def total_mass(shapes: list[Shape])->int:
     return (np.array(canvas.data) != NULL_COLOR).sum()
 
 
-def top_mass(shapes: list[Shape])->int:
-    if len(shapes) == 0:
-        return 0
-    return max(shapes, key=lambda x: x.mass).mass
-
-
-def duplicates(prototypes: list[Shape], new_coords: list[tuple[int, int]])->list[Shape]:
-    result = []
-    for prototype in prototypes:
-        for x, y in new_coords:
-            new_shape = deepcopy(prototype)
-            new_shape.x += x
-            new_shape.y += y
-            result.append(new_shape)
-    return result
-
-
 def find_inner_bound(a: Shape, b: Shape)->FilledRectangle:
     inner_x = _find_inner_bound_1d(range(a.x, a.x+a.width), range(b.x, b.x+b.width))
     inner_y = _find_inner_bound_1d(range(a.y, a.y+a.height), range(b.y, b.y+b.height))

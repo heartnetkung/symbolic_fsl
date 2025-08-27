@@ -63,10 +63,3 @@ def subtract(shape1: Shape, shape2: Shape)->Unknown:
             if shape2_grid[i][j] != NULL_COLOR:
                 grid.safe_assign(j+shape2.x-shape1.x, i+shape2.y-shape1.y, NULL_COLOR)
     return Unknown(shape1.x, shape1.y, grid)
-
-
-def _from_full_grid(grid: np.ndarray, hint: Optional[Type] = None)->Unknown:
-    x, y, altered_grid = trim(grid)
-    if altered_grid.height == 0 or altered_grid.width == 0:
-        return NULL_SHAPE  # intersect can generate zero with object
-    return Unknown(x, y, altered_grid)
