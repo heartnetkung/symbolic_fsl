@@ -48,20 +48,14 @@ class NonOverlapingContainer:
         List all shapes in the collection that overlap with the given shape.
         The result is always sorted by the insertion index.
         '''
-
-        result_indexes = set()
-        for x, y in _shape_pixel_loop(shape, self.grid):
-            value = self.grid.safe_access(x, y)
-            if value >= 0:
-                result_indexes.add(value)
-
-        return [self.shapes[i] for i in sorted(result_indexes)]
+        return self.query(self.get_overlap(shape))
 
     def remove(self, shape: Shape)->bool:
         '''
         Remove a shape in the collection and return True if successful.
         If that object does not exist in the collection, return False.
         '''
+
         coord = next(_shape_pixel_loop(shape, self.grid), None)
         if coord is None:
             return False
@@ -78,6 +72,19 @@ class NonOverlapingContainer:
         for x, y in _shape_pixel_loop(shape, self.grid):
             self.grid.data[y][x] = NULL_COLOR
         return True
+
+    def get_overlap(self, shape: Shape)->list[int]:
+        '''[low-level] Get all pixel_index associated with the shape.'''
+        result = []
+        for x, y in _shape_pixel_loop(shape, self.grid):
+            value = self.grid.safe_access(x, y)
+            if value >= 0:
+                result.append(value)
+        return result
+
+    def query(self, pixel_index: list[int])->list[Shape]:
+        '''[low-level] Lookup shapes from the given shape_indexes.'''
+        return [self.shapes[i] for i in sorted(set(pixel_index))]
 
 
 def _shape_pixel_loop(shape: Shape, grid: Grid)->Generator[tuple[int, int], None, None]:
