@@ -292,11 +292,23 @@ class Coordinate:
     def y_to_x(self, offset_x: int, offset_y: int)->Coordinate:
         return Coordinate(self.x-offset_x, self.y-offset_y)
 
+    def __add__(self, other: Coordinate)->Coordinate:
+        return Coordinate(self.x+other.x, self.y+other.y)
+
+    def __sub__(self, other: Coordinate)->Coordinate:
+        return Coordinate(self.x-other.x, self.y-other.y)
+
 
 @dataclass(frozen=True)
 class FloatCoordinate:
     x: float
     y: float
+
+    def __add__(self, other: FloatCoordinate)->FloatCoordinate:
+        return FloatCoordinate(self.x+other.x, self.y+other.y)
+
+    def __sub__(self, other: FloatCoordinate)->FloatCoordinate:
+        return FloatCoordinate(self.x-other.x, self.y-other.y)
 
 
 def range_intersect(r1: range, r2: range)->range:

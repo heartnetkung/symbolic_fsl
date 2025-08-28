@@ -5,8 +5,13 @@ import numpy as np
 from .grid_methods import *
 from ..constant import NULL_COLOR
 from enum import Enum
+from .types import Coordinate
 
 DUMMY_VALID_COLOR = 9
+N, S = Coordinate(0, -1), Coordinate(0, 1)
+E, W = Coordinate(1, 0), Coordinate(-1, 0)
+NE, NW = Coordinate(1, -1), Coordinate(-1, -1)
+SE, SW = Coordinate(1, 1), Coordinate(-1, 1)
 
 
 class LogicType(Enum):
@@ -63,3 +68,50 @@ def subtract(shape1: Shape, shape2: Shape)->Unknown:
             if shape2_grid[i][j] != NULL_COLOR:
                 grid.safe_assign(j+shape2.x-shape1.x, i+shape2.y-shape1.y, NULL_COLOR)
     return Unknown(shape1.x, shape1.y, grid)
+
+
+def find_outer_edge(grid: Grid)->Grid:
+    output = make_grid(grid.width+2, grid.height+2)
+    offset = Coordinate(-1, -1)
+
+    # from north-south
+    for x in range(grid.width+2):
+        for y in range(grid.height+2):
+            coord = Coordinate(x, y)+offset
+            a1, a2, a3 = coord+S, coord+SE, coord+SW
+            if _handle_cell(output, x, y, grid.safe_access_c(a1),
+                            grid.safe_access_c(a2), grid.safe_access_c(a3)):
+                break
+
+        for y in range(grid.height+1, -1, -1):
+            coord = Coordinate(x, y)+offset
+            a1, a2, a3 = coord+N, coord+NE, coord+NW
+            if _handle_cell(output, x, y, grid.safe_access_c(a1),
+                            grid.safe_access_c(a2), grid.safe_access_c(a3)):
+                break
+
+    # from east-west
+    for y in range(grid.height+2):
+        for x in range(grid.width+2):
+            coord = Coordinate(x, y)+offset
+            a1, a2, a3 = coord+E, coord+SE, coord+NE
+            if _handle_cell(output, x, y, grid.safe_access_c(a1),
+                            grid.safe_access_c(a2), grid.safe_access_c(a3)):
+                break
+
+        for x in range(grid.width+1, -1, -1):
+            coord = Coordinate(x, y)+offset
+            a1, a2, a3 = coord+W, coord+SW, coord+NW
+            if _handle_cell(output, x, y, grid.safe_access_c(a1),
+                            grid.safe_access_c(a2), grid.safe_access_c(a3)):
+                break
+
+    return output
+
+
+def _handle_cell(output: Grid, x: int, y: int, ahead1: int,
+                 ahead2: int, ahead3: int)->bool:
+    for cell_ahead in (ahead1, ahead2, ahead3):
+        if cell_ahead >= 0:
+            output.data[y][x] = 1
+    return ahead1 >= 0
