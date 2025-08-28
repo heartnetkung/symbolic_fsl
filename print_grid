@@ -1,0 +1,1 @@
+python3 -m arc.script.print_grid "$@"
