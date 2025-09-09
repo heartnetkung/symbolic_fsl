@@ -92,7 +92,7 @@ def _shape_pixel_loop(shape: Shape, grid: Grid)->Generator[tuple[int, int], None
 
     for x in range(shape.width):
         for y in range(shape.height):
-            if shape._draw_cell(x, y) == NULL_COLOR:
+            if shape._draw_cell(y, x) == NULL_COLOR:
                 continue
 
             return_x, return_y = shape.x+x, shape.y+y
