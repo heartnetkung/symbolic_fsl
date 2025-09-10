@@ -13,8 +13,7 @@ def _run_test(action: DrawRect, x_grids: list[Grid], y_grids: list[Grid]):
 def test_69():
     params = GlobalParams()
     x_grids, y_grids = [x69_0, x69_1, x69_2], [y69_0, y69_1, y69_2]
-    action = DrawIntersect(0, ConstantModel(1), ConstantModel(3),
-                           ConstantModel(8), params)
+    action = DrawIntersect(0, ConstantModel(1), ConstantModel(3), 8, params)
     _run_test(action, x_grids, y_grids)
 
 
@@ -25,8 +24,7 @@ def test_76():
     def get_color(df):
         return np.where(df['grid_top_color'] == 0,
                         df['grid_second_top_color'], df['grid_top_color'])
-    action = DrawIntersect(0, FunctionModel(get_color), ConstantModel(4),
-                           ConstantModel(2), params)
+    action = DrawIntersect(0, FunctionModel(get_color), ConstantModel(4), 2, params)
     _run_test(action, x_grids, y_grids)
 
 

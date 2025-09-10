@@ -29,12 +29,14 @@ class ConvolutionDrawExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
                 continue
 
             old_colors, new_colors = labels
-            result += make_draw_rect(
+            result += _make_draw_rect(
+                x_shapes, y_shapes, old_colors, new_colors, i, self.params)
+            result += _make_draw_intersect(
                 x_shapes, y_shapes, old_colors, new_colors, i, self.params)
 
         checked_result = []
         for action in result:
-            new_state = action.perform(state, task)
+            new_state = action.perform(state, task)  # type:ignore
             if new_state is None:
                 continue
 
@@ -75,11 +77,9 @@ def _extract_labels(x_shapes: list[Shape], y_shapes: list[Shape])->Optional[
     return old_colors, new_colors
 
 
-def make_draw_rect(x_shapes: list[Shape], y_shapes: list[Shape], old_colors: list[int],
-                   new_colors: list[int], feat_index: int,
-                   params: GlobalParams)->list[ConvDrawAction]:
-    # check rectangle
-
+def _make_draw_rect(x_shapes: list[Shape], y_shapes: list[Shape], old_colors: list[int],
+                    new_colors: list[int], feat_index: int,
+                    params: GlobalParams)->list[ConvDrawAction]:
     old_color_model = MemorizedModel(np.array(old_colors))
     new_color_model = MemorizedModel(np.array(new_colors))
     has_various_areas = False
@@ -100,3 +100,18 @@ def make_draw_rect(x_shapes: list[Shape], y_shapes: list[Shape], old_colors: lis
     selections = [SelectCondition.min_size] if has_various_areas else SelectCondition
     return [DrawRect(selection, feat_index, old_color_model, new_color_model, params)
             for selection in SelectCondition]
+
+
+def _make_draw_intersect(x_shapes: list[Shape], y_shapes: list[Shape],
+                         old_colors: list[int], new_colors: list[int], feat_index: int,
+                         params: GlobalParams)->list[ConvDrawAction]:
+    old_color_model = MemorizedModel(np.array(old_colors))
+    new_color_model = MemorizedModel(np.array(new_colors))
+
+    unchanged_colors = set(range(10))
+    for y_shape in y_shapes:
+        unchanged_colors &= y_shape._grid.list_colors()
+    unchanged_colors -= set(new_colors)
+
+    return [DrawIntersect(feat_index, old_color_model, new_color_model, color, params)
+            for color in sorted(unchanged_colors)]
