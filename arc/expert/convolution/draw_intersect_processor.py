@@ -83,6 +83,4 @@ def _trim_color(grid: Grid, color: int)->tuple[Grid, int, int]:
             break
         x_max -= 1
 
-    grid.print_grid2()
-    print(x_min, x_max, y_min, y_max)
     return grid.crop(x_min, y_min, x_max-x_min, y_max-y_min), x_min, y_min
