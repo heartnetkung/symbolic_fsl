@@ -48,3 +48,14 @@ def colorize(shape: Shape, color: int)->Shape:
         return Unknown(shape.x, shape.y, shape.grid.colorize(color))
     else:
         raise Exception('unknown shape implementation')
+
+
+def find_common_colors(shapes: list[Shape])->set[int]:
+    if len(shapes) < 2:
+        return set()
+    result = shapes[0]._grid.list_colors()
+    for shape in shapes[1:]:
+        result &= shape._grid.list_colors()
+        if len(result) == 0:
+            break
+    return result

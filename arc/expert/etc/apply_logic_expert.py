@@ -25,7 +25,7 @@ class ApplyLogicExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
             related_shapes = (get_x_col(state, task.atn, index1) +
                               get_x_col(state, task.atn, index2))
 
-            for color in _find_common_colors(related_shapes):
+            for color in find_common_colors(related_shapes):
                 for type in LogicType:
                     candidate = ApplyLogic([index1, index2], color, type)
                     produced_shapes = candidate.apply(state, task.atn)
@@ -48,17 +48,6 @@ class ApplyLogicExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
 
             result.append(candidate)
         return result
-
-
-def _find_common_colors(shapes: list[Shape])->set[int]:
-    if len(shapes) < 2:
-        return set()
-    result = shapes[0]._grid.list_colors()
-    for shape in shapes[1:]:
-        result &= shape._grid.list_colors()
-        if len(result) == 0:
-            break
-    return result
 
 
 def _check_result(a_shapes: list[Shape], b_shapes: list[Shape])->bool:
