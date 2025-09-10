@@ -8,6 +8,7 @@ from .post_loop import *
 from .etc import *
 from .shape_edit import *
 from .custom import *
+from .convolution import *
 # no import star except manager.task and subfolders
 
 
