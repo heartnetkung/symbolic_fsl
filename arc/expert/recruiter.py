@@ -25,8 +25,9 @@ class ArcRecruiter(BasicRecruiter):
             TrainingAttentionTask: [
                 MoveExpert(params), ApplyLogicExpert(), ColorizeExpert(params),
                 GeomTransformExpert(params), MoveUntilExpert(), CreateExpert(params),
-                FillInTheBlankExpert(params), SplitShapeExpert(),
-                HammingExpert(params), FITPExpert(params), PutObjectExpert(params)],
+                FillInTheBlankExpert(params), SplitShapeExpert(), FITPExpert(params),
+                HammingExpert(params), ConvolutionDrawExpert(params),
+                PutObjectExpert(params)],
             TrainingDrawLineTask: [DrawLineExpert(params)],
             CropTask: [CropExpert(params)],
             PhysicsTask: [RunPhysicsExpert(params)],
