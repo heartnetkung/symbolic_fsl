@@ -12,6 +12,8 @@ pytest -k pattern -log-level=INFO
 python3 -m arc.script.visualize 30
 # solve previously solved problem for sanity checking
 python3 -m arc.script.solve_previous
+# check for unused functions
+vulture arc
 ```
 
 ## Architecture
