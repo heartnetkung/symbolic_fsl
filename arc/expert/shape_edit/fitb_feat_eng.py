@@ -147,8 +147,7 @@ def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
 
     properties = []
     x_ranks = to_rank([shape.x for shape in shapes], False)
-    y_ranks = to_rank([shape.y for shape in shapes], False)
-    for shape, x_rank, y_rank in zip(shapes, x_ranks, y_ranks):
+    for shape, x_rank in zip(shapes, x_ranks):
         new_property = {
             'subshape.x': shape.x,
             'subshape.y': shape.y,
@@ -156,9 +155,7 @@ def inverse_parse(grid: Grid)->dict[Coordinate, dict[str, int]]:
             'subshape.mass%2': shape.mass % 2,
             'subshape.type': shape.shape_type,
             '+to_rank(subshape.x)%3': x_rank % 3,
-            '+to_rank(subshape.x)%2': x_rank % 2,
-            '+to_rank(subshape.y)%3': y_rank % 3,
-            '+to_rank(subshape.y)%2': y_rank % 2}
+            '+to_rank(subshape.x)%2': x_rank % 2}
         properties.append(new_property)
 
     result = {}
