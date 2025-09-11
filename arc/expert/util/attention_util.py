@@ -36,7 +36,11 @@ def default_make_df(
     if isinstance(task, AttentionTask) or isinstance(task, TrainingAttentionTask):
         extra_columns = [QueryShapeColumn(query, i, state.x_shapes)
                          for i, query in enumerate(task.g_atn.shape_queries)]
-    return generate_df(x, x_shapes, edit_index=edit_index, extra_columns=extra_columns)
+
+    result = generate_df(x, x_shapes, edit_index=edit_index,
+                         extra_columns=extra_columns)
+    result['shape_count'] = [len(shapes) for shapes in state.out_shapes]
+    return result
 
 
 def has_relationship(atn: TrainingAttention, relationship: str, column: int)->bool:
