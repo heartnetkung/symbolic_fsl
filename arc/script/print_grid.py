@@ -4,6 +4,12 @@ from ..base import *
 
 def print_grid(index: int, choice: DatasetChoice)->None:
     ds = read_datasets(choice)[index]
+    x_var_names = [f'x{index}_{i}' for i in range(len(ds.X_train))]
+    y_var_names = [f'y{index}_{i}' for i in range(len(ds.X_train))]
+    print(f'x_grids = [{",".join(x_var_names)}]')
+    print(f'y_grids = [{",".join(y_var_names)}]')
+    print('\n\n')
+
     for i, (x_grid, y_grid) in enumerate(zip(ds.X_train, ds.y_train)):
         print(f'x{index}_{i} = ', end='')
         x_grid.print_grid2()
