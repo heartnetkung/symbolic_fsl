@@ -5,10 +5,10 @@ from ...manager.task import *
 from copy import deepcopy
 from ..util import *
 from enum import Enum
-from .draw_intersect_processor import *
+from .intersect_rect_processor import *
 
 
-class DrawIntersect(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
+class IntersectRect(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def __init__(self, feat_index: int, old_color_model: MLModel,
                  new_color_model: MLModel, unchanged_color: int,
                  params: GlobalParams)->None:
@@ -39,7 +39,7 @@ class DrawIntersect(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         return state.update(out_shapes=result)
 
     def _perform(self, shape: Shape, old_color: int, new_color: int)->Optional[Shape]:
-        processor = DrawIntersectProcessor(old_color, new_color, self.unchanged_color)
+        processor = IntersectRectProcessor(old_color, new_color, self.unchanged_color)
         candidates = processor.process(shape._grid)
         if candidates is None:
             return None
@@ -58,7 +58,7 @@ class DrawIntersect(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         labels = [self.old_color_model.result, self.new_color_model.result]
         label_types = [LabelType.reg]*2
         all_models = make_all_models(
-            df, self.params, 'draw_intersect', labels, label_types)
-        return [DrawIntersect(self.feat_index, oldc_model, newc_model,
+            df, self.params, 'intersect_rect', labels, label_types)
+        return [IntersectRect(self.feat_index, oldc_model, newc_model,
                               self.unchanged_color, self.params)
                 for oldc_model, newc_model in model_selection(*all_models)]

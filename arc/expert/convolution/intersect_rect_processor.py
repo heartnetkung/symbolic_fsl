@@ -4,7 +4,7 @@ from copy import deepcopy
 from ..util import *
 
 
-class DrawIntersectProcessor(ShapeConvProcess):
+class IntersectRectProcessor(ShapeConvProcess):
     def __init__(self, old_color: int, new_color: int, unchanged_color: int)->None:
         self.old_color = old_color
         self.new_color = new_color

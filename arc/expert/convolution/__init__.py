@@ -1,2 +1,2 @@
 from .conv_draw_expert import (
-    ConvolutionDrawExpert, DrawIntersect, DrawRect, SelectCondition)
+    ConvolutionDrawExpert, IntersectRect, DrawRect, SelectCondition)

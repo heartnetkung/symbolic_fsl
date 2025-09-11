@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 from ..util import *
 from .draw_rect import DrawRect, SelectCondition
-from .draw_intersect import DrawIntersect
+from .intersect_rect import IntersectRect
 
-ConvDrawAction = Union[DrawRect, DrawIntersect]
+ConvDrawAction = Union[DrawRect, IntersectRect]
 
 
 class ConvolutionDrawExpert(Expert[ArcTrainingState, TrainingAttentionTask]):
@@ -113,5 +113,5 @@ def _make_draw_intersect(x_shapes: list[Shape], y_shapes: list[Shape],
         unchanged_colors &= y_shape._grid.list_colors()
     unchanged_colors -= set(new_colors)
 
-    return [DrawIntersect(feat_index, old_color_model, new_color_model, color, params)
+    return [IntersectRect(feat_index, old_color_model, new_color_model, color, params)
             for color in sorted(unchanged_colors)]
