@@ -39,7 +39,7 @@ def default_make_df(
 
     result = generate_df(x, x_shapes, edit_index=edit_index,
                          extra_columns=extra_columns)
-    result['shape_count'] = [len(shapes) for shapes in state.out_shapes]
+    result['shape_count'] = [len(state.out_shapes[i])for i in task.atn.sample_index]
     return result
 
 
