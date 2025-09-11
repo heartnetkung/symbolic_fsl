@@ -38,7 +38,7 @@ def solve_one(index: int, choice: DatasetChoice, log_level: int,
 
     if (result.correct_trace is not None) and (
             log_level in (logging.INFO, logging.DEBUG)):
-        print('\ncorrect trace: ', result.correct_trace)
+        print('correct trace: ', result.correct_trace)
     print('\nelapsed time:', time.time()-start)
     print('\a', file=sys.stderr)
     return result

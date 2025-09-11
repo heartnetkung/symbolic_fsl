@@ -36,6 +36,7 @@ class ArcResult:
             result.append(f'=========== prediction #{i+1} ===========')
             for grid in grids:
                 result.append('\n'.join([repr(row) for row in grid.data]))
+                result.append('')
         return '\n'.join(result)
 
     @property
