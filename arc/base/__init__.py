@@ -1,4 +1,4 @@
-from .dataset import DatasetChoice, Dataset, read_datasets
+from .dataset import DatasetChoice, Dataset, read_datasets, write_datasets
 from typing import Optional, Union
 from ..constant import (ANY_PATTERN, MISSING_VALUE, NULL_COLOR, NULL_DF,
                         BOOLS, GlobalParams, FuzzyBool, default_repr, default_hash,

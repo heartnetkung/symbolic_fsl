@@ -16,24 +16,36 @@ class DatasetChoice(Enum):
     eval_v1 = 1
     train_v2 = 2
     eval_v2 = 3
+    train_v1_color_shift = 4
+    train_v1_fliph = 5
+    train_v1_flipv = 6
+    train_v1_transpose = 7
 
     def get_folder(self)->str:
         if (self == DatasetChoice.train_v1 or
                 self == DatasetChoice.eval_v1):
             return '1.0'
+        if self == DatasetChoice.train_v1_color_shift:
+            return '1.0_color_shift'
+        if self == DatasetChoice.train_v1_fliph:
+            return '1.0_fliph'
+        if self == DatasetChoice.train_v1_flipv:
+            return '1.0_flipv'
+        if self == DatasetChoice.train_v1_transpose:
+            return '1.0_transpose'
         return '2.0'
 
     def get_challenge_filename(self)->str:
-        if (self == DatasetChoice.train_v1 or
-                self == DatasetChoice.train_v2):
-            return 'arc-agi_training_challenges.json'
-        return 'arc-agi_evaluation_challenges.json'
+        if (self == DatasetChoice.eval_v1 or
+                self == DatasetChoice.eval_v2):
+            return 'arc-agi_evaluation_challenges.json'
+        return 'arc-agi_training_challenges.json'
 
     def get_solution_filename(self)->str:
-        if (self == DatasetChoice.train_v1 or
-                self == DatasetChoice.train_v2):
-            return 'arc-agi_training_solutions.json'
-        return 'arc-agi_evaluation_solutions.json'
+        if (self == DatasetChoice.eval_v1 or
+                self == DatasetChoice.eval_v2):
+            return 'arc-agi_evaluation_solutions.json'
+        return 'arc-agi_training_solutions.json'
 
 
 @dataclass(frozen=True)
@@ -66,6 +78,11 @@ def _get_json(filename: str, version: str) -> dict:
         return d
 
 
+def _to_json(data: dict, folder: str, filename: str):
+    with open(path.join(INPUT_FOLDER, folder, filename), 'w') as f:
+        json.dump(data, f)
+
+
 @cache
 def read_datasets(choice: DatasetChoice)->dict[int, Dataset]:
     return _read_datasets(choice.get_challenge_filename(),
@@ -87,3 +104,20 @@ def _read_datasets(challenge_file: str, solution_file: str,
         y_test = [Grid(grid) for grid in solutions[key]]
         all_dataset[i] = Dataset(key, X_train, y_train, X_test, y_test)
     return all_dataset
+
+
+def write_datasets(datasets: dict[int, Dataset], choice: DatasetChoice)->None:
+    folder = choice.get_folder()
+    challenges, solutions = {}, {}
+
+    for ds in datasets.values():
+        assert ds.y_test is not None
+        key = ds._id
+        challenges[key] = {
+            'test': [{'input': grid.data} for grid in ds.X_test],
+            'train': [{'input': in_grid.data, 'output': out_grid.data}
+                      for in_grid, out_grid in zip(ds.X_train, ds.y_train)]}
+        solutions[key] = [grid.data for grid in ds.y_test]
+
+    _to_json(challenges, folder, choice.get_challenge_filename())
+    _to_json(solutions, folder, choice.get_solution_filename())
