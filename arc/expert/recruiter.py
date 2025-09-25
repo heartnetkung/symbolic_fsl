@@ -28,7 +28,6 @@ class ArcRecruiter(BasicRecruiter):
                 FillInTheBlankExpert(params), SplitShapeExpert(), FITPExpert(params),
                 HammingExpert(params), ConvolutionDrawExpert(params),
                 PutObjectExpert(params)],
-            TrainingDrawLineTask: [DrawLineExpert(params)],
             CropTask: [CropExpert(params)],
             PhysicsTask: [RunPhysicsExpert(params)],
             FreeDrawTask: [FreeDrawExpert(params)]

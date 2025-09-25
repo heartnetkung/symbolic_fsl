@@ -2,7 +2,6 @@ from ..base import Task, ArcTrainingState, ModelFreeTask
 from dataclasses import dataclass
 from typing import Callable
 from .attention_task import TrainingAttentionTask, AttentionTask
-from .draw_line import *
 from .reparse.reparse_creator import ReparseEdgeTask
 from collections.abc import Sequence
 from ..graphic import Shape

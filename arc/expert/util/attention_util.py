@@ -9,8 +9,7 @@ from ...ml import *
 from typing import Union
 from ...global_attention import *
 
-TaskWithAtn = Union[DrawLineTask, TrainingDrawLineTask,
-                    AttentionTask, TrainingAttentionTask]
+TaskWithAtn = Union[AttentionTask, TrainingAttentionTask]
 
 
 @lru_cache
@@ -25,10 +24,6 @@ def default_make_df(
 
     for sample, shape_indexes in zip(task.atn.sample_index, task.atn.x_index):
         row = [state.out_shapes[sample][i] for i in shape_indexes]
-        if isinstance(task, DrawLineTask) or isinstance(task, TrainingDrawLineTask):
-            x_shapes.append(row)
-            continue
-
         row.extend(task.common_y_shapes)
         x_shapes.append(row)
 

@@ -49,9 +49,8 @@ class ArcManager(Manager[ArcTrainingState]):
             return [(CleanUpTask(), state)]
 
         attentions = self.atn_manager.decide(state)
-        draw_lines = _to_task_states(state, make_line_tasks(state, self.params))
         crop_tasks = self.crop_manager.decide(state)
-        return attentions+draw_lines+crop_tasks
+        return attentions+crop_tasks
 
 
 def _all_shapes_matched(a: Optional[list[list[Shape]]],
@@ -72,9 +71,3 @@ def _all_shapes_subset(all_x: Optional[list[list[Shape]]],
         if not set(y_shapes).issubset(set(x_shapes)):
             return False
     return True
-
-
-def _to_task_states(
-    state: ArcTrainingState, tasks: list[Task[ArcTrainingState]])->list[
-        tuple[Task[ArcTrainingState], ArcTrainingState]]:
-    return [(task, state) for task in tasks]
