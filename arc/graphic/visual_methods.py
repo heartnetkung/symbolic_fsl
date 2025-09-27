@@ -18,6 +18,20 @@ def shape_value(shape: Shape)->int:
     return hash(repr(masked_grid))
 
 
+def colorize(shape: Shape, color: int)->Shape:
+    if isinstance(shape, FilledRectangle):
+        return FilledRectangle(shape.x, shape.y, shape.width, shape.height, color)
+    elif isinstance(shape, HollowRectangle):
+        return HollowRectangle(shape.x, shape.y, shape.width, shape.height,
+                               color, shape.stroke)
+    elif isinstance(shape, Diagonal):
+        return Diagonal(shape.x, shape.y, shape.width, color, shape.north_west)
+    elif isinstance(shape, Unknown):
+        return Unknown(shape.x, shape.y, shape.grid.colorize(color))
+    else:
+        raise Exception('unknown shape implementation')
+
+
 def list_shape_colors(shape: Shape)->set[int]:
     if shape.__class__ == Unknown:
         return shape._grid.list_colors()-{NULL_COLOR}

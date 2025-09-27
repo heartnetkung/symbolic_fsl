@@ -36,20 +36,6 @@ def filter_overwhelming_shapes(all_shapes: list[list[Shape]])-> list[list[Shape]
     return result
 
 
-def colorize(shape: Shape, color: int)->Shape:
-    if isinstance(shape, FilledRectangle):
-        return FilledRectangle(shape.x, shape.y, shape.width, shape.height, color)
-    elif isinstance(shape, HollowRectangle):
-        return HollowRectangle(shape.x, shape.y, shape.width, shape.height,
-                               color, shape.stroke)
-    elif isinstance(shape, Diagonal):
-        return Diagonal(shape.x, shape.y, shape.width, color, shape.north_west)
-    elif isinstance(shape, Unknown):
-        return Unknown(shape.x, shape.y, shape.grid.colorize(color))
-    else:
-        raise Exception('unknown shape implementation')
-
-
 def find_common_colors(shapes: list[Shape])->set[int]:
     if len(shapes) < 2:
         return set()
