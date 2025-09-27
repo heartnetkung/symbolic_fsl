@@ -100,11 +100,9 @@ def _make_attentions(
                     if new_result2 is not None:
                         results.append(new_result2)
 
-    if len(results) == 0:
-        empty_attention = create_empty_attention(y_train_shapes)
-        if empty_attention is not None:
-            return [empty_attention]
-    return list(dict.fromkeys(results))
+    results2 = list(dict.fromkeys(results))
+    empty_attention = create_empty_attention(y_train_shapes)
+    return results2 if empty_attention is None else results2+[empty_attention]
 
 
 def _make_inner_attentions(
