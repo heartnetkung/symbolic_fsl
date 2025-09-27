@@ -65,7 +65,7 @@ def test_predict():
     x_train_grids, x_test_grids = [grid, grid], [grid]
 
     attentions = make_attentions(all_x_shapes, all_y_shapes, x_train_grids)
-    assert len(attentions) == 1
+    assert len(attentions) == 2
     assert attentions[0].sample_index == [0, 1]
     assert attentions[0].x_index == [[0], [0]]
     assert attentions[0].y_index == [0, 0]
