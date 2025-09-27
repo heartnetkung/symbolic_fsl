@@ -6,10 +6,8 @@ from functools import lru_cache
 import pandas as pd
 import numpy as np
 from ...ml import *
-from typing import Union
 from ...global_attention import *
-
-TaskWithAtn = Union[AttentionTask, TrainingAttentionTask]
+from .feat_eng import *
 
 
 @lru_cache
@@ -34,8 +32,7 @@ def default_make_df(
 
     result = generate_df(x, x_shapes, edit_index=edit_index,
                          extra_columns=extra_columns)
-    result['shape_count'] = [len(state.out_shapes[i])for i in task.atn.sample_index]
-    return result
+    return feat_eng(result, state, task, edit_index)
 
 
 def has_relationship(atn: TrainingAttention, relationship: str, column: int)->bool:
