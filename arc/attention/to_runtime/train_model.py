@@ -46,6 +46,7 @@ def create_df(grids: list[Grid], all_shapes: list[list[Shape]],
 
     result = generate_df(
         resolved_grids, all_resolved_shapes, extra_columns=extra_columns)
+    result = gen_group_feat(result, all_shapes, sample_index, all_x_index, 0)
     return pd.concat([result, pd.DataFrame(extra_features)], axis=1)
 
 
