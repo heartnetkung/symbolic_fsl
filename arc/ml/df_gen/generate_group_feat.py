@@ -20,11 +20,14 @@ def gen_group_feat(df: pd.DataFrame, all_shapes: list[list[Shape]],
             df[key] = [new_fields[key][i] for i in sample_index]
 
     if edit_index > -1:
-        mass_rank = []
-        for sample_id, x_index in zip(sample_index, all_x_index):
-            masses = [shape.mass for shape in all_shapes[sample_id]]
-            mass_rank.append(to_rank_float(masses)[x_index[edit_index]])
-        df['mass_rank'] = mass_rank
+        try:
+            mass_rank = []
+            for sample_id, x_index in zip(sample_index, all_x_index):
+                masses = [shape.mass for shape in all_shapes[sample_id]]
+                mass_rank.append(to_rank_float(masses)[x_index[edit_index]])
+            df['mass_rank'] = mass_rank
+        except Exception:
+            pass
 
     return df
 
