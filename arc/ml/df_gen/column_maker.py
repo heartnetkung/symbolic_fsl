@@ -44,6 +44,10 @@ def extract_properties(shape: Shape)->dict[str, Any]:
         result['is_symmetry(+h)'] = -1
         result['is_symmetry(+v)'] = -1
         result['is_symmetry(+t)'] = -1
+    if shape.mass > 7:
+        result['has_inner_area()'] = int(has_inner_area(shape))
+    else:
+        result['has_inner_area()'] = 0
     return result
 
 

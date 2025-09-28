@@ -38,6 +38,17 @@ def list_shape_colors(shape: Shape)->set[int]:
     return {shape.color}-{NULL_COLOR}  # type:ignore
 
 
+def has_inner_area(shape: Shape)->bool:
+    if isinstance(shape, FilledRectangle) or isinstance(shape, Diagonal):
+        return False
+    elif isinstance(shape, HollowRectangle):
+        return True
+    elif isinstance(shape, Unknown):
+        return _has_inner_area(shape._grid)
+    else:
+        raise Exception('unknown shape implementation')
+
+
 def measure_gap(shape1: Shape, shape2: Shape, threshold: float)->float:
     center1, center2 = _find_center(shape1), _find_center(shape2)
     if _cal_upperbound_gap(center1, center2, shape1, shape2) > threshold:
@@ -58,6 +69,22 @@ def measure_gap(shape1: Shape, shape2: Shape, threshold: float)->float:
 # ====================
 #  private methods
 # ====================
+
+def _has_inner_area(grid: Grid)->bool:
+    if not grid.has_color(NULL_COLOR):
+        return False
+    inverse = grid.inverse()
+    if inverse is None:
+        return False
+    for subshape in list_objects(inverse):
+        if (subshape.x == 0) or (subshape.y == 0):
+            continue
+        if (subshape.x+subshape.width == grid.width) or (
+                subshape.y+subshape.height == grid.height):
+            continue
+        return True
+    return False
+
 
 def _find_center(shape: Shape)->FloatCoordinate:
     return FloatCoordinate(shape.x+(shape.width/2), shape.y+(shape.height/2))
