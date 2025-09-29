@@ -15,7 +15,6 @@ def generate_df(grids: Optional[list[Grid]] = None,
     '''
 
     # TODO query object with same color, height, target color, etc
-    # TODO group by?
     _check_input(grids, all_shapes)
     result = {}
     columns = [GridColumns(), ShapeColumns(), EditColumns(), ShapeStatsColumns()]

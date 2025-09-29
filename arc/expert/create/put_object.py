@@ -44,7 +44,6 @@ class PutObject(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert isinstance(self.x_model, MemorizedModel)
         assert isinstance(self.y_model, MemorizedModel)
 
-        result = []
         df = default_make_df(state, task)
         labels = [self.selection_model.result, self.x_model.result, self.y_model.result]
         label_types = [LabelType.cls_, LabelType.reg, LabelType.reg]
