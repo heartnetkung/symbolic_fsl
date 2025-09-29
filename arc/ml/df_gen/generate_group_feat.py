@@ -10,25 +10,24 @@ def gen_group_feat(df: pd.DataFrame, all_shapes: list[list[Shape]],
                    sample_index: list[int], all_x_index: list[list[int]],
                    edit_index: int = -1)->pd.DataFrame:
 
-    new_fields = {'shape_count': []}
-    for shapes in all_shapes:
-        new_fields['shape_count'].append(len(shapes))
-        _groupby_count(new_fields, shapes)
+    try:
+        new_fields = {'shape_count': []}
+        for shapes in all_shapes:
+            new_fields['shape_count'].append(len(shapes))
+            _groupby_count(new_fields, shapes)
 
-    for key in new_fields:
-        if len(new_fields[key]) == len(all_shapes):
-            df[key] = [new_fields[key][i] for i in sample_index]
+        for key in new_fields:
+            if len(new_fields[key]) == len(all_shapes):
+                df[key] = [new_fields[key][i] for i in sample_index]
 
-    if edit_index > -1:
-        try:
+        if edit_index > -1:
             mass_rank = []
             for sample_id, x_index in zip(sample_index, all_x_index):
                 masses = [shape.mass for shape in all_shapes[sample_id]]
                 mass_rank.append(to_rank_float(masses)[x_index[edit_index]])
             df['mass_rank'] = mass_rank
-        except Exception:
-            pass
-
+    except Exception:
+        pass
     return df
 
 
