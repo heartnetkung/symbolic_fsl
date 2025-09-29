@@ -79,7 +79,7 @@ def _model_factory(
     # exact answer
     exact_result = []
     for col in X.columns:
-        if np.allclose(y, X[col]):
+        if np.allclose(y, X[col]) and cal_system2_cost(col) == 0:
             exact_result.append(ColumnModel(col))
     if len(exact_result) > 0:
         return exact_result
