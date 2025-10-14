@@ -38,7 +38,7 @@ class SelectOne(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
         assert state.out_shapes != None
 
         all_groups, all_ranks, sample_index = extract_group(state, self.grouping)
-        df = _make_df(all_groups, all_ranks)
+        df = _make_df(all_groups, all_ranks, self.grouping, sample_index)
         selections = self.selection_model.predict_bool(df)
         result = [[] for _ in range(len(state.out_shapes))]
 
@@ -57,19 +57,42 @@ class SelectOne(ModelBasedArcAction[TrainingAttentionTask, AttentionTask]):
     def train_models(self, state: ArcTrainingState,
                      task: TrainingAttentionTask)->list[InferenceAction]:
         assert isinstance(self.selection_model, MemorizedModel)
+        assert state.out_shapes != None
 
         all_groups, all_ranks, sample_index = extract_group(state, self.grouping)
-        df = _make_df(all_groups, all_ranks)
+        df = _make_df(all_groups, all_ranks, self.grouping, sample_index)
         all_models = make_classifier(
             df, self.selection_model.result, self.params, 'select_one')
         return [SelectOne(model, self.grouping, self.params) for model in all_models]
 
 
-def _make_df(all_shapes: list[list[Shape]],
-             all_ranks: list[list[float]])->pd.DataFrame:
-    df = generate_df(all_shapes=all_shapes)
+def _make_df(all_shapes: list[list[Shape]], all_ranks: list[list[float]],
+             grouping: Grouping, sample_index: list[int])->pd.DataFrame:
+    if grouping == Grouping.none:
+        _df = generate_df(all_shapes=all_shapes)
+        all_shapes2, x_index = _reformat_shapes_data(sample_index, all_shapes)
+        df = gen_group_feat(_df, all_shapes2, sample_index, x_index, 0)
+    else:
+        df = generate_df(all_shapes=all_shapes)
+
     df['group_rank'] = list(itertools.chain(*all_ranks))
     return df
+
+
+def _reformat_shapes_data(
+        sample_index: list[int],
+        all_shapes: list[list[Shape]])->tuple[list[list[Shape]], list[list[int]]]:
+    all_shapes2 = [[] for i in range(max(sample_index)+1)]
+    x_index = []
+    previous_value, counter = -1, -1
+    for shapes, sample_id in zip(all_shapes, sample_index):
+        all_shapes2[sample_id].append(shapes[0])
+        if previous_value != sample_id:
+            previous_value = sample_id
+            counter = 0
+        x_index.append([counter])
+        counter += 1
+    return all_shapes2, x_index
 
 
 def extract_group(state: ArcState, grouping: Grouping)->tuple[
