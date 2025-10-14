@@ -41,18 +41,18 @@ def _make_grid_oriented_field(new_fields: dict[str, list], shapes: list[Shape])-
 def _make_shape_oriented_field(
         df: pd.DataFrame, all_shapes: list[list[Shape]], sample_index: list[int],
         all_x_index: list[list[int]], edit_index: int = -1)->None:
-    _make_mass_rank(df, all_shapes, sample_index, all_x_index)
-    _make_color_rank(df, all_shapes, sample_index, all_x_index)
+    _make_mass_rank(df, all_shapes, sample_index, all_x_index, edit_index)
+    _make_color_rank(df, all_shapes, sample_index, all_x_index, edit_index)
 
 
 def _make_mass_rank(
         df: pd.DataFrame, all_shapes: list[list[Shape]], sample_index: list[int],
         all_x_index: list[list[int]], edit_index: int = -1)->None:
-    mass_rank_cache = {i: [shape.mass for shape in all_shapes[i]]
-                       for i in range(len(all_shapes))}
+    mass_rank = {i: [shape.mass for shape in all_shapes[i]]
+                 for i in range(len(all_shapes))}
     column = []
     for sample_id, x_index in zip(sample_index, all_x_index):
-        masses = mass_rank_cache[sample_id]
+        masses = mass_rank[sample_id]
         column.append(to_rank_float(masses)[x_index[edit_index]])
     df['mass_rank'] = column
 
