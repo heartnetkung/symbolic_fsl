@@ -42,6 +42,9 @@ def recursive_shape_split(
         original_shape = shape
 
     subshape_grids = _clean_subshapes(subshape_grids)
+    if len(subshape_grids)>MAX_SHAPES_PER_GRID:
+        return None
+
     return _recursive_shape_split(
         _trim(shape),  _trim(original_shape), subshape_grids, stopper)
 
