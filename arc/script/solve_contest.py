@@ -60,10 +60,12 @@ def solve_contest():
     end_time = time.time() + MAX_TOTAL_TIME_S
 
     for i, dataset in enumerate(datasets):
+        print('solving', i)
         try:
-            if time.time()>end_time:
+            if time.time() > end_time:
                 raise Exception('time_limit')
             output[dataset._id] = _solve_one(dataset)
+            print('solved', dataset._id, output[dataset._id])
         except Exception as e:
             print(e)
             output[dataset._id] = _init_output(dataset)
