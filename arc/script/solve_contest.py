@@ -56,7 +56,8 @@ def solve_contest():
             if i != 0:
                 raise Exeption('aaa')
             output[dataset._id] = _solve_one(dataset)
-        except Exception:
+        except Exception as e:
+            print(e)
             output[dataset._id] = _init_output(dataset)
     _write_result(output)
 
