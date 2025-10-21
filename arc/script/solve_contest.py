@@ -4,8 +4,8 @@ from .util import *
 import json
 from ..graphic import *
 
-INPUT_FILE = '/kaggle/input/arc-prize-2025/arc-agi_test-challenges.json'
-OUTPUT_FILE = '/kaggle/working/submission.json'
+INPUT_FILE = os.path.join('/kaggle/input/arc-prize-2025','arc-agi_test_challenges.json')
+OUTPUT_FILE = os.path.join('/kaggle/working','submission.json')
 
 
 def _read_dataset()->list[Dataset]:
