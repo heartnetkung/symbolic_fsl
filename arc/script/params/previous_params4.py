@@ -46,6 +46,10 @@ previous_v1_params4[319] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,))
 
+previous_v1_params4[320] = proto.update(
+    parser_x_modes=(ParseMode.partition,),
+    parser_y_modes=(ParseMode.proximity_diag,))
+
 previous_v1_params4[321] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.crop,))
@@ -57,6 +61,10 @@ previous_v1_params4[324] = proto.update(
 previous_v1_params4[325] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,))
+
+previous_v1_params4[326] = proto.update(
+    parser_x_modes=(ParseMode.color_proximity_diag,),
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
 previous_v1_params4[328] = proto.update(
     parser_x_modes=(ParseMode.crop,),
@@ -110,6 +118,10 @@ previous_v1_params4[353] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),
     parser_y_modes=(ParseMode.proximity_normal,))
 
+previous_v1_params4[354] = proto.update(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.proximity_diag,), enable_free_draw=True)
+
 previous_v1_params4[355] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,))
@@ -121,6 +133,10 @@ previous_v1_params4[357] = proto.update(
 previous_v1_params4[358] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,), enable_free_draw=True)
+
+previous_v1_params4[359] = proto.update(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,))
 
 previous_v1_params4[360] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
@@ -155,6 +171,10 @@ previous_v1_params4[374] = proto.update(
     parser_y_modes=(ParseMode.proximity_diag,))
 
 previous_v1_params4[379] = proto.update(
+    parser_x_modes=(ParseMode.crop,),
+    parser_y_modes=(ParseMode.crop,))
+
+previous_v1_params4[380] = proto.update(
     parser_x_modes=(ParseMode.crop,),
     parser_y_modes=(ParseMode.crop,))
 
