@@ -4,8 +4,11 @@ from .util import *
 import json
 from ..graphic import *
 
-INPUT_FILE = os.path.join('/kaggle/input/arc-prize-2025','arc-agi_test_challenges.json')
-OUTPUT_FILE = os.path.join('/kaggle/working','submission.json')
+INPUT_FILE = os.path.join('/kaggle/input/arc-prize-2025',
+                          'arc-agi_test_challenges.json')
+OUTPUT_FILE = os.path.join('/kaggle/working', 'submission.json')
+MAX_RETURN = 2
+MAX_TIME_S = 300
 
 
 def _read_dataset()->list[Dataset]:
@@ -33,15 +36,25 @@ def _init_output(dataset: Dataset)->list:
     return result
 
 
-def _solve_one(dataset: Dataset):
-    raise Exception('aa')
+def _solve_one(dataset: Dataset)->list:
+    params = GlobalParams()
+    manager = ArcManager(params)
+    hr = ArcRecruiter(params)
+    result = _init_output(dataset)
+    arc_result = solve_arc(dataset, manager, hr, params, max_time_s=MAX_TIME_S)
+    for i in range(len(dataset.X_test)):
+        for j, prediction in enumerate(arc_result.predictions[:MAX_RETURN]):
+            result[i][f'attempt_{j}'] = prediction[i].data
+    return result
 
 
 def solve_contest():
     datasets = _read_dataset()
     output = {}
-    for dataset in datasets:
+    for i, dataset in enumerate(datasets):
         try:
+            if i != 0:
+                raise Exeption('aaa')
             output[dataset._id] = _solve_one(dataset)
         except Exception:
             output[dataset._id] = _init_output(dataset)
