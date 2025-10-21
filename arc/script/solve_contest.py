@@ -5,6 +5,7 @@ import json
 from ..graphic import *
 from ..manager import ArcManager
 from ..expert import ArcRecruiter
+import time
 
 INPUT_FILE = os.path.join('/kaggle/input/arc-prize-2025',
                           'arc-agi_test_challenges.json')
@@ -13,6 +14,7 @@ OUTPUT_FILE = os.path.join('/kaggle/working', 'submission.json')
 # OUTPUT_FILE = 'submission.json'
 MAX_RETURN = 2
 MAX_TIME_S = 300
+MAX_TOTAL_TIME_S = 42000
 
 
 def _read_dataset()->list[Dataset]:
@@ -55,10 +57,12 @@ def _solve_one(dataset: Dataset)->list:
 def solve_contest():
     datasets = _read_dataset()
     output = {}
+    end_time = time.time() + MAX_TOTAL_TIME_S
+
     for i, dataset in enumerate(datasets):
         try:
-            if i != 0:
-                raise Exception('aaa')
+            if time.time()>end_time:
+                raise Exception('time_limit')
             output[dataset._id] = _solve_one(dataset)
         except Exception as e:
             print(e)
