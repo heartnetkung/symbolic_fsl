@@ -3,10 +3,14 @@ from ..base import *
 from .util import *
 import json
 from ..graphic import *
+from ..manager import ArcManager
+from ..expert import ArcRecruiter
 
 INPUT_FILE = os.path.join('/kaggle/input/arc-prize-2025',
                           'arc-agi_test_challenges.json')
 OUTPUT_FILE = os.path.join('/kaggle/working', 'submission.json')
+# INPUT_FILE = os.path.join(path.abspath(path.join(__file__, '../../../data/1.0')), 'arc-agi_training_challenges.json')
+# OUTPUT_FILE = 'submission.json'
 MAX_RETURN = 2
 MAX_TIME_S = 300
 
@@ -44,7 +48,7 @@ def _solve_one(dataset: Dataset)->list:
     arc_result = solve_arc(dataset, manager, hr, params, max_time_s=MAX_TIME_S)
     for i in range(len(dataset.X_test)):
         for j, prediction in enumerate(arc_result.predictions[:MAX_RETURN]):
-            result[i][f'attempt_{j}'] = prediction[i].data
+            result[i][f'attempt_{j+1}'] = prediction[i].data
     return result
 
 
@@ -54,7 +58,7 @@ def solve_contest():
     for i, dataset in enumerate(datasets):
         try:
             if i != 0:
-                raise Exeption('aaa')
+                raise Exception('aaa')
             output[dataset._id] = _solve_one(dataset)
         except Exception as e:
             print(e)
