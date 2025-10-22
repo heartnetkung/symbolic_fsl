@@ -43,7 +43,9 @@ def _init_output(dataset: Dataset)->list:
 
 
 def _solve_one(dataset: Dataset)->list:
-    params = GlobalParams()
+    params = GlobalParams(
+        enable_free_draw=False, enable_edge=False, enable_merge=False,
+        enable_stack=False, enable_split=False)
     manager = ArcManager(params)
     hr = ArcRecruiter(params)
     result = _init_output(dataset)
