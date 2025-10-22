@@ -25,6 +25,9 @@ class MergeNearby(ModelFreeArcAction[MergeNearbyTask]):
         self.param = param
         super().__init__()
 
+    def get_cost(self)->int:
+        return 0 if self.param == MergeNearbyParam.skip else 1
+
     def perform(self, state: ArcState, task: MergeNearbyTask)->Optional[ArcState]:
         assert state.x_shapes is not None
         if self.param == MergeNearbyParam.skip:

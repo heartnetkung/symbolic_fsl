@@ -10,7 +10,7 @@ import time
 import logging
 from ..constant import N_RESULT
 
-MAX_TIME_S = 600
+MAX_TIME_S = 720
 MAX_PLAN_DEPTH = 12
 MAX_PLAN_ITR = 5000
 MAX_ADJUST_PATH = 500
