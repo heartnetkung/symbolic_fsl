@@ -13,7 +13,7 @@ OUTPUT_FILE = os.path.join('/kaggle/working', 'submission.json')
 # INPUT_FILE = os.path.join(path.abspath(path.join(__file__, '../../../data/1.0')), 'arc-agi_training_challenges.json')
 # OUTPUT_FILE = 'submission.json'
 MAX_RETURN = 2
-MAX_TIME_S = 300
+MAX_TIME_S = 600
 MAX_TOTAL_TIME_S = 42000
 
 
