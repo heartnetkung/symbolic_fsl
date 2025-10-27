@@ -1,0 +1,30 @@
+Trace(cost=2):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.color_proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0, 0], x_index=[[0], [1], [2]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()),)), common_y_shapes=(
+Unknown(0, 0, [
+[-1, 4, -1],
+[4, -1, 4],
+[-1, 4, -1],
+[4, -1, 4],
+[-1, 4, -1],
+[4, -1, 4]]),))
+  FillInTheBlank(expansion=ExpansionMode.bottom_left,feat_index=0,width_model=return 3,height_model=return 6,pixel_model=if x%2 == y%2:
+  return -1
+else:
+  return cell(x mod w,y mod h))
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0, 0], x_index=[[0], [1], [2]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()),)), common_y_shapes=(
+Unknown(0, 0, [
+[-1, 4, -1],
+[4, -1, 4],
+[-1, 4, -1],
+[4, -1, 4],
+[-1, 4, -1],
+[4, -1, 4]]),))
+  Move(x_model=return -1 + shape0.x,y_model=return 0,feat_index=0)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return grid_width,height_model=return grid_height,layer_model=None,is_all_equal=False)

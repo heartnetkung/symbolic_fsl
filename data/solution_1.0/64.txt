@@ -1,0 +1,13 @@
+Trace(cost=1):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.partition,y_mode=ParseMode.crop,x_bg_model=return x_top_color,y_bg_model=return x_top_color,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return mass_1,)),)), common_y_shapes=())
+  SelectOne(grouping=Grouping.none,selection_model=if shape0.mass != 1:
+  return 0
+else:
+  return 1)
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return bound_width(shapes),height_model=return bound_height(shapes),layer_model=None,is_all_equal=False)

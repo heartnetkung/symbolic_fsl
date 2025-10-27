@@ -1,0 +1,25 @@
+Trace(cost=6):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_diag,y_mode=ParseMode.proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(1, 1))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 1, 1], x_index=[[0], [2], [3]], model=if shape0.x != shape0.y:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=()), common_y_shapes=())
+  CreateRectangle(x_model=return 0,y_model=return 0,w_model=return 1,h_model=return 1,c_model=if -shape0.mass - shape0.single_color - shape_count >= -13:
+  return 0
+else:
+  return shape0.top_color)
+2
+  CleanUpTask()
+  CleanUp(filter_model=if shape0.mass <= 1.5:
+  if shape0.x.is_equal(shape0.y) <= 0.5:
+      return 0
+  else:
+      return 1
+else:
+    return 0)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 1,height_model=return 1,layer_model=None,is_all_equal=False)

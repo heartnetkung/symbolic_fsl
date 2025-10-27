@@ -1,0 +1,32 @@
+Trace(cost=8):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.color_proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(9, 9))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0], x_index=[[0], [3]], model=if mass_rank == 0.0:
+  return 0
+elif mass_rank == 1.0:
+  return 1
+elif mass_rank == -0.5:
+  return 0
+elif mass_rank == 0.5:
+  return 0
+elif mass_rank == -1.0:
+  return 1
+elif mass_rank == 0.33333333333333326:
+  return 0
+else:
+  return 0), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return y_2,)))), common_y_shapes=())
+  Colorize(color_model=if mass_rank == 1.0:
+  return 1
+else:
+  return 2,feat_index=0)
+2
+  CleanUpTask()
+  CleanUp(filter_model=if shape0.single_color >= 3:
+  return 0
+else:
+  return 1)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 9,height_model=return 9,layer_model=None,is_all_equal=False)

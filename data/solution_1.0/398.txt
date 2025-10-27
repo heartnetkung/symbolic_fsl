@@ -1,0 +1,45 @@
+Trace(cost=5):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_normal,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 1, 2], x_index=[[], [], []], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=()), common_y_shapes=(
+Unknown(0, 0, [
+[1, -1, -1],
+[-1, -1, -1],
+[-1, -1, -1]]), 
+Unknown(0, 0, [
+[1, -1, 1],
+[-1, -1, -1],
+[-1, -1, -1]]), 
+Unknown(0, 0, [
+[1, -1, 1],
+[-1, 1, -1],
+[-1, -1, -1]]), 
+Unknown(0, 0, [
+[1, -1, 1],
+[-1, 1, -1],
+[1, -1, -1]]), 
+Unknown(0, 0, [
+[1, -1, 1],
+[-1, 1, -1],
+[1, -1, 1]])))
+  PutObject(selection_model=if shape_count == 1:
+  return 0
+elif shape_count == 2:
+  return 1
+elif shape_count == 3:
+  return 2
+elif shape_count == 4:
+  return 3
+else:
+  return 4,x_model=return 0,y_model=return 0)
+2
+  CleanUpTask()
+  CleanUp(filter_model=if -shape0.shape_type >= 0:
+  return 0
+else:
+  return 1)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

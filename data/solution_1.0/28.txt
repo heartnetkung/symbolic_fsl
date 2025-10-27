@@ -1,0 +1,19 @@
+Trace(cost=5):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  CropTask(crop_from_out_shapes=False)
+  Crop(bound_model=BoundScanModel(inner_model=if cell(x,y).is_equal(grid_largest_color) <= 0.5:
+    return 0
+else:
+  if line_e(x,y).is_equal(line_w(x,y)) <= 0.5:
+    if cell(x-1,y).is_equal(cell(x+1,y)) <= 0.5:
+        return 1
+    else:
+        return 0
+  else:
+      return 0))
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return bound_width(shapes),height_model=return bound_height(shapes),layer_model=None,is_all_equal=False)

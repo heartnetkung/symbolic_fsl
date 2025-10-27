@@ -1,0 +1,10 @@
+Trace(cost=0):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return y_0,)),)), common_y_shapes=())
+  IntersectRect(feat_index=0,old_color_model=return shape0.top_color,new_color_model=return 4,unchanged_color=2)
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return grid_width,height_model=return grid_height,layer_model=None,is_all_equal=False)

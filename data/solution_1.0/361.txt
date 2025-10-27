@@ -1,0 +1,34 @@
+Trace(cost=4):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.color_proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(10, 10))
+1
+  ReparseStackTask()
+  ReparseStack(param=ReparseStackParam.greedy)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[1, 0, 2]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return x_mid_10,)), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return x_0,)))), common_y_shapes=(
+FilledRectangle(0,0,1,10,3), 
+FilledRectangle(0,0,10,1,3)))
+  Colorize(color_model=return shape0.single_color,feat_index=2)
+3
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0, 1, 2]], model=if shape0.y != shape2.is_original:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return x_mid_10,)), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return x_0,)))), common_y_shapes=(
+FilledRectangle(0,0,1,10,3), 
+FilledRectangle(0,0,10,1,3)))
+  Move(x_model=return shape0.x - shape2.height,y_model=return 0,feat_index=0)
+4
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0, 2, 1]], model=return shape2.is_original), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return x_mid_10,)), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return x_0,)))), common_y_shapes=(
+FilledRectangle(0,0,1,10,3), 
+FilledRectangle(0,0,10,1,3)))
+  Move(x_model=return 0,y_model=return shape1.height + shape2.y,feat_index=2)
+5
+  CleanUpTask()
+  CleanUp(filter_model=if -shape0.x >= -8:
+  return 1
+else:
+  return 0)
+6
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 10,height_model=return 10,layer_model=return 1,is_all_equal=False)

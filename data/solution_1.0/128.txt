@@ -1,0 +1,21 @@
+Trace(cost=0):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 4,y_bg_model=return 4,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return y_mid_2,)),)), common_y_shapes=(
+Unknown(0, 0, [
+[6, 6, 6],
+[6, 6, 6],
+[6, 6, 6]]),))
+  CreateRectangle(x_model=return 0,y_model=return 0,w_model=return 3,h_model=return 3,c_model=return grid_top_color)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0, 1]], model=return shape0.is_original), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return y_mid_2,)),)), common_y_shapes=(
+Unknown(0, 0, [
+[6, 6, 6],
+[6, 6, 6],
+[6, 6, 6]]),))
+  ApplyUnion(feat_indexes=[0, 1])
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

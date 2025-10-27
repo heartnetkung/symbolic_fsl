@@ -1,0 +1,20 @@
+Trace(cost=4):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(1, 1))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 1, 2], x_index=[[0], [0], [0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0, 1, 2), shape_index=(0, 0, 0), models=(return y_mid_2,)),)), common_y_shapes=())
+  CreateRectangle(x_model=return 0,y_model=return 0,w_model=return 1,h_model=return 1,c_model=if shape0.shape_value == 7530069593513653993:
+  return 1
+elif shape0.shape_value == 6959632316921896455:
+  return 2
+elif shape0.shape_value == -9048217458013946498:
+  return 3
+else:
+  return 6)
+2
+  CropTask(crop_from_out_shapes=True)
+  Crop(bound_model=DummyVisualModel(inner_models=[return 0, return 0, return 1, return 1]))
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 1,height_model=return 1,layer_model=None,is_all_equal=False)

@@ -1,0 +1,16 @@
+Trace(cost=3):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_diag,y_mode=ParseMode.proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  CropTask(crop_from_out_shapes=False)
+  Crop(bound_model=DummyVisualModel(inner_models=[if -grid_second_top_color >= -6:
+  return 1
+else:
+  return 2, if -grid_second_top_color >= -6:
+  return 1
+else:
+  return 2, return 3, return 3]))
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

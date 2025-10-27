@@ -1,0 +1,16 @@
+Trace(cost=2):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  FreeDrawTask()
+  FreeDraw(param=FreeDrawParam.normal,width_model=return grid_width,height_model=return grid_height,pixel_model=if cell(x,y) <= 1.5:
+    return -1
+else:
+  if x%3 <= 0.5:
+      return 6
+  else:
+      return 4)
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return grid_width,height_model=return grid_height,layer_model=None,is_all_equal=False)

@@ -126,7 +126,9 @@ previous_v1_params2[154] = proto.update(
     parser_x_modes=(ParseMode.proximity_diag,),
     parser_y_modes=(ParseMode.proximity_diag,))
 
-# TODO 155 is a problem
+previous_v1_params2[155] = proto.update(
+    parser_x_modes=(ParseMode.color_proximity_diag,),
+    parser_y_modes=(ParseMode.color_proximity_diag,))
 
 previous_v1_params2[159] = proto.update(
     parser_x_modes=(ParseMode.proximity_normal,),

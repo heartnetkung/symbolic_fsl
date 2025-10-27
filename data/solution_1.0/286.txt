@@ -1,0 +1,30 @@
+Trace(cost=1):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 1,y_bg_model=return 1,unknown_background=True,x_partition_color=-1,y_partition_color=-1,y_constant_size=(16, 16))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return y_mid_8,)),)), common_y_shapes=(
+Unknown(0, 0, [
+[2, 2, 7, 6, 8, 9, 9, 1, 1, 9, 9, 8, 6, 7, 2, 2],
+[2, 1, 6, 2, 9, 5, 1, 1, 1, 1, 5, 9, 2, 6, 1, 2],
+[7, 6, 3, 3, 9, 1, 6, 6, 6, 6, 1, 9, 3, 3, 6, 7],
+[6, 2, 3, 8, 1, 1, 6, 6, 6, 6, 1, 1, 8, 3, 2, 6],
+[8, 9, 9, 1, 1, 7, 1, 1, 1, 1, 7, 1, 1, 9, 9, 8],
+[9, 5, 1, 1, 7, 7, 1, 3, 3, 1, 7, 7, 1, 1, 5, 9],
+[9, 1, 6, 6, 1, 1, 3, 3, 3, 3, 1, 1, 6, 6, 1, 9],
+[1, 1, 6, 6, 1, 3, 3, 2, 2, 3, 3, 1, 6, 6, 1, 1],
+[1, 1, 6, 6, 1, 3, 3, 2, 2, 3, 3, 1, 6, 6, 1, 1],
+[9, 1, 6, 6, 1, 1, 3, 3, 3, 3, 1, 1, 6, 6, 1, 9],
+[9, 5, 1, 1, 7, 7, 1, 3, 3, 1, 7, 7, 1, 1, 5, 9],
+[8, 9, 9, 1, 1, 7, 1, 1, 1, 1, 7, 1, 1, 9, 9, 8],
+[6, 2, 3, 8, 1, 1, 6, 6, 6, 6, 1, 1, 8, 3, 2, 6],
+[7, 6, 3, 3, 9, 1, 6, 6, 6, 6, 1, 9, 3, 3, 6, 7],
+[2, 1, 6, 2, 9, 5, 1, 1, 1, 1, 5, 9, 2, 6, 1, 2],
+[2, 2, 7, 6, 8, 9, 9, 1, 1, 9, 9, 8, 6, 7, 2, 2]]),))
+  Hamming(feat_index=0,pixel_model=if mirror(x,y) != 4:
+  return mirror(x,y)
+else:
+  return cell(x,y))
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 16,height_model=return 16,layer_model=None,is_all_equal=False)

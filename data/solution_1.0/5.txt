@@ -1,0 +1,19 @@
+Trace(cost=1):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.partition,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=5,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0, 2, 1]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return x_mid_4,)), ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return x_mid_2,)))), common_y_shapes=())
+  ApplyLogic(feat_indexes=[0, 2],color=1,type=LogicType.and_)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0, 1]], model=return shape0.is_original), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return x_mid_4,)), ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return x_mid_2,)))), common_y_shapes=())
+  Colorize(color_model=return 2,feat_index=1)
+3
+  CleanUpTask()
+  CleanUp(filter_model=if -shape0.shape_type >= 0:
+  return 0
+else:
+  return 1)
+4
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

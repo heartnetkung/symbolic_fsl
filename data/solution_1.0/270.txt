@@ -1,0 +1,27 @@
+Trace(cost=4):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_normal,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  ReparseEdgeTask(supershape=ShapeGraph(n_nodes=28,n_edges=31)
+, transformed_supershape=ShapeGraph(n_nodes=28,n_edges=35)
+, colorless_supershape=ShapeGraph(n_nodes=28,n_edges=44)
+, colorless_transformed_supershape=ShapeGraph(n_nodes=28,n_edges=48)
+)
+  DoNothing(extra_info=ReparseEdge(param=ReparseEdgeParam.normal),cost=1)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[3]], model=if shape0.single_color != +color_8_rank:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()), ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()))), common_y_shapes=(
+Unknown(0, 0, [
+[8, 1, 1],
+[1, 1, 1],
+[8, 1, 8]]),))
+  Move(x_model=return 0,y_model=return 0,feat_index=0)
+3
+  CropTask(crop_from_out_shapes=True)
+  Crop(bound_model=DummyVisualModel(inner_models=[return 0, return 0, return 3, return 3]))
+4
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

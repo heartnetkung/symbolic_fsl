@@ -1,0 +1,30 @@
+Trace(cost=2):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_diag,y_mode=ParseMode.proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(12, 12))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0, 0], x_index=[[0], [1], [2]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return w_4,)), ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return w_5,)))), common_y_shapes=(
+Unknown(0, 0, [
+[5, 5, 5],
+[5, 6, 5],
+[5, 5, 5]]), 
+Unknown(0, 0, [
+[5, 5, 5, 5],
+[5, 7, 7, 5],
+[5, 7, 7, 5],
+[5, 5, 5, 5]]), 
+Unknown(0, 0, [
+[5, 5, 5, 5, 5],
+[5, 8, 8, 8, 5],
+[5, 8, 8, 8, 5],
+[5, 8, 8, 8, 5],
+[5, 5, 5, 5, 5]])))
+  FillInTheBlank(expansion=ExpansionMode.top_left,feat_index=0,width_model=return shape0.height,height_model=return shape0.height,pixel_model=if mass_rank >= 1:
+  return 8
+elif tile(x,y) >= 1:
+  return 7
+else:
+  return 6)
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 12,height_model=return 12,layer_model=None,is_all_equal=False)

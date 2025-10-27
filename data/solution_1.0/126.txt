@@ -1,0 +1,44 @@
+Trace(cost=8):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0, 0, 0, 0, 0], x_index=[[1, 3, 5], [2, 4, 6], [3, 1, 5], [4, 2, 6], [5, 1, 3], [6, 2, 4]], model=if bound_height(shapes) >= 2:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=()), common_y_shapes=(
+FilledRectangle(0,0,3,3,9), 
+FilledRectangle(0,0,1,3,5), 
+Unknown(0, 0, [
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1],
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1],
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1],
+[5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1],
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1],
+[-1, -1, -1, 5, -1, -1, -1, 5, -1, -1, -1]])))
+  CreateRectangle(x_model=if shape0.x == 1:
+  return 0
+elif shape0.x == 5:
+  return 4
+else:
+  return 8,y_model=if shape1.y == 1:
+  return 0
+else:
+  return 4,w_model=return 3,h_model=return 3,c_model=if shape0.top_color == 1:
+  return 6
+elif shape0.top_color == 2:
+  return 7
+elif shape0.top_color == 3:
+  return 8
+else:
+  return 9)
+2
+  CleanUpTask()
+  CleanUp(filter_model=if shape0.height >= 2:
+  return 1
+else:
+  return 0)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return grid_width,height_model=return grid_height,layer_model=None,is_all_equal=False)

@@ -1,0 +1,10 @@
+Trace(cost=0):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.color_proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(10, 10))
+1
+  PhysicsTask()
+  RunPhysics(param=RunPhysicsParam.solid_north,still_colors={1})
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 10,height_model=return 10,layer_model=None,is_all_equal=False)

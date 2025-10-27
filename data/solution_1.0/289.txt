@@ -1,0 +1,23 @@
+Trace(cost=4):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.color_proximity_diag,y_mode=ParseMode.color_proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=None)
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0], x_index=[[0, 1], [1, 0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return contained,)), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return x_4,)))), common_y_shapes=())
+  Colorize(color_model=return shape1.single_color,feat_index=0)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0], x_index=[[0, 1], [1, 0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return contained,)), ShapeQuery(sample_index=(0,), shape_index=(1,), models=(return x_4,)))), common_y_shapes=())
+  Move(x_model=if -shape1.height >= -2:
+  return 0
+elif -shape1.mass >= -23:
+  return 1
+else:
+  return 2,y_model=if -shape1.height >= -2:
+  return 0
+elif -shape1.mass >= -23:
+  return 1
+else:
+  return 2,feat_index=0)
+3
+  DrawCanvasTask()
+  DrawCanvas(width_model=return bound_width(shapes),height_model=return bound_height(shapes),layer_model=None,is_all_equal=False)

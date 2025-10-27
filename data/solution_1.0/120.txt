@@ -1,0 +1,25 @@
+Trace(cost=3):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_diag,y_mode=ParseMode.proximity_diag,x_bg_model=return 0,y_bg_model=return 0,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(3, 3))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[3]], model=if shape0.single_color >= 1:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return top_color_2,)), ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return top_color_3,)))), common_y_shapes=())
+  Hamming(feat_index=0,pixel_model=return shape.top_color)
+2
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[3]], model=if shape0.is_original >= 1:
+  return 0
+else:
+  return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return top_color_2,)), ShapeQuery(sample_index=(0,), shape_index=(2,), models=(return top_color_3,)))), common_y_shapes=())
+  Move(x_model=return 0,y_model=return 0,feat_index=0)
+3
+  CleanUpTask()
+  CleanUp(filter_model=if shape0.x >= 1:
+  return 0
+else:
+  return 1)
+4
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 3,height_model=return 3,layer_model=None,is_all_equal=False)

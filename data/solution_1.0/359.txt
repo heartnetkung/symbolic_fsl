@@ -1,0 +1,26 @@
+Trace(cost=3):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.crop,y_mode=ParseMode.crop,x_bg_model=return 0,y_bg_model=return 0,unknown_background=True,x_partition_color=-1,y_partition_color=-1,y_constant_size=(4, 10))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0], x_index=[[0]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(0,), shape_index=(0,), models=(return y_mid_5,)),)), common_y_shapes=(
+Unknown(0, 0, [
+[0, 0, 0, 0],
+[0, 0, 0, 7],
+[0, 0, 0, 8],
+[0, 0, 0, 8],
+[0, 7, 8, 8],
+[0, 0, 8, 8],
+[0, 0, 0, 8],
+[0, 0, 0, 8],
+[0, 0, 7, 8],
+[0, 0, 0, 0]]),))
+  Hamming(feat_index=0,pixel_model=if x >= 4:
+  return -1
+elif cell(x,y) != 0:
+  return cell(x,y)
+else:
+  return cell(- x,y))
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 4,height_model=return 10,layer_model=None,is_all_equal=False)

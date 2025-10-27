@@ -1,0 +1,13 @@
+Trace(cost=2):
+0
+  ParseGridTask()
+  IndependentParse(x_mode=ParseMode.proximity_normal,y_mode=ParseMode.proximity_normal,x_bg_model=return 5,y_bg_model=return 5,unknown_background=False,x_partition_color=-1,y_partition_color=-1,y_constant_size=(10, 10))
+1
+  AttentionTask(atn=InferenceAttention(sample_index=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], x_index=[[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12], [13], [14]], model=return 1), g_atn=InferenceGlobalAttention(shape_queries=(ShapeQuery(sample_index=(-1,), shape_index=(-1,), models=()),)), common_y_shapes=(
+Unknown(0, 0, [
+[1, 1],
+[-1, 1]]),))
+  Colorize(color_model=return 5 - shape0.height - shape0.width,feat_index=0)
+2
+  DrawCanvasTask()
+  DrawCanvas(width_model=return 10,height_model=return 10,layer_model=None,is_all_equal=False)
