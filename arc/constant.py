@@ -91,7 +91,8 @@ class FuzzyBool(Enum):
 
 
 def default_repr(obj: Any)->str:
-    vars_ = [f'{k}={v}' for k, v in obj.__dict__.items() if k[0] != '_']
+    vars_ = [f'{k}={v}' for k, v in obj.__dict__.items()
+             if (k[0] != '_') and (k != 'params')]
     return '{}({})'.format(obj.__class__.__name__, ','.join(vars_))
 
 

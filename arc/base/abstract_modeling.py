@@ -176,7 +176,7 @@ class Trace:
         result = [f'Trace(cost={self.cost}):']
         index = 0
         for task, action in self.task_actions:
-            new_str = f'  {task} {action}'
+            new_str = f'  {task}\n  {action}'
             if new_str.find('skip') == -1:
                 result.append(f'{index}')
                 result.append(new_str)
