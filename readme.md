@@ -23,4 +23,4 @@ vulture arc
 
 ## Resources
 - Reproducible experiment on [Google Colab](https://colab.research.google.com/drive/1hlM8jEvLyLtXYO2WUWbdUlYOx_33MpCc) from the paper.
-- Readable solutions for the 205 problems solved by our algorithm. See folder `data/solution_1.0` in this repo.
+- Readable solutions for the 204 problems solved by our algorithm. See folder `data/solution_1.0` in this repo.
