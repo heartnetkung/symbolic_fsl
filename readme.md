@@ -1,6 +1,6 @@
 # Symbolic Few-shot Learning Algorithm
 
-This repo stores the code for our paper named "Solving ARC-AGI with symbolic few-shot learning and tiny-scale ml". The key idea is to emulate how LLMs and humans learn few-shot learning using programming and traditional ML paradigm. This means that the algorithm can learn from a few examples and flexibly adapt the pre-existing knowledge/skills to solve the task at hand with the added benefit of being symbolic (interpretibility, explainability, robustness, maintainability, etc). The highlight of our approach is the newly propoed machine learning model that is robustly trainable from 2-3 samples! This extreme sample efficiency is obtained by searching the model space to find the simplest one that perfectly fit the data using Mixed-Integer Linear Programming and greedy matching algorithm.
+This repo stores the code for our paper named "Solving ARC-AGI with symbolic few-shot learning and tiny-scale ml". The key idea is to emulate how LLMs and humans learn few-shot learning using programming and traditional ML paradigm. This means that the algorithm can learn from a few examples and flexibly adapt the pre-existing knowledge/skills to solve the task at hand with the added benefit of being symbolic (interpretibility, explainability, robustness, maintainability, etc).
 
 The paper can be accessed from `paper/paper.pdf` folder in this repo.
 
