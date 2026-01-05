@@ -41,7 +41,6 @@ vulture arc
 
 ### Program
 ```sh
-Trace(cost=7):
 0
   ParseGridTask()
   IndependentParse(x_mode=ParseMode.color_proximity,y_mode=ParseMode.color_proximity,x_bg_model=return 0,y_bg_model=return 0)
